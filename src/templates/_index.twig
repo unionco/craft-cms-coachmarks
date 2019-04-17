@@ -1,0 +1,14 @@
+{% extends "_layouts/elementindex" %}
+{% set title = "Coachmarks"|t('coacher') %}
+{% set elementType = 'franco\\coacher\\elements\\Coachmark' %}
+
+{% block actionButton %}
+    <a href="coachmarks/new" class="btn submit add icon" title="{{ 'New Coachmark'|t('coacher') }}">{{ 'New Coachmark'|t('coacher') }}</a>
+{% endblock %}
+
+{% block initJs %}
+    Craft.elementIndex = Craft.createElementIndex('{{ elementType|e("js") }}', $('#main'), {
+        context:        '{{ context }}',
+        storageKey:     'elementindex.{{ elementType|e("js") }}'
+    });
+{% endblock %}

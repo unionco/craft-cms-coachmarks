@@ -1,0 +1,38 @@
+{
+    "name": "franco/coacher",
+    "description": "Coachmarks plugin for CraftCMS.",
+    "type": "craft-plugin",
+    "version": "1.0.0",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "coacher"
+    ],
+    "support": {
+        "docs": "https://github.com/fvaldes33/coacher/blob/master/README.md",
+        "issues": "https://github.com/fvaldes33/coacher/issues"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Franco Valdes",
+            "homepage": "https://github.com/fvaldes33"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "franco\\coacher\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Coacher",
+        "handle": "coacher",
+        "changelogUrl": "https://raw.githubusercontent.com/fvaldes33/coacher/master/CHANGELOG.md",
+        "class": "franco\\coacher\\Coacher"
+    }
+}
