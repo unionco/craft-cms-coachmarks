@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\models;
+namespace unionco\coachmarks\models;
 
-use franco\coacher\Coacher;
+use unionco\coachmarks\Coacher;
 
 use Craft;
 use craft\base\Model;

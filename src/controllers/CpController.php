@@ -8,16 +8,16 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\controllers;
+namespace unionco\coachmarks\controllers;
 
-use franco\coacher\Coacher;
+use unionco\coachmarks\Coacher;
 
 use Craft;
 use craft\helpers\Json;
 use craft\web\Controller;
-use franco\coacher\elements\Coachmark as CoachmarkElement;
-use franco\coacher\records\Coachmark as CoachmarkRecord;
-use franco\coacher\models\Coachmark as CoachmarkModel;
+use unionco\coachmarks\elements\Coachmark as CoachmarkElement;
+use unionco\coachmarks\records\Coachmark as CoachmarkRecord;
+use unionco\coachmarks\models\Coachmark as CoachmarkModel;
 
 /**
  * SearchController Controller
@@ -73,7 +73,7 @@ class CpController extends Controller
     {
         $variables = [];
 
-        return $this->renderTemplate('coacher/_index', $variables);
+        return $this->renderTemplate('coachmarks/_index', $variables);
     }
 
     /**
@@ -89,7 +89,7 @@ class CpController extends Controller
             'coachmark' => $coachmark
         ];
 
-        return $this->renderTemplate('coacher/_edit', $variables);
+        return $this->renderTemplate('coachmarks/_edit', $variables);
     }
 
     /**
@@ -108,7 +108,7 @@ class CpController extends Controller
             'coachmark' => $coachmark
         ];
 
-        return $this->renderTemplate('coacher/_edit', $variables);
+        return $this->renderTemplate('coachmarks/_edit', $variables);
     }
 
     /**

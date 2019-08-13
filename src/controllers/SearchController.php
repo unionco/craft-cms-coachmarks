@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\controllers;
+namespace unionco\coachmarks\controllers;
 
-use franco\coacher\Coacher;
+use unionco\coachmarks\Coacher;
 
 use Craft;
 use craft\web\Controller;

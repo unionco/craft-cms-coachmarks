@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\elements\db;
+namespace unionco\coachmarks\elements\db;
 
-use franco\coacher\Coacher;
+use unionco\coachmarks\Coacher;
 
 use craft\elements\db\ElementQuery;
 use craft\helpers\Db;
@@ -47,21 +47,21 @@ class CoachmarkQuery extends ElementQuery
     protected function beforePrepare(): bool
     {
         // join in the products table
-        $this->joinElementTable('coacher_coachmark');
+        $this->joinElementTable('coachmarks_coachmark');
 
         // select the columns
         $this->query->select([
-            'coacher_coachmark.title',
-            'coacher_coachmark.context',
-            'coacher_coachmark.steps'
+            'coachmarks_coachmark.title',
+            'coachmarks_coachmark.context',
+            'coachmarks_coachmark.steps'
         ]);
 
         if ($this->title) {
-            $this->subQuery->andWhere(Db::parseParam('coacher_coachmark.title', $this->title));
+            $this->subQuery->andWhere(Db::parseParam('coachmarks_coachmark.title', $this->title));
         }
 
         if ($this->context) {
-            $this->subQuery->andWhere(Db::parseParam('coacher_coachmark.context', $this->context));
+            $this->subQuery->andWhere(Db::parseParam('coachmarks_coachmark.context', $this->context));
         }
 
         return parent::beforePrepare();

@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\services;
+namespace unionco\coachmarks\services;
 
 use Craft;
 use craft\base\Component;
@@ -19,7 +19,7 @@ use craft\elements\MatrixBlock;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\Json;
-use franco\coacher\elements\Coachmark as CoachmarkElement;
+use unionco\coachmarks\elements\Coachmark as CoachmarkElement;
 
 /**
  * @author    Franco Valdes

@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\records;
+namespace unionco\coachmarks\records;
 
-use franco\coacher\Coacher;
+use unionco\coachmarks\Coacher;
 
 use Craft;
 use craft\db\ActiveRecord;
@@ -50,6 +50,6 @@ class Coachmark extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%coacher_coachmark}}';
+        return '{{%coachmarks_coachmark}}';
     }
 }

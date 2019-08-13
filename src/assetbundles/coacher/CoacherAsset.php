@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\assetbundles\Coacher;
+namespace unionco\coachmarks\assetbundles\Coacher;
 
 use Craft;
 use craft\web\AssetBundle;
@@ -43,7 +43,7 @@ class CoacherAsset extends AssetBundle
     public function init()
     {
         // define the path that your publishable resources live
-        $this->sourcePath = "@franco/coacher/assetbundles/coacher/dist";
+        $this->sourcePath = "@unionco/coachmarks/assetbundles/coachmarks/dist";
 
         // define the dependencies
         $this->depends = [

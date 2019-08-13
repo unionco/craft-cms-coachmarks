@@ -1,5 +1,5 @@
 {
-    "name": "franco/coacher",
+    "name": "unionco/craft-coachmarks",
     "description": "Coachmarks plugin for CraftCMS.",
     "type": "craft-plugin",
     "version": "1.0.0",
@@ -18,7 +18,7 @@
     "authors": [
         {
             "name": "Franco Valdes",
-            "homepage": "https://github.com/fvaldes33"
+            "homepage": "https://github.com/unionco"
         }
     ],
     "require": {
@@ -26,13 +26,13 @@
     },
     "autoload": {
         "psr-4": {
-          "franco\\coacher\\": "src/"
+          "unionco\\coachmarks\\": "src/"
         }
     },
     "extra": {
         "name": "Coacher",
         "handle": "coacher",
         "changelogUrl": "https://raw.githubusercontent.com/fvaldes33/coacher/master/CHANGELOG.md",
-        "class": "franco\\coacher\\Coacher"
+        "class": "unionco\\coachmarks\\CoachmarksPlugin"
     }
 }

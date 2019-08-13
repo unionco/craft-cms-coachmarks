@@ -1,1 +1,30 @@
-{"pluginName":"Coacher","pluginDescription":"Coachmarks plugin for CraftCMS.","pluginVersion":"1.0.0","pluginAuthorName":"Franco Valdes","pluginVendorName":"franco/coacher","pluginAuthorUrl":"https://github.com/fvaldes33","pluginAuthorGithub":"fvaldes33","codeComments":"yes","pluginComponents":["controllers","elementtypes","models","records","settings"],"consolecommandName":"","controllerName":"SearchController","cpsectionName":"","elementName":"Coachmark","fieldName":"","modelName":"Coachmark","purchasableName":"","recordName":"Coachmark","serviceName":"","taskName":"","utilityName":"","widgetName":"","apiVersion":"api_version_3_0"}
+{
+  "pluginName": "Coachmarks",
+  "pluginDescription": "Coachmarks plugin for CraftCMS.",
+  "pluginVersion": "1.0.0",
+  "pluginAuthorName": "Franco Valdes",
+  "pluginVendorName": "unionco/coachmarks",
+  "pluginAuthorUrl": "https://github.com/unionco",
+  "pluginAuthorGithub": "unionco",
+  "codeComments": "yes",
+  "pluginComponents": [
+    "controllers",
+    "elementtypes",
+    "models",
+    "records",
+    "settings"
+  ],
+  "consolecommandName": "",
+  "controllerName": "SearchController",
+  "cpsectionName": "",
+  "elementName": "Coachmark",
+  "fieldName": "",
+  "modelName": "Coachmark",
+  "purchasableName": "",
+  "recordName": "Coachmark",
+  "serviceName": "",
+  "taskName": "",
+  "utilityName": "",
+  "widgetName": "",
+  "apiVersion": "api_version_3_0"
+}

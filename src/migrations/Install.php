@@ -8,9 +8,9 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\migrations;
+namespace unionco\coachmarks\migrations;
 
-use franco\coacher\Coacher;
+use unionco\coachmarks\Coacher;
 
 use Craft;
 use craft\config\DbConfig;
@@ -96,12 +96,12 @@ class Install extends Migration
     {
         $tablesCreated = false;
 
-        // coacher_coachmark table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%coacher_coachmark}}');
+        // coachmarks_coachmark table
+        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%coachmarks_coachmark}}');
         if ($tableSchema === null) {
             $tablesCreated = true;
             $this->createTable(
-                '{{%coacher_coachmark}}',
+                '{{%coachmarks_coachmark}}',
                 [
                     'id' => $this->primaryKey(),
                     // Custom columns in the table
@@ -126,10 +126,10 @@ class Install extends Migration
      */
     protected function addForeignKeys()
     {
-        // coacher_coachmark table
+        // coachmarks_coachmark table
         $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%coacher_coachmark}}', 'siteId'),
-            '{{%coacher_coachmark}}',
+            $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'siteId'),
+            '{{%coachmarks_coachmark}}',
             'siteId',
             '{{%sites}}',
             'id',
@@ -138,8 +138,8 @@ class Install extends Migration
         );
 
         $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%coacher_coachmark}}', 'id'),
-            '{{%coacher_coachmark}}',
+            $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'id'),
+            '{{%coachmarks_coachmark}}',
             'id',
             '{{%elements}}',
             'id',
@@ -164,7 +164,7 @@ class Install extends Migration
      */
     protected function removeTables()
     {
-        // coacher_coachmark table
-        $this->dropTableIfExists('{{%coacher_coachmark}}');
+        // coachmarks_coachmark table
+        $this->dropTableIfExists('{{%coachmarks_coachmark}}');
     }
 }

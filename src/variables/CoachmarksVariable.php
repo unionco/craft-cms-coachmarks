@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2018 Franco Valdes
  */
 
-namespace franco\coacher\variables;
+namespace unionco\coachmarks\variables;
 
 use Craft;
 use craft\elements\Entry;
@@ -19,7 +19,7 @@ use craft\elements\MatrixBlock;
  * @package   Calendarize
  * @since     1.0.0
  */
-class CoacherVariable
+class CoachmarksVariable
 {
     // Public Methods
     // =========================================================================

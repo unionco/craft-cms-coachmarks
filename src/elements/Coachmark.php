@@ -8,10 +8,10 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher\elements;
+namespace unionco\coachmarks\elements;
 
-use franco\coacher\Coacher;
-use franco\coacher\elements\db\CoachmarkQuery;
+use unionco\coachmarks\Coacher;
+use unionco\coachmarks\elements\db\CoachmarkQuery;
 
 use Craft;
 use craft\base\Element;
@@ -103,7 +103,7 @@ class Coachmark extends Element
      */
     public static function displayName(): string
     {
-        return Craft::t('coacher', 'Coachmark');
+        return Craft::t('coachmarks', 'Coachmark');
     }
 
     /**
@@ -284,16 +284,16 @@ class Coachmark extends Element
 
         $actions[] = $elementsService->createAction([
             'type' => Delete::class,
-            'confirmationMessage' => Craft::t('coacher', 'Are you sure you want to delete the selected entries?'),
-            'successMessage' => Craft::t('coacher', 'Entries deleted.'),
+            'confirmationMessage' => Craft::t('coachmarks', 'Are you sure you want to delete the selected entries?'),
+            'successMessage' => Craft::t('coachmarks', 'Entries deleted.'),
         ]);
 
         // Restore
         $actions[] = $elementsService->createAction([
             'type' => Restore::class,
-            'successMessage' => Craft::t('coacher', 'Entries restored.'),
-            'partialSuccessMessage' => Craft::t('coacher', 'Some entries restored.'),
-            'failMessage' => Craft::t('coacher', 'Entries not restored.'),
+            'successMessage' => Craft::t('coachmarks', 'Entries restored.'),
+            'partialSuccessMessage' => Craft::t('coachmarks', 'Some entries restored.'),
+            'failMessage' => Craft::t('coachmarks', 'Entries not restored.'),
         ]);
 
         return $actions;
@@ -305,10 +305,10 @@ class Coachmark extends Element
     protected static function defineTableAttributes(): array
     {
         $attributes = [
-            'id'          => Craft::t('coacher', 'ID'),
-            'title'       => Craft::t('coacher', 'Title'),
-            'context'     => Craft::t('coacher', 'Context'),
-            'dateCreated' => Craft::t('coacher', 'Date Created'),
+            'id'          => Craft::t('coachmarks', 'ID'),
+            'title'       => Craft::t('coachmarks', 'Title'),
+            'context'     => Craft::t('coachmarks', 'Context'),
+            'dateCreated' => Craft::t('coachmarks', 'Date Created'),
         ];
 
         return $attributes;
@@ -364,7 +364,7 @@ class Coachmark extends Element
     {
         if ($isNew) {
             Craft::$app->db->createCommand()
-                ->insert('{{%coacher_coachmark}}', [
+                ->insert('{{%coachmarks_coachmark}}', [
                     'id'        => $this->id,
                     'title'     => $this->title,
                     'context'   => $this->context,
@@ -374,7 +374,7 @@ class Coachmark extends Element
                 ->execute();
         } else {
             Craft::$app->db->createCommand()
-                ->update('{{%coacher_coachmark}}', [
+                ->update('{{%coachmarks_coachmark}}', [
                     'title'     => $this->title,
                     'context'   => $this->context,
                     'steps'     => $this->steps,

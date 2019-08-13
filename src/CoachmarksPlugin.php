@@ -1,6 +1,6 @@
 <?php
 /**
- * Coacher plugin for Craft CMS 3.x
+ * CoachmarksPlugin plugin for Craft CMS 3.x
  *
  * Coachmarks plugin for CraftCMS.
  *
@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
-namespace franco\coacher;
+namespace unionco\coachmarks;
 
 use Craft;
 use craft\base\Plugin;
@@ -18,13 +18,13 @@ use craft\web\UrlManager;
 use craft\services\Elements;
 use craft\events\RegisterComponentTypesEvent;
 use craft\events\RegisterUrlRulesEvent;
-use franco\coacher\models\Settings;
-use franco\coacher\services\CoachmarkService;
+use unionco\coachmarks\models\Settings;
+use unionco\coachmarks\services\CoachmarkService;
 use yii\base\Event;
 use craft\web\twig\variables\CraftVariable;
-use franco\coacher\variables\CoacherVariable;
-use franco\coacher\elements\Coachmark as CoachmarkElement;
-use franco\coacher\assetbundles\coacher\CoacherAsset;
+use unionco\coachmarks\variables\CoachmarksVariable;
+use unionco\coachmarks\elements\Coachmark as CoachmarkElement;
+use unionco\coachmarks\assetbundles\coachmarks\CoachmarksAsset;
 use craft\helpers\Json;
 
 /**
@@ -38,22 +38,22 @@ use craft\helpers\Json;
  * https://craftcms.com/docs/plugins/introduction
  *
  * @author    Franco Valdes
- * @package   Coacher
+ * @package   CoachmarksPlugin
  * @since     1.0.0
  *
  * @property  Settings $settings
  * @method    Settings getSettings()
  */
-class Coacher extends Plugin
+class CoachmarksPlugin extends Plugin
 {
     // Static Properties
     // =========================================================================
 
     /**
      * Static property that is an instance of this plugin class so that it can be accessed via
-     * Coacher::$plugin
+     * CoachmarksPlugin::$plugin
      *
-     * @var Coacher
+     * @var CoachmarksPlugin
      */
     public static $plugin;
 
@@ -113,7 +113,7 @@ class Coacher extends Plugin
 
     /**
      * Set our $plugin static property to this class so that it can be accessed via
-     * Coacher::$plugin
+     * CoachmarksPlugin::$plugin
      *
      * Called after the plugin class is instantiated; do any one-time initialization
      * here such as hooks and events.
@@ -145,9 +145,9 @@ class Coacher extends Plugin
             UrlManager::class,
             UrlManager::EVENT_REGISTER_CP_URL_RULES,
             function (RegisterUrlRulesEvent $event) {
-                $event->rules['coachmarks'] = 'coacher/cp/index';
-                $event->rules['coachmarks/new'] = 'coacher/cp/new';
-                $event->rules['coachmarks/edit/<id:\d+>'] = 'coacher/cp/edit';
+                $event->rules['coachmarks'] = 'coachmarks/cp/index';
+                $event->rules['coachmarks/new'] = 'coachmarks/cp/new';
+                $event->rules['coachmarks/edit/<id:\d+>'] = 'coachmarks/cp/edit';
             }
         );
 
@@ -169,15 +169,15 @@ class Coacher extends Plugin
             function (Event $event) {
                 /** @var CraftVariable $variable */
                 $variable = $event->sender;
-                $variable->set('coacher', CoacherVariable::class);
+                $variable->set('coachmarks', CoachmarksVariable::class);
             }
         );
 
-        $this->_startCoacherJs();
+        $this->_startCoachmarksPluginJs();
 
         Craft::info(
             Craft::t(
-                'coacher',
+                'app',
                 '{name} plugin loaded',
                 ['name' => $this->name]
             ),
@@ -232,7 +232,7 @@ class Coacher extends Plugin
     /**
      * 
      */
-    private function _startCoacherJs()
+    private function _startCoachmarksPluginJs()
     {
         $settings = $this->getSettings();
 
@@ -241,8 +241,9 @@ class Coacher extends Plugin
             $params = $this->_collection($coachmarks);
             
             $view = Craft::$app->getView();
-            $view->registerAssetBundle(CoacherAsset::class);
-            $view->registerJs("new Coacher(" . Json::encode($params) . ");");
+            $view->registerAssetBundle(CoachmarksAsset::class);
+            // $view->registerJs("new CoachmarksPlugin(" . Json::encode($params) . ");");
+            // $view->registerJs("new CoachmarksPlugin(" . Json::encode($params) . ");");
         }
     }
 
@@ -268,5 +269,10 @@ class Coacher extends Plugin
                 ];
             }, Json::decode($coachmark->steps)),
         ];
+    }
+
+    public static function getInstance(): CoachmarksPlugin
+    {
+        return static::$plugin;
     }
 }
