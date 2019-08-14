@@ -1,80 +1,48 @@
 <template>
-  <div class="MainMenu">
-    <UnionOverflowMenu :up="true" :flip-menu="true" @openChanged="handleOpenChanged">
-      <template v-slot:trigger>
-        <div ref="trigger">
-          <AddComment32 v-if="!$cmUiStore.mainMenuOpen" class="icon" />
-          <CloseFilled16 v-else class="icon" />
-        </div>
-      </template>
-      <CvTile>
-        <div class="header">Welcome to Coachmarks</div>
-        <div>
-          <CvButton>Create a new coachmark</CvButton>
-        </div>
-        <div>
-          <ul>
-            <li
-              v-for="coachmark in $cmContentStore.coachmarks"
-              :key="coachmark.id"
-            >{{ coachmark.name }}</li>
-          </ul>
-        </div>
-      </CvTile>
-    </UnionOverflowMenu>
+  <div class="md-elevation-6">
+    <md-card class="md-primary">
+      <md-card-header>
+        <md-card-header-text>
+          <div class="md-title">Welcome to Coachmarks</div>
+          <!-- <div class="md-subhead">Subtitle here</div> -->
+        </md-card-header-text>
+      </md-card-header>
+    </md-card>
+    <md-card-content>
+      <div class="content-container">
+        <md-button>Create a new coachmark</md-button>
+        <md-divider />Your coachmarks
+        <ul>
+          <li
+            v-for="coachmark in $cmContentStore.coachmarks"
+            :key="coachmark.id"
+            @click="() => $cmUiStore.goToCoachmark(coachmark.id)"
+          >{{ coachmark.name }}</li>
+        </ul>
+      </div>
+    </md-card-content>
   </div>
 </template>
 
 <script>
 import { Component, Vue } from 'vue-property-decorator';
-import {
-  CvButton,
-  CvStructuredList,
-  CvStructuredListItem,
-  CvStructuredListData,
-  CvTile,
-} from '@carbon/vue/src';
-
-import CloseFilled16 from '@carbon/icons-vue/es/close/16';
-import AddComment32 from '@carbon/icons-vue/es/add-comment/32';
 import { Observer } from 'mobx-vue';
-import UnionOverflowMenu from './UnionOverflowMenu.vue';
 
 @Observer
 @Component({
   name: 'main-menu',
-  components: {
-    CvButton,
-    CvStructuredList,
-    CvStructuredListItem,
-    CvStructuredListData,
-    CloseFilled16,
-    AddComment32,
-    CvTile,
-    UnionOverflowMenu,
-  },
+  components: {},
 })
 export default class MainMenu extends Vue {
-    handleOpenChanged(e) {
-        this.$cmUiStore.setMainMenuOpen(e.open);
-    }
+  handleOpenChanged(e) {
+    this.$cmUiStore.setOpen(e.open);
+  }
 }
 </script>
 
-<style lang="scss">
-.icon {
-  height: 36px;
-}
-.MainMenu {
-  .menu {
-    display: none;
-    flex-direction: column;
-    position: relative;
-    top: -200px;
-
-    &.open {
-      display: flex;
-    }
-  }
+<style lang="scss" scoped>
+.md-content {
+  height: 200px;
+  display: inline-flex;
 }
 </style>

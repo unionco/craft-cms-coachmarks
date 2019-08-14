@@ -2,28 +2,33 @@
     <div>
         <div class="Coachmarks">
             <!-- {{ $store.isOpen ? 'Open' : 'Closed' }} -->
-            <MainMenu/>
+            <Toggle/>
+            <Router/>
             <!-- <button @click="$store.toggleOpen">Click</button> -->
         </div>
-        <div class="Coachmarks--debug">
+        <!-- <div class="Coachmarks--debug">
             <pre>
                 {{ $cmContentStore.debug }}
             </pre>
-        </div>
+        </div> -->
     </div>
 </template>
 
 <script>
 import { Component, Vue } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
-import MainMenu from './MainMenu';
+// import MainMenu from './MainMenu';
+import Toggle from './Toggle.vue';
+import Router from './Router.vue';
 
 @Observer
 @Component({
     name: 'coachmarks',
     props: {},
     components: {
-        MainMenu,
+        // MainMenu,
+        Router,
+        Toggle
     }
 })
 export default class Coachmarks extends Vue {
@@ -33,16 +38,3 @@ export default class Coachmarks extends Vue {
     }
 }
 </script>
-
-<style scoped>
-.Coachmarks {
-    position: absolute;
-    bottom: 50px;
-    right: 50px;
-}
-.Coachmarks--debug {
-    position: absolute;
-    top: 50px;
-    right: 150px;
-}
-</style>

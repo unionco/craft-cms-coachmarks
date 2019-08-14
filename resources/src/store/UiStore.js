@@ -1,16 +1,21 @@
 import { observable, action } from 'mobx';
 
 export default class UiStore {
-    @observable mainMenuOpen = false;
+    @observable open = false;
+
+    @observable pageType = 'mainMenu';
+       
+    @observable coachmarkId = undefined;
 
     @observable componentSelectMode = false;
 
-    @action.bound toggleMainMenuOpen() {
-        this.mainMenuOpen = !this.mainMenuOpen;
+    @action.bound toggleOpen() {
+        this.open = !this.open;
+        console.log('open: ', this.open);
     }
 
-    @action setMainMenuOpen(open) {
-        this.mainMenuOpen = open;
+    @action setOpen(open) {
+        this.open = open;
     }
 
     @action.bound enableComponentSelectMode() {
@@ -19,5 +24,10 @@ export default class UiStore {
 
     @action.bound disableComponentSelectMode() {
         this.componentSelectMode = false;
+    }
+
+    @action goToCoachmark(id) {
+        this.pageType = 'coachmarkDetail';
+        this.coachmarkId = id;
     }
 }

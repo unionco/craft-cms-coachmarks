@@ -242,7 +242,7 @@ class CoachmarksPlugin extends Plugin
             
             $view = Craft::$app->getView();
             $view->registerAssetBundle(CoachmarksAsset::class);
-            // $view->registerJs("new CoachmarksPlugin(" . Json::encode($params) . ");");
+             // $view->registerJs("new CoachmarksPlugin(" . Json::encode($params) . ");");
             // $view->registerJs("new CoachmarksPlugin(" . Json::encode($params) . ");");
         }
     }

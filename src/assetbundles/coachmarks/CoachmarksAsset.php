@@ -19,6 +19,10 @@ class CoachmarksAsset extends AssetBundle
             CpAsset::class,
         ];
 
+        $this->css = [
+            "https://fonts.googleapis.com/icon?family=Material+Icons",
+        ];
+
         if ($dev) {
             $this->js = [
                 'https://vuejs.org/js/vue.js',
@@ -26,7 +30,7 @@ class CoachmarksAsset extends AssetBundle
             ];
         } else {
             $this->depends[] = VueAsset::class;
-            $this->css = ['css/app.css'];
+            $this->css[] = 'css/app.css';
             $this->js = ['js/app.js', 'js/chunk-vendors.js'];
         }
         parent::init();
