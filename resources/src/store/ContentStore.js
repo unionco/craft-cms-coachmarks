@@ -1,4 +1,4 @@
-import { observable, action, runInAction, toJS } from 'mobx';
+import { observable, action, runInAction, toJS, computed } from 'mobx';
 
 // const debug = true;
 
@@ -8,7 +8,15 @@ const getCoachmarks = () => new Promise(resolve => {
         coachmarks: [
           {
             id: 1,
-            name: 'Get started'
+            name: 'Get started',
+            steps: [
+              {
+                id: 1,
+                name: 'Click on entries in the left panel',
+                description: 'Click on entries in the left panel',
+                label: 'Idk'
+              }
+            ]
           },
           {
             id: 2,
