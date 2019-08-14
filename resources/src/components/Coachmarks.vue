@@ -1,8 +1,15 @@
 <template>
-    <div class="Coachmarks">
-        {{ $store.isOpen ? 'Open' : 'Closed' }}
-        <MainMenu v-if="$store.isOpen"/>
-        <button @click="$store.toggleOpen">Click</button>
+    <div>
+        <div class="Coachmarks">
+            <!-- {{ $store.isOpen ? 'Open' : 'Closed' }} -->
+            <MainMenu/>
+            <!-- <button @click="$store.toggleOpen">Click</button> -->
+        </div>
+        <div class="Coachmarks--debug">
+            <pre>
+                {{ $cmContentStore.debug }}
+            </pre>
+        </div>
     </div>
 </template>
 
@@ -22,6 +29,7 @@ import MainMenu from './MainMenu';
 export default class Coachmarks extends Vue {
     mounted() {
         console.log('mounted');
+        this.$cmContentStore.fetchCoachmarks();
     }
 }
 </script>
@@ -29,7 +37,12 @@ export default class Coachmarks extends Vue {
 <style scoped>
 .Coachmarks {
     position: absolute;
-    bottom: 100px;
-    right: 100px;
+    bottom: 50px;
+    right: 50px;
+}
+.Coachmarks--debug {
+    position: absolute;
+    top: 50px;
+    right: 150px;
 }
 </style>
