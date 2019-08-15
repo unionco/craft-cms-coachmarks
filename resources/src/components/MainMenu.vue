@@ -10,13 +10,13 @@
     </md-card>
     <md-card-content>
       <div class="content-container">
-        <md-button>Create a new coachmark</md-button>
+        <md-button @click="createNewCoachmark">Create a new coachmark</md-button>
         <md-divider />Your coachmarks
         <ul>
           <li
             v-for="coachmark in $cmContentStore.coachmarks"
             :key="coachmark.id"
-            @click="() => $cmUiStore.goToCoachmark(coachmark.id)"
+            @click="() => goToCoachmark(coachmark.id)"
           >{{ coachmark.name }}</li>
         </ul>
       </div>
@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Inject } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 
 @Observer
@@ -37,6 +37,9 @@ export default class MainMenu extends Vue {
   handleOpenChanged(e) {
     this.$cmUiStore.setOpen(e.open);
   }
+
+  @Inject() goToCoachmark;
+  @Inject() createNewCoachmark;
 }
 </script>
 

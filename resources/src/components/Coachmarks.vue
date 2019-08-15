@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Provide } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 // import MainMenu from './MainMenu';
 import Toggle from './Toggle.vue';
@@ -34,7 +34,14 @@ import Router from './Router.vue';
 export default class Coachmarks extends Vue {
     mounted() {
         console.log('mounted');
-        this.$cmContentStore.fetchCoachmarks();
+        if (this.$cmContentStore.coachmarksState === 'uninitialized') {
+            this.$cmContentStore.fetchCoachmarks();
+        }
+    }
+
+    @Provide()
+    getCoachmark(id) {
+        return this.$cmContentStore.coachmarks.find(c => c.id === id);
     }
 }
 </script>
