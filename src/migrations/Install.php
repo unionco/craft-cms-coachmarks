@@ -3,8 +3,7 @@
  * Coacher plugin for Craft CMS 3.x
  *
  * Coachmarks plugin for CraftCMS.
- *
- * @link      https://github.com/fvaldes33
+ * * @link      https://github.com/fvaldes33
  * @copyright Copyright (c) 2019 Franco Valdes
  */
 
@@ -104,7 +103,6 @@ class Install extends Migration
                 '{{%coachmarks_coachmark}}',
                 [
                     'id' => $this->primaryKey(),
-                    // Custom columns in the table
                     'siteId' => $this->integer()->notNull(),
                     'title' => $this->string(255)->notNull(),
                     'context' => $this->string(255)->notNull()->defaultValue('global'),

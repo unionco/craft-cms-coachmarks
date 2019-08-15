@@ -12,14 +12,8 @@ namespace unionco\coachmarks\services;
 
 use Craft;
 use craft\base\Component;
-use craft\base\ElementInterface;
-use craft\elements\db\ElementQueryInterface;
-use craft\elements\Entry;
-use craft\elements\MatrixBlock;
-use craft\helpers\DateTimeHelper;
-use craft\helpers\Db;
-use craft\helpers\Json;
 use unionco\coachmarks\elements\Coachmark as CoachmarkElement;
+use craft\console\Application as ConsoleApplication;
 
 /**
  * @author    Franco Valdes
@@ -30,23 +24,25 @@ class CoachmarkService extends Component
 {
 
     /**
-     * 
+     *
      */
     public function getPageCoachmarks(): array
     {
         $request = Craft::$app->getRequest();
-        $page = $request->getParam('p');
+        if (! Craft::$app instanceof ConsoleApplication) {
+            $page = $request->getParam('p');
 
-        if (strpos($page, 'dashboard') >= -1) {
-            return CoachmarkElement::find()
-                ->context('global')
-                ->all();
-        }
+            if (strpos($page, 'dashboard') >= -1) {
+                return CoachmarkElement::find()
+                    ->context('global')
+                    ->all();
+            }
 
-        if (strpos($page, 'entries') >= -1) {
-            return CoachmarkElement::find()
-                ->context('entries')
-                ->all();
+            if (strpos($page, 'entries') >= -1) {
+                return CoachmarkElement::find()
+                    ->context('entries')
+                    ->all();
+            }
         }
 
         return [];

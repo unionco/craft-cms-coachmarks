@@ -173,6 +173,9 @@ class CoachmarksPlugin extends Plugin
             }
         );
 
+        if (Craft::$app instanceof \craft\console\Application) {
+            return null;
+        }
         $this->_startCoachmarksPluginJs();
 
         Craft::info(
@@ -191,7 +194,7 @@ class CoachmarksPlugin extends Plugin
     public function getCpNavItem()
     {
         $navItem = parent::getCpNavItem();
-        
+
         $navItem['url'] = "coachmarks";
 
         return $navItem;
@@ -230,7 +233,7 @@ class CoachmarksPlugin extends Plugin
     // =========================================================================
 
     /**
-     * 
+     *
      */
     private function _startCoachmarksPluginJs()
     {
@@ -239,7 +242,7 @@ class CoachmarksPlugin extends Plugin
         if ($settings->showCoachMarks) {
             $coachmarks = $this->coachmarks->getPageCoachmarks();
             $params = $this->_collection($coachmarks);
-            
+
             $view = Craft::$app->getView();
             $view->registerAssetBundle(CoachmarksAsset::class);
              // $view->registerJs("new CoachmarksPlugin(" . Json::encode($params) . ");");
