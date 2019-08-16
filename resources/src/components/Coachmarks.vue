@@ -41,8 +41,13 @@ export default class Coachmarks extends Vue {
   }
   mounted() {
     console.log('mounted');
-    if (this.$store.content.coachmarksState === ContentStore.StateUninit) {
+    console.log('coachmarksState:', this.$store.content.coachmarksState);
+    if (this.$store.content.coachmarksState !== ContentStore.StateComplete) {
       this.$store.content.fetchCoachmarks();
+    }
+    console.log('usersState:', this.$store.content.usersState);
+    if (this.$store.content.usersState !== ContentStore.StateComplete) {
+      this.$store.content.fetchUsers();
     }
   }
 }
@@ -50,7 +55,7 @@ export default class Coachmarks extends Vue {
 
 <style lang="scss" scoped>
 .Coachmarks-main {
-  z-index: 99;
+  z-index: 0;
   position: fixed;
   bottom: 100px;
   right: 20px;

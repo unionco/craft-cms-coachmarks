@@ -17,7 +17,7 @@ const coachmarks = [
         url: '/relative',
         order: 1,
         selectorNode: '.node-here',
-        selectorPosition: 'top'
+        selectorPosition: 'top',
       },
       {
         id: 2,
@@ -28,8 +28,8 @@ const coachmarks = [
         order: 2,
         selector: {
           node: '.node-here',
-          position: 'top'
-        }
+          position: 'top',
+        },
       },
     ],
   },
@@ -41,12 +41,35 @@ const coachmarks = [
   },
 ];
 
+const users = [
+  {
+    id: 99,
+    name: 'Admin',
+  },
+  {
+    id: 100,
+    name: 'Client 1',
+  },
+  {
+    id: 101,
+    name: 'Account Manager',
+  },
+];
+
 const getCoachmarks = () => new Promise(resolve => {
     setTimeout(() => {
       resolve({
         coachmarks,
       });
     }, 500);
+  });
+
+const getUsers = () => new Promise(resolve => {
+    setTimeout(() => {
+      resolve({
+        users,
+      });
+    }, 300);
   });
 
 export default class ContentStore {
@@ -129,7 +152,38 @@ export default class ContentStore {
   }
 
   @computed get loaded() {
-      return this.coachmarksState === ContentStore.StateComplete;
+    return this.coachmarksState === ContentStore.StateComplete;
+  }
+
+  @observable _users = [];
+  @observable _usersState = ContentStore.StateUninit;
+  @computed get usersState() {
+      return this._usersState;
+  }
+  @action.bound setUsers(users) {
+    this._users = users;
+    this.writeState();
+  }
+  @computed get users() {
+    return this._users;
+  }
+
+  @action.bound async fetchUsers() {
+    this._users = [];
+    this._usersState = ContentStore.StateLoading;
+    try {
+      const result = await getUsers();
+      runInAction(() => {
+        this._usersState = ContentStore.StateComplete;
+        this.setUsers(result.users); // = result.coachmarks;
+        console.log('loaded users');
+        console.log(toJS(this._users));
+      });
+    } catch (err) {
+      runInAction(() => {
+        this._usersState = ContentStore.StateError;
+      });
+    }
   }
 
   /** Persistance */

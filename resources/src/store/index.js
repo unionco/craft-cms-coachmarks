@@ -27,7 +27,18 @@ export default class RootStore {
     }
 
     @action.bound createNewCoachmark() {
-        console.log('hook me up');
+        this.ui.setCoachmarkId(ContentStore.NewCoachmarkId);
+        this.ui.setStepId(null);
+        this.ui.setEditCoachmarkMode(true);
+        this.ui.setPageType(UiStore.PTCoachmarkEdit);
+        this.content.setCurrentCoachmark({
+            id: ContentStore.NewCoachmarkId,
+            name: '',
+            steps: [],
+            createdBy: 'someUser',
+            readonlyUsers: [],
+            readWriteUsers: [],
+        });
     }
 
     @computed get coachmark() {
@@ -35,15 +46,35 @@ export default class RootStore {
         return this.content.coachmarks.find(c => c.id === this.ui.coachmarkId);
     }
 
-    @action.bound getStep(id) {
-        return this.content.steps.find(s => s.id === id);
+    @computed get step() {
+        let stepId = undefined;
+        console.log('getting step for id: ', this.ui.stepId);
+        if (!this.ui.stepId) {
+            const coachmark = this.coachmark;
+            const firstStep = coachmark.steps[0];
+            if (firstStep) {
+                stepId = firstStep.id;
+            }
+        } else {
+            stepId = this.ui.stepId;
+        }
+        return this.content.steps.find(s => s.id === stepId);
     }
 
 
+    /**
+     * @return bool is the user currently creating a new coachmark
+     */
     @computed get isNewCoachmark() {
         return this.ui.coachmarkId === ContentStore.NewCoachmarkId;
     }
 
+    /**
+     * @return bool can the current user edit this coachmark
+     */
+    @computed get coachmarkEditable() {
+        return true; /** @todo  actually check this... */
+    }
     /* Persistance */
     restore() {
         this.ui.restore();

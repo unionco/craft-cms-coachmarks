@@ -1,17 +1,18 @@
 <template>
   <div md-elevation="6" class="Detail">
-      <div class="toolbar">
-          <slot name="toolbar"></slot>
-        </div>
-    <md-card class="md-primary">
-      <md-card-header>
-        
-      </md-card-header>
+    <div class="toolbar">
+      <slot name="toolbar"></slot>
+    </div>
+    <md-card>
+      <md-card-header></md-card-header>
       <md-card-content>
         <div class="content">
           <slot name="content"></slot>
         </div>
       </md-card-content>
+      <md-card-actions>
+        <slot name="actions"></slot>
+      </md-card-actions>
     </md-card>
   </div>
 </template>

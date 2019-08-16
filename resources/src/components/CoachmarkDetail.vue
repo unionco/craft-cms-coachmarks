@@ -7,7 +7,7 @@
             <md-icon>arrow_back</md-icon>
           </md-button>
           <h3 class="md-title" style="flex: 1">{{ coachmark.name }}</h3>
-          <md-button class="md-primary" @click="() => $store.editCoachmark(coachmark.id)">
+          <md-button v-if="$store.coachmarkEditable" class="md-primary" @click="() => $store.editCoachmark(coachmark.id)">
             <md-icon>edit</md-icon>
           </md-button>
         </md-toolbar>
@@ -24,15 +24,14 @@
     <template v-slot:content>
       <div>
         <div v-if="coachmark" class="steps">
-          <md-steppers md-vertical @update:mdActiveStep="handleChange">
+          <md-steppers md-vertical :md-active-step="`step-${$store.step.id}`">
             <md-step
               v-for="step in coachmark.steps"
               :key="step.id"
-              :id="`step-${step.id.toString()}`"
+              :id="`step-${step.id}`"
               :md-label="step.label"
-              :md-description="step.description"
-              
-            >{{ step.description }}</md-step>
+              :md-editable="false"
+              />
           </md-steppers>
         </div>
 
@@ -78,15 +77,6 @@ export default class CoachmarkDetail extends Vue {
     console.log('id changed', val, oldVal);
     this.coachmark = this.$store.coachmark;
   }
-
-    handleChange(e) {
-        console.log(e);
-    }
-
-//   @Inject() goToMainMenu;
-//   @Inject() getCoachmark;
-//   @Inject() editCoachmark;
-//   @Inject() goToStep;
 }
 </script>
 
