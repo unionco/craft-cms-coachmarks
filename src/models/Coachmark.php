@@ -36,11 +36,6 @@ class Coachmark extends Model
     /**
      * @var string
      */
-    public $siteId;
-
-    /**
-     * @var string
-     */
     public $title;
 
     /**
