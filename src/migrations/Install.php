@@ -14,6 +14,7 @@ use unionco\coachmarks\Coacher;
 use Craft;
 use craft\config\DbConfig;
 use craft\db\Migration;
+use unionco\coachmarks\elements\db\Table;
 
 /**
  * Coacher Install Migration
@@ -56,7 +57,7 @@ class Install extends Migration
     {
         $this->driver = Craft::$app->getConfig()->getDb()->driver;
         if ($this->createTables()) {
-            $this->addForeignKeys();
+            // $this->addForeignKeys();
             // Refresh the db schema caches
             Craft::$app->db->schema->refresh();
             $this->insertDefaultData();
@@ -96,17 +97,15 @@ class Install extends Migration
         $tablesCreated = false;
 
         // coachmarks_coachmark table
-        $tableSchema = Craft::$app->db->schema->getTableSchema('{{%coachmarks_coachmark}}');
+        $tableSchema = Craft::$app->db->schema->getTableSchema(Table::COACHMARKS);
         if ($tableSchema === null) {
             $tablesCreated = true;
             $this->createTable(
-                '{{%coachmarks_coachmark}}',
+                Table::COACHMARKS,
                 [
                     'id' => $this->primaryKey(),
-                    'siteId' => $this->integer()->notNull(),
                     'title' => $this->string(255)->notNull(),
-                    'context' => $this->string(255)->notNull()->defaultValue('global'),
-                    'steps' => $this->longText()->notNull(),
+                    'read_only' => $this->boolean(),
                     'dateCreated' => $this->dateTime()->notNull(),
                     'dateUpdated' => $this->dateTime()->notNull(),
                     'uid' => $this->uid(),
@@ -125,25 +124,25 @@ class Install extends Migration
     protected function addForeignKeys()
     {
         // coachmarks_coachmark table
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'siteId'),
-            '{{%coachmarks_coachmark}}',
-            'siteId',
-            '{{%sites}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
-        );
+        // $this->addForeignKey(
+        //     $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'siteId'),
+        //     '{{%coachmarks_coachmark}}',
+        //     'siteId',
+        //     '{{%sites}}',
+        //     'id',
+        //     'CASCADE',
+        //     'CASCADE'
+        // );
 
-        $this->addForeignKey(
-            $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'id'),
-            '{{%coachmarks_coachmark}}',
-            'id',
-            '{{%elements}}',
-            'id',
-            'CASCADE',
-            'CASCADE'
-        );
+        // $this->addForeignKey(
+        //     $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'id'),
+        //     '{{%coachmarks_coachmark}}',
+        //     'id',
+        //     '{{%elements}}',
+        //     'id',
+        //     'CASCADE',
+        //     'CASCADE'
+        // );
     }
 
     /**
