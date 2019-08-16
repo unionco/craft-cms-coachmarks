@@ -7,24 +7,36 @@ const coachmarks = [
   {
     id: 1,
     name: 'Get started',
+    readOnly: true,
     steps: [
       {
         id: 1,
         name: 'Click on entries in the left panel',
         description: 'Click on entries in the left panel',
         label: 'Click on entries on the left panel',
+        url: '/relative',
+        order: 1,
+        selectorNode: '.node-here',
+        selectorPosition: 'top'
       },
       {
         id: 2,
         name: 'Click on entries in the left panel',
         description: 'Click on entries in the left panel',
         label: 'Click on entries on the left panel',
+        url: '/relative',
+        order: 2,
+        selector: {
+          node: '.node-here',
+          position: 'top'
+        }
       },
     ],
   },
   {
     id: 2,
     name: 'Create an entry',
+    readOnly: true,
     steps: [],
   },
 ];
