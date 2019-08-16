@@ -12,13 +12,13 @@
       <div class="content">
         <md-button @click="$store.createNewCoachmark">Create a new coachmark</md-button>
         <md-divider />Your coachmarks
-        <ul>
-          <li
+        <md-list>
+          <md-list-item
             v-for="coachmark in $store.content.coachmarks"
             :key="coachmark.id"
             @click="() => $store.goToCoachmark(coachmark.id)"
-          >{{ coachmark.name }}</li>
-        </ul>
+          >{{ coachmark.name }}</md-list-item>
+        </md-list>
       </div>
     </md-card-content>
   </div>

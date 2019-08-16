@@ -104,7 +104,7 @@ export default class ContentStore {
     try {
       const result = await getCoachmarks();
       runInAction(() => {
-        this._coachmarksState = this.StateComplete;
+        this._coachmarksState = ContentStore.StateComplete;
         this._coachmarks = result.coachmarks;
         console.log('loaded coachmarks');
         console.log(toJS(this.coachmarks));
@@ -126,6 +126,10 @@ export default class ContentStore {
       }
     });
     return steps;
+  }
+
+  @computed get loaded() {
+      return this.coachmarksState === ContentStore.StateComplete;
   }
 
   /** Persistance */

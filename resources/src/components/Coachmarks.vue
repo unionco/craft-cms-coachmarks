@@ -3,7 +3,12 @@
     <div class="Coachmarks">
       <Toggle />
       <div class="Coachmarks-main">
-        <component v-if="$store.ui.open" v-bind:is="$store.ui.pageType" />
+        <div v-if="$store.content.loaded">
+          <component v-if="$store.ui.open" v-bind:is="$store.ui.pageType" />
+        </div>
+        <div v-else>
+          <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
+        </div>
       </div>
     </div>
   </div>

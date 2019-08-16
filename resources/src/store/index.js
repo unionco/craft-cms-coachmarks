@@ -30,8 +30,9 @@ export default class RootStore {
         console.log('hook me up');
     }
 
-    @action.bound getCoachmark(id) {
-        return this.content.coachmarks.find(c => c.id === id);
+    @computed get coachmark() {
+        console.log('getting coachmark for id: ', this.ui.coachmarkId);
+        return this.content.coachmarks.find(c => c.id === this.ui.coachmarkId);
     }
 
     @action.bound getStep(id) {
