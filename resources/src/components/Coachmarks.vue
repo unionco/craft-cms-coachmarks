@@ -15,13 +15,15 @@
 </template>
 
 <script>
-import { Component, Vue, Provide } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import Toggle from './Toggle.vue';
 import MainMenu from './MainMenu.vue';
 import CoachmarkDetail from './CoachmarkDetail.vue';
 import ContentStore from '../store/ContentStore';
 import CoachmarkEdit from './CoachmarkEdit.vue';
+import StepsEdit from './StepsEdit.vue';
+import StepEdit from './StepEdit.vue';
 
 @Observer
 @Component({
@@ -32,6 +34,8 @@ import CoachmarkEdit from './CoachmarkEdit.vue';
     MainMenu,
     CoachmarkDetail,
     CoachmarkEdit,
+    StepsEdit,
+    StepEdit,
   },
 })
 export default class Coachmarks extends Vue {

@@ -7,6 +7,8 @@ export default class UiStore {
   static PTCoachmarkDetail = 'CoachmarkDetail';
   static PTMainMenu = 'MainMenu';
   static PTCoachmarkEdit = 'CoachmarkEdit';
+  static PTStepsEdit = 'StepsEdit';
+  static PTStepEdit = 'StepEdit';
 
   /** Open */
   @observable _open = false;

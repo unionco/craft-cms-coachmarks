@@ -48,6 +48,7 @@
     </template>
 
     <template v-slot:actions>
+      <md-button v-if="$store.content.currentCoachmark.id > 0" @click="$store.editSteps">Edit Steps</md-button>
       <md-button type="submit" class="md-primary" :disabled="sending">Save</md-button>
     </template>
   </BaseDetail>

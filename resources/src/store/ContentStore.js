@@ -11,25 +11,25 @@ const coachmarks = [
     steps: [
       {
         id: 1,
+        coachmarkId: 1,
         name: 'Click on entries in the left panel',
         description: 'Click on entries in the left panel',
         label: 'Click on entries on the left panel',
         url: '/relative',
         order: 1,
         selectorNode: '.node-here',
-        selectorPosition: 'top',
+        tooltipPosition: 'top',
       },
       {
         id: 2,
+        coachmarkId: 1,
         name: 'Click on entries in the left panel',
         description: 'Click on entries in the left panel',
         label: 'Click on entries on the left panel',
         url: '/relative',
         order: 2,
-        selector: {
-          node: '.node-here',
-          position: 'top',
-        },
+        selectorNode: '.node-here',
+        tooltipPosition: 'top',
       },
     ],
   },
@@ -109,6 +109,17 @@ export default class ContentStore {
     return this._currentCoachmark;
   }
 
+  /** Current Step */
+  @observable _currentStep = {};
+  @action.bound setCurrentStep(step) {
+      this._currentStep = step;
+      this.writeState();
+  }
+  @computed get currentState() {
+      return this._currentStep;
+  }
+
+
   /** Coachmarks State */
   @observable _coachmarksState = this.StateUninit;
 
@@ -158,7 +169,7 @@ export default class ContentStore {
   @observable _users = [];
   @observable _usersState = ContentStore.StateUninit;
   @computed get usersState() {
-      return this._usersState;
+    return this._usersState;
   }
   @action.bound setUsers(users) {
     this._users = users;
@@ -201,6 +212,9 @@ export default class ContentStore {
       _coachmarks: toJS(this._coachmarks),
       _coachmarksState: toJS(this._coachmarksState),
       _currentCoachmark: toJS(this._currentCoachmark),
+      _users: toJS(this._users),
+      _usersState: toJS(this._usersState),
+      _currentStep: toJS(this._currentStep),
     });
   }
 
@@ -211,13 +225,18 @@ export default class ContentStore {
       // Object.merge({}, this, state);
       this.debug = state.debug;
       this._coachmarks = state._coachmarks;
+      this._users = state._users;
       this._currentCoachmark = state._currentCoachmark;
       this._coachmarksState = state._coachmarksState;
+      this._currentStep = state._currentStep;
     } catch (err) {
       this.debug = '';
       this._coachmarks = [];
+      this._users = [];
       this._currentCoachmark = {};
       this._coachmarksState = ContentStore.StateUninit;
+      this._usersState = ContentStore.StateUninit;
+      this._currentStep = {};
     }
   }
 
