@@ -1,5 +1,7 @@
-import { observable, action, computed, toJS } from 'mobx';
+import { observable, action, computed, autorun, toJS } from 'mobx';
 import Cookies from 'js-cookie';
+import { handleMouseMove, handleMouseClick } from '../util/ComponentSelection';
+
 
 export default class UiStore {
   static CookieName = 'cm-ui';
@@ -15,7 +17,6 @@ export default class UiStore {
 
   @action.bound toggleOpen() {
     this._open = !this._open;
-    console.log('open: ', this._open);
   }
 
   @action setOpen(open) {
@@ -30,7 +31,9 @@ export default class UiStore {
     return this._open;
   }
 
-  /** Page Type */
+  /**
+   * Page Type
+   * */
   @observable _pageType = UiStore.PTMainMenu;
 
   @action.bound setPageType(pt) {
@@ -39,11 +42,13 @@ export default class UiStore {
   }
 
   @computed get pageType() {
-    console.log('pageType: ', this._pageType);
+    // console.log('pageType: ', this._pageType);
     return this._pageType;
   }
 
-  /** Coachmark ID */
+  /**
+   * Coachmark ID
+   * */
   @observable _coachmarkId = undefined;
 
   @action.bound setCoachmarkId(id) {
@@ -55,7 +60,9 @@ export default class UiStore {
     return this._coachmarkId;
   }
 
-  /** Step ID */
+  /**
+   * Step ID
+   * */
   @observable _stepId = undefined;
 
   @action.bound setStepId(id) {
@@ -67,29 +74,46 @@ export default class UiStore {
     return this._stepId;
   }
 
-  /** Edit coachmark mode */
-  @observable _editCoachmarkMode = false;
+  /** Component select mode */
+  @observable _componentSelectMode = false;
 
-  @action.bound setEditCoachmarkMode(mode) {
-    this._editCoachmarkMode = mode;
+  @action.bound setComponentSelectMode(mode) {
+    console.log('setComponentSelectMode:', mode);
+    this._componentSelectMode = mode;
     this.writeState();
   }
 
-  @computed get editCoachmarkMode() {
-    return this._editCoachmarkMode;
+  @computed get componentSelectMode() {
+    console.log('get componentSelectMode: ', this._componentSelectMode);
+    return this._componentSelectMode;
   }
 
-  @observable componentSelectMode = false;
+  /** Autorun */
+  /**
+   * Listen for changes to ui.componentSelectMode
+   */
+  componentSelectModeDisposer = autorun(
+    () => {
+      if (this.componentSelectMode) {
+        console.log('AUTORUN - componentSelectMode activated');
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('click', handleMouseClick);
+      } else {
+        console.log('AUTORUN - componentSelectMode deactivated');
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('click', handleMouseClick);
+      }
+    },
+    {
+      onError(e) {
+        console.error(e);
+      },
+    }
+  );
 
-  @action.bound enableComponentSelectMode() {
-    this.componentSelectMode = true;
-  }
-
-  @action.bound disableComponentSelectMode() {
-    this.componentSelectMode = false;
-  }
-
-  /** Persistance */
+  /**
+   * Persistance
+   * */
   writeState() {
     Cookies.set(UiStore.CookieName, this.serialize());
   }
@@ -105,8 +129,7 @@ export default class UiStore {
       _pageType: toJS(this._pageType),
       _coachmarkId: toJS(this._coachmarkId),
       _stepId: toJS(this._stepId),
-      componentSelectMode: toJS(this.componentSelectMode),
-      _editCoachmarkMode: toJS(this._editCoachmarkMode),
+      _componentSelectMode: toJS(this._componentSelectMode),
     });
   }
 
@@ -117,15 +140,13 @@ export default class UiStore {
       this._pageType = state._pageType;
       this._coachmarkId = state._coachmarkId;
       this._stepId = state._stepId;
-      this.componentSelectMode = state.componentSelectMode;
-      this._editCoachmarkMode = state._editCoachmarkMode;
+      this._componentSelectMode = state._componentSelectMode;
     } catch (err) {
       this._open = false;
       this._pageType = UiStore.PTMainMenu;
       this._coachmarkId = undefined;
       this._stepId = undefined;
-      this.componentSelectMode = false;
-      this._editCoachmarkMode = false;
+      this._componentSelectMode = false;
     }
   }
 }

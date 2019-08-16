@@ -31,8 +31,7 @@
           <md-field>
             <label>Node Selector</label>
             <md-input disabled v-model="nodeSelector"/>
-            <md-button @click="$store.ui.enableComponentSelectMode">Select</md-button>
-            
+            <md-button @click="() => componentSelectMode = !componentSelectMode">{{ !componentSelectMode ? 'Select' : 'Cancel' }}</md-button>
           </md-field>
         </div>
       </form>
@@ -45,7 +44,7 @@
 </template>
 
 <script>
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail';
 
@@ -59,6 +58,36 @@ export default class StepEdit extends Vue {
     label = '';
     nodeSelector = '';
     tooltipPosition = 'top';
+    componentSelectMode = false;
+
+    created() {
+        this.componentSelectMode = this.$store.ui.componentSelectMode;
+    }
+
+    @Watch('componentSelectMode')
+    onComponentSelectModeChange(val, oldVal) {
+        console.log(val);
+        this.$store.ui.setComponentSelectMode(val);
+    }
 
 }
 </script>
+
+<style>
+#selector-top, #selector-bottom {
+	background: blue;
+	height:3px;
+	position: fixed;
+	transition:all 300ms ease;
+}
+#selector-left, #selector-right {
+	background: blue;
+	width:3px;
+	position: fixed;
+	transition:all 300ms ease;
+}
+
+.n{
+ -webkit-transform: scale(3) translateX(100px)   
+}
+</style>

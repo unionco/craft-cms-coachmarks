@@ -2574,6 +2574,11 @@ css-selector-tokenizer@^0.7.0:
     fastparse "^1.1.1"
     regexpu-core "^1.0.0"
 
+css-selector-tools@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/css-selector-tools/-/css-selector-tools-1.0.9.tgz#4f7b14b61bc98a96d850c539f27090b7989e6047"
+  integrity sha512-8G8OzuuYD76whNA/sfUP5Yck7pvUmLyvzUnVadDK+2P5wsSOpuAg9M3JsL31189U0gVeNNpPEkEHkuXSnmN23Q==
+
 css-tree@1.0.0-alpha.29:
   version "1.0.0-alpha.29"
   resolved "https://registry.yarnpkg.com/css-tree/-/css-tree-1.0.0-alpha.29.tgz#3fa9d4ef3142cbd1c301e7664c1f352bd82f5a39"

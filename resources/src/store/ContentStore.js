@@ -140,8 +140,8 @@ export default class ContentStore {
       runInAction(() => {
         this._coachmarksState = ContentStore.StateComplete;
         this._coachmarks = result.coachmarks;
-        console.log('loaded coachmarks');
-        console.log(toJS(this.coachmarks));
+        // console.log('loaded coachmarks');
+        // console.log(toJS(this.coachmarks));
       });
     } catch (err) {
       runInAction(() => {
@@ -187,8 +187,8 @@ export default class ContentStore {
       runInAction(() => {
         this._usersState = ContentStore.StateComplete;
         this.setUsers(result.users); // = result.coachmarks;
-        console.log('loaded users');
-        console.log(toJS(this._users));
+        // console.log('loaded users');
+        // console.log(toJS(this._users));
       });
     } catch (err) {
       runInAction(() => {

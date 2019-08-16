@@ -1,4 +1,4 @@
-import { observable, action, computed } from 'mobx';
+import { observable, action, computed, autorun, toJS } from 'mobx';
 import UiStore from './UiStore';
 import ContentStore from './ContentStore';
 
@@ -17,7 +17,6 @@ export default class RootStore {
     this.ui.setPageType(UiStore.PTMainMenu);
     this.ui.setCoachmarkId(null);
     this.ui.setStepId(null);
-    this.ui.setEditCoachmarkMode(false);
   }
 
   @action.bound editCoachmark(id = false) {
@@ -26,14 +25,12 @@ export default class RootStore {
     }
     this.ui.setCoachmarkId(id);
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
-    this.ui.setEditCoachmarkMode(true);
     this.content.setCurrentCoachmark(this.coachmark);
   }
 
   @action.bound createNewCoachmark() {
     this.ui.setCoachmarkId(ContentStore.NewCoachmarkId);
     this.ui.setStepId(null);
-    this.ui.setEditCoachmarkMode(true);
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
     this.content.setCurrentCoachmark({
       id: ContentStore.NewCoachmarkId,
@@ -50,25 +47,25 @@ export default class RootStore {
   }
 
   @action.bound newStep() {
-      this.ui.setPageType(UiStore.PTStepEdit);
-      this.content.setCurrentStep({
-          id: ContentStore.NewCoachmarkId,
-          coachmarkId: this.ui.coachmarkId,
-          label: '',
-          nodeSelector: '',
-          tooltipPosition: 'bottom',
-          order: 1,
-      });
+    this.ui.setPageType(UiStore.PTStepEdit);
+    this.content.setCurrentStep({
+      id: ContentStore.NewCoachmarkId,
+      coachmarkId: this.ui.coachmarkId,
+      label: '',
+      nodeSelector: '',
+      tooltipPosition: 'bottom',
+      order: 1,
+    });
   }
 
   @computed get coachmark() {
-    console.log('getting coachmark for id: ', this.ui.coachmarkId);
+    // console.log('getting coachmark for id: ', this.ui.coachmarkId);
     return this.content.coachmarks.find(c => c.id === this.ui.coachmarkId);
   }
 
   @computed get step() {
     let stepId;
-    console.log('getting step for id: ', this.ui.stepId);
+    // console.log('getting step for id: ', this.ui.stepId);
     if (!this.ui.stepId) {
       const coachmark = this.coachmark;
       const firstStep = coachmark.steps[0];
@@ -88,7 +85,9 @@ export default class RootStore {
     if (!this.ui.coachmarkId) {
       return [];
     }
-    return this.content.steps.filter(step => step.coachmarkId === this.ui.coachmarkId);
+    return this.content.steps.filter(
+      step => step.coachmarkId === this.ui.coachmarkId
+    );
   }
 
   /**
@@ -109,4 +108,6 @@ export default class RootStore {
     this.ui.restore();
     this.content.restore();
   }
+
+  
 }

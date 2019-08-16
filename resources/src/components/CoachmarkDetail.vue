@@ -74,7 +74,6 @@ export default class CoachmarkDetail extends Vue {
 
   @Watch('id')
   onIdChange(val, oldVal) {
-    console.log('id changed', val, oldVal);
     this.coachmark = this.$store.coachmark;
   }
 }

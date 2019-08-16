@@ -40,7 +40,6 @@ export default class StepDetail extends Vue {
 
     @Watch('id')
     onIdChange(val, oldVal) {
-        console.log('id changed', val, oldVal);
         this.step = this.getStep(this.id);
     }
     

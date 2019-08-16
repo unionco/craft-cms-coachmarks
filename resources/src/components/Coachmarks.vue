@@ -44,12 +44,11 @@ export default class Coachmarks extends Vue {
     this.$store.restore();
   }
   mounted() {
-    console.log('mounted');
-    console.log('coachmarksState:', this.$store.content.coachmarksState);
+    // console.log('coachmarksState:', this.$store.content.coachmarksState);
     if (this.$store.content.coachmarksState !== ContentStore.StateComplete) {
       this.$store.content.fetchCoachmarks();
     }
-    console.log('usersState:', this.$store.content.usersState);
+    // console.log('usersState:', this.$store.content.usersState);
     if (this.$store.content.usersState !== ContentStore.StateComplete) {
       this.$store.content.fetchUsers();
     }
