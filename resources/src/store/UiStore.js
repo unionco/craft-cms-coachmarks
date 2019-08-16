@@ -31,6 +31,16 @@ export default class UiStore {
     return this._open;
   }
 
+  @observable _selectedComponent;
+  @action.bound setSelectedComponent(comp) {
+      this.setComponentSelectMode(false);
+      console.log('setSelectedComponent', comp);
+      this._selectedComponent = comp;
+  }
+  @computed get selectedComponent() {
+      return this._selectedComponent;
+  }
+
   /**
    * Page Type
    * */
@@ -94,14 +104,15 @@ export default class UiStore {
    */
   componentSelectModeDisposer = autorun(
     () => {
+
       if (this.componentSelectMode) {
         console.log('AUTORUN - componentSelectMode activated');
         document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('click', handleMouseClick);
+        document.addEventListener('click', (e) => handleMouseClick(e, this.setSelectedComponent));
       } else {
         console.log('AUTORUN - componentSelectMode deactivated');
         document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('click', handleMouseClick);
+        document.removeEventListener('click', (e) => handleMouseClick(e, this.setSelectedComponent));
       }
     },
     {

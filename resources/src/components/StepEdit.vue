@@ -30,7 +30,7 @@
           </md-field>
           <md-field>
             <label>Node Selector</label>
-            <md-input disabled v-model="nodeSelector"/>
+            <md-input disabled v-model="$store.ui.selectedComponent"/>
             <md-button @click="() => componentSelectMode = !componentSelectMode">{{ !componentSelectMode ? 'Select' : 'Cancel' }}</md-button>
           </md-field>
         </div>
