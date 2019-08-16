@@ -11,13 +11,13 @@ export default class NavigationService extends Vue {
         this.writeCookie = this.writeCookie.bind(this);
 
         autorun(() => {
-            const data = this.Vue.$cmUiStore.serialize();
+            const data = this.Vue.$store.ui.serialize();
             console.log('nav', data);
         })
     }
 
     writeCookie() {
-        const ui = this.Vue.$cmUiStore;
+        const ui = this.Vue.$store.ui;
         const uiState = {
             open: toJS(ui.open),
         }

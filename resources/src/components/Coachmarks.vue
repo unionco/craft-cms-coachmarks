@@ -1,47 +1,65 @@
 <template>
-    <div>
-        <div class="Coachmarks">
-            <!-- {{ $store.isOpen ? 'Open' : 'Closed' }} -->
-            <Toggle/>
-            <Router/>
-            <!-- <button @click="$store.toggleOpen">Click</button> -->
-        </div>
-        <!-- <div class="Coachmarks--debug">
-            <pre>
-                {{ $cmContentStore.debug }}
-            </pre>
-        </div> -->
+  <div>
+    <div class="Coachmarks">
+      <Toggle />
+      <div class="Coachmarks-main">
+        <component v-if="$store.ui.open" v-bind:is="$store.ui.pageType" />
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
 import { Component, Vue, Provide } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
-// import MainMenu from './MainMenu';
 import Toggle from './Toggle.vue';
-import Router from './Router.vue';
+import MainMenu from './MainMenu.vue';
+import CoachmarkDetail from './CoachmarkDetail.vue';
+import ContentStore from '../store/ContentStore';
+import CoachmarkEdit from './CoachmarkEdit.vue';
 
 @Observer
 @Component({
-    name: 'coachmarks',
-    props: {},
-    components: {
-        // MainMenu,
-        Router,
-        Toggle
-    }
+  name: 'coachmarks',
+  props: {},
+  components: {
+    Toggle,
+    MainMenu,
+    CoachmarkDetail,
+    CoachmarkEdit,
+  },
 })
 export default class Coachmarks extends Vue {
-    mounted() {
-        console.log('mounted');
-        if (this.$cmContentStore.coachmarksState === 'uninitialized') {
-            this.$cmContentStore.fetchCoachmarks();
-        }
+  created() {
+    // Restore state from cookies
+    this.$store.restore();
+  }
+  mounted() {
+    console.log('mounted');
+    if (this.$store.content.coachmarksState === ContentStore.StateUninit) {
+      this.$store.content.fetchCoachmarks();
     }
-
-    @Provide()
-    getCoachmark(id) {
-        return this.$cmContentStore.coachmarks.find(c => c.id === id);
-    }
+  }
 }
 </script>
+
+<style lang="scss" scoped>
+.Coachmarks-main {
+  z-index: 99;
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  width: 376px;
+  min-height: 250px;
+  max-height: 750px;
+  height: calc(100% - 120px);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  .content-container {
+    display: flex;
+    flex-direction: column;
+  }
+}
+</style>

@@ -1,7 +1,7 @@
 <template>
   <div class="Toggle">
-    <md-button class="md-fab" @click="$cmUiStore.toggleOpen">
-      <md-icon v-if="!$cmUiStore.open">add_comment</md-icon>
+    <md-button class="md-fab" @click="$store.ui.toggleOpen">
+      <md-icon v-if="!$store.ui.open">add_comment</md-icon>
       <md-icon v-else>close</md-icon>
     </md-button>
   </div>

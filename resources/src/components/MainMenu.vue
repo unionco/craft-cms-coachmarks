@@ -1,5 +1,5 @@
 <template>
-  <div class="md-elevation-6">
+  <div class="MainMenu md-elevation-6">
     <md-card class="md-primary">
       <md-card-header>
         <md-card-header-text>
@@ -9,14 +9,14 @@
       </md-card-header>
     </md-card>
     <md-card-content>
-      <div class="content-container">
-        <md-button @click="createNewCoachmark">Create a new coachmark</md-button>
+      <div class="content">
+        <md-button @click="$store.createNewCoachmark">Create a new coachmark</md-button>
         <md-divider />Your coachmarks
         <ul>
           <li
-            v-for="coachmark in $cmContentStore.coachmarks"
+            v-for="coachmark in $store.content.coachmarks"
             :key="coachmark.id"
-            @click="() => goToCoachmark(coachmark.id)"
+            @click="() => $store.goToCoachmark(coachmark.id)"
           >{{ coachmark.name }}</li>
         </ul>
       </div>
@@ -35,11 +35,8 @@ import { Observer } from 'mobx-vue';
 })
 export default class MainMenu extends Vue {
   handleOpenChanged(e) {
-    this.$cmUiStore.setOpen(e.open);
+    this.$store.ui.setOpen(e.open);
   }
-
-  @Inject() goToCoachmark;
-  @Inject() createNewCoachmark;
 }
 </script>
 
@@ -47,5 +44,12 @@ export default class MainMenu extends Vue {
 .md-content {
   height: 200px;
   display: inline-flex;
+}
+
+.MainMenu {
+    background-color: white;
+    .content {
+        min-height: 200px;
+    }
 }
 </style>
