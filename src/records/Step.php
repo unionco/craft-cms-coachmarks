@@ -48,6 +48,10 @@ class Step extends ActiveRecord
      */
     public static function tableName()
     {
-        return '{{%coachmarks_step}}';
+        return '{{%coachmarks_steps}}';
+    }
+
+    public function getCoachmark() {
+        return $this->hasOne(Coachmark::className(), ['id' => 'coachmarkId']);
     }
 }

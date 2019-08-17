@@ -90,7 +90,7 @@ class Coachmark extends Element
     /**
      * @var string
      */
-    public $steps;
+    // public $steps;
 
 
     // Static Methods
@@ -247,9 +247,9 @@ class Coachmark extends Element
         $rules = parent::rules();
         $rules[] = ['title', 'string'];
         $rules[] = ['context', 'string'];
-        $rules[] = ['steps', 'string'];
+        // $rules[] = ['steps', 'string'];
         $rules[] = ['siteId', SiteIdValidator::class];
-        $rules[] = [['title', 'context', 'steps', 'siteId'], 'required'];
+        $rules[] = [['title', 'context', 'siteId'], 'required'];
 
         return $rules;
     }
@@ -368,7 +368,7 @@ class Coachmark extends Element
                     'id'        => $this->id,
                     'title'     => $this->title,
                     'context'   => $this->context,
-                    'steps'     => $this->steps,
+                    // 'steps'     => $this->steps,
                     'siteId'    => Craft::$app->getSites()->getPrimarySite()->id
                 ])
                 ->execute();
@@ -377,7 +377,7 @@ class Coachmark extends Element
                 ->update('{{%coachmarks_coachmark}}', [
                     'title'     => $this->title,
                     'context'   => $this->context,
-                    'steps'     => $this->steps,
+                    // 'steps'     => $this->steps,
                     'siteId'    => Craft::$app->getSites()->getPrimarySite()->id
                 ], ['id' => $this->id])
                 ->execute();

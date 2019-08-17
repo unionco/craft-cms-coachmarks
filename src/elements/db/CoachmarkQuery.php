@@ -53,7 +53,7 @@ class CoachmarkQuery extends ElementQuery
         $this->query->select([
             'coachmarks_coachmark.title',
             'coachmarks_coachmark.context',
-            'coachmarks_coachmark.steps'
+            // 'coachmarks_coachmark.steps'
         ]);
 
         if ($this->title) {

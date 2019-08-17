@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Coacher plugin for Craft CMS 3.x
  *
@@ -55,15 +56,53 @@ class Install extends Migration
      */
     public function safeUp()
     {
-        $this->driver = Craft::$app->getConfig()->getDb()->driver;
-        if ($this->createTables()) {
-            // $this->addForeignKeys();
-            // Refresh the db schema caches
-            Craft::$app->db->schema->refresh();
-            $this->insertDefaultData();
-        }
+        $this->createTable(
+            '{{%coachmarks_coachmarks}}',
+            [
+                'id' => $this->primaryKey(),
+                'title' => $this->string(255)->notNull(),
+                // 'read_only' => $this->boolean(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'uid' => $this->uid(),
+            ]
+        );
+        $this->createTable(
+            '{{%coachmarks_steps}}',
+            [
+                'id' => $this->primaryKey(),
+                'coachmarkId' => $this->integer(),
+                'title' => $this->string(255)->notNull(),
+                'description' => $this->longText()->notNull(),
+                'label' => $this->string(255)->notNull(),
+                'tooltipPosition' => $this->string()->notNull(),
+                'url' => $this->string(255)->notNull(),
+                'order' => $this->integer()->notNull(),
+                'selectorNode' => $this->string(255)->notNull(),
+                // 'selectorPosition' => $this->string(255)->notNull(),
+                'dateCreated' => $this->dateTime()->notNull(),
+                'dateUpdated' => $this->dateTime()->notNull(),
+                'uid' => $this->uid()
+            ]
+        );
 
-        return true;
+        $this->createTable('{{%coachmarks_coachmarks_ro_users}}', [
+            'id' => $this->primaryKey(),
+            'coachmarkId' => $this->integer()->notNull(),
+            'userId' => $this->integer()->notNull(),
+            'uid' => $this->uid(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+        ]);
+
+        $this->createTable('{{%coachmarks_coachmarks_rw_users}}', [
+            'id' => $this->primaryKey(),
+            'coachmarkId' => $this->integer()->notNull(),
+            'userId' => $this->integer()->notNull(),
+            'uid' => $this->uid(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+        ]);
     }
 
     /**
@@ -78,90 +117,14 @@ class Install extends Migration
      */
     public function safeDown()
     {
-        $this->driver = Craft::$app->getConfig()->getDb()->driver;
-        $this->removeTables();
+        $this->dropTableIfExists('{{%coachmarks_coachmarks}}');
+        $this->dropTableIfExists('{{%coachmarks_steps}}');
+        $this->dropTableIfExists('{{%coachmarks_coachmarks_ro_users}}');
+        $this->dropTableIfExists('{{%coachmarks_coachmarks_rw_users}}');
 
         return true;
     }
 
     // Protected Methods
     // =========================================================================
-
-    /**
-     * Creates the tables needed for the Records used by the plugin
-     *
-     * @return bool
-     */
-    protected function createTables()
-    {
-        $tablesCreated = false;
-
-        // coachmarks_coachmark table
-        $tableSchema = Craft::$app->db->schema->getTableSchema(Table::COACHMARKS);
-        if ($tableSchema === null) {
-            $tablesCreated = true;
-            $this->createTable(
-                Table::COACHMARKS,
-                [
-                    'id' => $this->primaryKey(),
-                    'title' => $this->string(255)->notNull(),
-                    'read_only' => $this->boolean(),
-                    'dateCreated' => $this->dateTime()->notNull(),
-                    'dateUpdated' => $this->dateTime()->notNull(),
-                    'uid' => $this->uid(),
-                ]
-            );
-        }
-
-        return $tablesCreated;
-    }
-
-    /**
-     * Creates the foreign keys needed for the Records used by the plugin
-     *
-     * @return void
-     */
-    protected function addForeignKeys()
-    {
-        // coachmarks_coachmark table
-        // $this->addForeignKey(
-        //     $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'siteId'),
-        //     '{{%coachmarks_coachmark}}',
-        //     'siteId',
-        //     '{{%sites}}',
-        //     'id',
-        //     'CASCADE',
-        //     'CASCADE'
-        // );
-
-        // $this->addForeignKey(
-        //     $this->db->getForeignKeyName('{{%coachmarks_coachmark}}', 'id'),
-        //     '{{%coachmarks_coachmark}}',
-        //     'id',
-        //     '{{%elements}}',
-        //     'id',
-        //     'CASCADE',
-        //     'CASCADE'
-        // );
-    }
-
-    /**
-     * Populates the DB with the default data.
-     *
-     * @return void
-     */
-    protected function insertDefaultData()
-    {
-    }
-
-    /**
-     * Removes the tables needed for the Records used by the plugin
-     *
-     * @return void
-     */
-    protected function removeTables()
-    {
-        // coachmarks_coachmark table
-        $this->dropTableIfExists('{{%coachmarks_coachmark}}');
-    }
 }

@@ -102,25 +102,17 @@ export default class UiStore {
   /**
    * Listen for changes to ui.componentSelectMode
    */
-  componentSelectModeDisposer = autorun(
-    () => {
+//   componentSelectModeDisposer = autorun(
+//     () => {
 
-      if (this.componentSelectMode) {
-        console.log('AUTORUN - componentSelectMode activated');
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('click', (e) => handleMouseClick(e, this.setSelectedComponent));
-      } else {
-        console.log('AUTORUN - componentSelectMode deactivated');
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('click', (e) => handleMouseClick(e, this.setSelectedComponent));
-      }
-    },
-    {
-      onError(e) {
-        console.error(e);
-      },
-    }
-  );
+      
+//     },
+//     {
+//       onError(e) {
+//         console.error(e);
+//       },
+//     }
+//   );
 
   /**
    * Persistance

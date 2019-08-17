@@ -26,6 +26,7 @@ use unionco\coachmarks\variables\CoachmarksVariable;
 use unionco\coachmarks\elements\Coachmark as CoachmarkElement;
 use unionco\coachmarks\assetbundles\coachmarks\CoachmarksAsset;
 use craft\helpers\Json;
+use craft\console\Application as ConsoleApplication;
 
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
@@ -65,7 +66,7 @@ class CoachmarksPlugin extends Plugin
      *
      * @var string
      */
-    public $schemaVersion = '1.0.1';
+    public $schemaVersion = '0.0.1';
 
     /**
      * The plugin’s changelog URL.
@@ -131,6 +132,13 @@ class CoachmarksPlugin extends Plugin
             'coachmarks' => CoachmarkService::class
         ]);
 
+        if (Craft::$app instanceof ConsoleApplication) {
+            $this->controllerNamespace = 'unionco\coachmarks\console\controllers';
+        } else {
+            $this->controllerNamespace = 'unionco\coachmarks\controllers';
+            // Craft::$app->getView()->registerTwigExtension(new SyncDbTwigExtension());
+        } 
+
         // Register our elements
         // Event::on(
         //     Elements::class,
@@ -148,6 +156,8 @@ class CoachmarksPlugin extends Plugin
                 $event->rules['coachmarks'] = 'coachmarks/cp/index';
                 $event->rules['coachmarks/new'] = 'coachmarks/cp/new';
                 $event->rules['coachmarks/edit/<id:\d+>'] = 'coachmarks/cp/edit';
+
+                $event->rules['coachmarks/api/coachmarks'] = 'coacher/coachmarks/coachmarks';
             }
         );
 
