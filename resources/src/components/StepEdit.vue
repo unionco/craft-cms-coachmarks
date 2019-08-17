@@ -30,15 +30,17 @@
           </md-field>
           <md-field>
             <label>Node Selector</label>
-            <md-input disabled v-model="$store.ui.selectedComponent"/>
-            <md-button @click="() => componentSelectMode = !componentSelectMode">{{ !componentSelectMode ? 'Select' : 'Cancel' }}</md-button>
+            <md-input disabled v-model="nodeSelector" />
+            <md-button
+              @click="() => componentSelectMode = !componentSelectMode"
+            >{{ !componentSelectMode ? 'Select' : 'Cancel' }}</md-button>
           </md-field>
         </div>
       </form>
     </template>
 
     <template v-slot:actions>
-        <md-button class="md-primary">Save</md-button>
+      <md-button class="md-primary">Save</md-button>
     </template>
   </BaseDetail>
 </template>
@@ -47,6 +49,12 @@
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail';
+import {
+  addCompomnentSelectedListener,
+  removeComponentSelectListener,
+  handleMouseMove,
+  handleMouseClick,
+} from '../util/ComponentSelection';
 
 @Observer
 @Component({
@@ -55,39 +63,59 @@ import BaseDetail from './BaseDetail';
   },
 })
 export default class StepEdit extends Vue {
-    label = '';
-    nodeSelector = '';
-    tooltipPosition = 'top';
-    componentSelectMode = false;
+  label = '';
+  nodeSelector = '';
+  tooltipPosition = 'top';
+  componentSelectMode = false;
 
-    created() {
-        this.componentSelectMode = this.$store.ui.componentSelectMode;
+  created() {
+    this.componentSelectMode = this.$store.ui.componentSelectMode;
+  }
+
+  @Watch('componentSelectMode')
+  onComponentSelectModeChange(val, oldVal) {
+    console.log(val);
+    this.$store.ui.setComponentSelectMode(val);
+    if (val === true) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('click', e =>
+        handleMouseClick(e, this.setSelectedComponent)
+      );
+      addCompomnentSelectedListener(this.componentSelectListenerCallback);
+    } else {
+      console.log('AUTORUN - componentSelectMode deactivated');
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('click', e =>
+        handleMouseClick(e, this.setSelectedComponent)
+      );
+      removeComponentSelectListener(this.componentSelectListenerCallback);
     }
+  }
 
-    @Watch('componentSelectMode')
-    onComponentSelectModeChange(val, oldVal) {
-        console.log(val);
-        this.$store.ui.setComponentSelectMode(val);
-    }
-
+  componentSelectListenerCallback(e) {
+    this.componentSelectMode = false;
+    this.nodeSelector = e.detail.selector;
+  }
 }
 </script>
 
 <style>
-#selector-top, #selector-bottom {
-	background: blue;
-	height:3px;
-	position: fixed;
-	transition:all 300ms ease;
+#selector-top,
+#selector-bottom {
+  background: blue;
+  height: 3px;
+  position: fixed;
+  transition: all 300ms ease;
 }
-#selector-left, #selector-right {
-	background: blue;
-	width:3px;
-	position: fixed;
-	transition:all 300ms ease;
+#selector-left,
+#selector-right {
+  background: blue;
+  width: 3px;
+  position: fixed;
+  transition: all 300ms ease;
 }
 
-.n{
- -webkit-transform: scale(3) translateX(100px)   
+.n {
+  -webkit-transform: scale(3) translateX(100px);
 }
 </style>
