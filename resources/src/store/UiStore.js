@@ -1,9 +1,17 @@
 import { observable, action, computed, autorun, toJS } from 'mobx';
 import Cookies from 'js-cookie';
 import { handleMouseMove, handleMouseClick } from '../util/ComponentSelection';
+import BaseCoachmarksStore from './BaseCoachmarksStore';
 
-
-export default class UiStore {
+export default class UiStore extends BaseCoachmarksStore {
+  cookieName() {
+    return 'cm-ui';
+  }
+  reset() {
+      this._open = false;
+      this._pageType = UiStore.PTMainMenu;
+      this._coachmarkId = 0;
+  }
   static CookieName = 'cm-ui';
   /** Page Types */
   static PTCoachmarkDetail = 'CoachmarkDetail';
@@ -31,15 +39,15 @@ export default class UiStore {
     return this._open;
   }
 
-  @observable _selectedComponent;
-  @action.bound setSelectedComponent(comp) {
-      this.setComponentSelectMode(false);
-      console.log('setSelectedComponent', comp);
-      this._selectedComponent = comp;
-  }
-  @computed get selectedComponent() {
-      return this._selectedComponent;
-  }
+  //   @observable _selectedComponent;
+  //   @action.bound setSelectedComponent(comp) {
+  //       this.setComponentSelectMode(false);
+  //       console.log('setSelectedComponent', comp);
+  //       this._selectedComponent = comp;
+  //   }
+  //   @computed get selectedComponent() {
+  //       return this._selectedComponent;
+  //   }
 
   /**
    * Page Type
@@ -85,71 +93,70 @@ export default class UiStore {
   }
 
   /** Component select mode */
-  @observable _componentSelectMode = false;
+  //   @observable _componentSelectMode = false;
 
-  @action.bound setComponentSelectMode(mode) {
-    console.log('setComponentSelectMode:', mode);
-    this._componentSelectMode = mode;
-    this.writeState();
-  }
+  //   @action.bound setComponentSelectMode(mode) {
+  //     console.log('setComponentSelectMode:', mode);
+  //     this._componentSelectMode = mode;
+  //     this.writeState();
+  //   }
 
-  @computed get componentSelectMode() {
-    console.log('get componentSelectMode: ', this._componentSelectMode);
-    return this._componentSelectMode;
-  }
+  //   @computed get componentSelectMode() {
+  //     console.log('get componentSelectMode: ', this._componentSelectMode);
+  //     return this._componentSelectMode;
+  //   }
 
   /** Autorun */
   /**
    * Listen for changes to ui.componentSelectMode
    */
-//   componentSelectModeDisposer = autorun(
-//     () => {
+  //   componentSelectModeDisposer = autorun(
+  //     () => {
 
-      
-//     },
-//     {
-//       onError(e) {
-//         console.error(e);
-//       },
-//     }
-//   );
+  //     },
+  //     {
+  //       onError(e) {
+  //         console.error(e);
+  //       },
+  //     }
+  //   );
 
   /**
    * Persistance
    * */
-  writeState() {
-    Cookies.set(UiStore.CookieName, this.serialize());
-  }
+  //   writeState() {
+  //     Cookies.set(UiStore.CookieName, this.serialize());
+  //   }
 
-  restore() {
-    const state = Cookies.get(UiStore.CookieName);
-    this.deserialize(state);
-  }
+  //   restore() {
+  //     const state = Cookies.get(UiStore.CookieName);
+  //     this.deserialize(state);
+  //   }
 
-  serialize() {
-    return JSON.stringify({
-      _open: toJS(this._open),
-      _pageType: toJS(this._pageType),
-      _coachmarkId: toJS(this._coachmarkId),
-      _stepId: toJS(this._stepId),
-      _componentSelectMode: toJS(this._componentSelectMode),
-    });
-  }
+  //   serialize() {
+  //     return JSON.stringify({
+  //       _open: toJS(this._open),
+  //       _pageType: toJS(this._pageType),
+  //       _coachmarkId: toJS(this._coachmarkId),
+  //       _stepId: toJS(this._stepId),
+  //       _componentSelectMode: toJS(this._componentSelectMode),
+  //     });
+  //   }
 
-  @action deserialize(json) {
-    try {
-      const state = JSON.parse(json);
-      this._open = state._open;
-      this._pageType = state._pageType;
-      this._coachmarkId = state._coachmarkId;
-      this._stepId = state._stepId;
-      this._componentSelectMode = state._componentSelectMode;
-    } catch (err) {
-      this._open = false;
-      this._pageType = UiStore.PTMainMenu;
-      this._coachmarkId = undefined;
-      this._stepId = undefined;
-      this._componentSelectMode = false;
-    }
-  }
+  //   @action deserialize(json) {
+  //     try {
+  //       const state = JSON.parse(json);
+  //       this._open = state._open;
+  //       this._pageType = state._pageType;
+  //       this._coachmarkId = state._coachmarkId;
+  //       this._stepId = state._stepId;
+  //       this._componentSelectMode = state._componentSelectMode;
+  //     } catch (err) {
+  //       this._open = false;
+  //       this._pageType = UiStore.PTMainMenu;
+  //       this._coachmarkId = undefined;
+  //       this._stepId = undefined;
+  //       this._componentSelectMode = false;
+  //     }
+  //   }
 }

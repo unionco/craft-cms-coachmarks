@@ -1,9 +1,16 @@
 import { observable, action, runInAction, toJS, computed } from 'mobx';
 import Cookies from 'js-cookie';
-import { getCoachmarks as getCoachmarksApi, newCoachmark } from '../api/Coachmarks';
+import {
+  getCoachmarks as getCoachmarksApi,
+  newCoachmark,
+} from '../api/Coachmarks';
 import { getUsers as getUsersApi } from '../api/Users';
+import BaseCoachmarksStore from './BaseCoachmarksStore';
 
-export default class ContentStore {
+export default class ContentStore extends BaseCoachmarksStore {
+  cookieName() {
+    return 'cm-content';
+  }
   static CookieName = 'cm-content';
 
   static NewCoachmarkId = -1;
@@ -23,11 +30,9 @@ export default class ContentStore {
   @observable _coachmarksState = ContentStore.StateUninit;
   @observable _coachmarkSaveState = ContentStore.StateUninit;
   @observable _usersState = ContentStore.StateUninit;
-  
-//   @observable _currentCoachmark = {};
+
+  //   @observable _currentCoachmark = {};
   @observable _currentStep = {};
-  
-  
 
   @action.bound setCoachmarks(cm) {
     this._coachmarks = cm;
@@ -40,7 +45,6 @@ export default class ContentStore {
 
   /** Current Coachmark */
 
-  
   /** Current Step */
 
   @action.bound setCurrentStep(step) {
@@ -106,7 +110,6 @@ export default class ContentStore {
     return this.coachmarksState === ContentStore.StateComplete;
   }
 
-
   @computed get usersState() {
     return this._usersState;
   }
@@ -136,48 +139,48 @@ export default class ContentStore {
     }
   }
 
-  /** Persistance */
-  writeState() {
-    Cookies.set(ContentStore.CookieName, this.serialize());
-  }
+//   /** Persistance */
+//   writeState() {
+//     Cookies.set(ContentStore.CookieName, this.serialize());
+//   }
 
-  restore() {
-    const state = Cookies.get(ContentStore.CookieName);
-    this.deserialize(state);
-  }
-  serialize() {
-    return JSON.stringify({
-      debug: toJS(this.debug),
-    //   _coachmarks: toJS(this._coachmarks),
-    //   _coachmarksState: toJS(this._coachmarksState),
-    //   _currentCoachmark: toJS(this._currentCoachmark),
-    //   _users: toJS(this._users),
-    //   _usersState: toJS(this._usersState),
-      _currentStep: toJS(this._currentStep),
-    });
-  }
+//   restore() {
+//     const state = Cookies.get(ContentStore.CookieName);
+//     this.deserialize(state);
+//   }
+//   serialize() {
+//     return JSON.stringify({
+//       debug: toJS(this.debug),
+//       //   _coachmarks: toJS(this._coachmarks),
+//       //   _coachmarksState: toJS(this._coachmarksState),
+//       //   _currentCoachmark: toJS(this._currentCoachmark),
+//       //   _users: toJS(this._users),
+//       //   _usersState: toJS(this._usersState),
+//       _currentStep: toJS(this._currentStep),
+//     });
+//   }
 
-  @action deserialize(json) {
-    try {
-      const state = JSON.parse(json);
-      //   this = {...this, ...state};
-      // Object.merge({}, this, state);
-    //   this.debug = state.debug;
-    //   this._coachmarks = state._coachmarks;
-    //   this._users = state._users;
-    //   this._currentCoachmark = state._currentCoachmark;
-    //   this._coachmarksState = state._coachmarksState;
-      this._currentStep = state._currentStep;
-    } catch (err) {
-      this.debug = '';
-      this._coachmarks = [];
-      this._users = [];
-    //   this._currentCoachmark = {};
-      this._coachmarksState = ContentStore.StateUninit;
-      this._usersState = ContentStore.StateUninit;
-      this._currentStep = {};
-    }
-  }
+//   @action deserialize(json) {
+//     try {
+//       const state = JSON.parse(json);
+//       //   this = {...this, ...state};
+//       // Object.merge({}, this, state);
+//       //   this.debug = state.debug;
+//       //   this._coachmarks = state._coachmarks;
+//       //   this._users = state._users;
+//       //   this._currentCoachmark = state._currentCoachmark;
+//       //   this._coachmarksState = state._coachmarksState;
+//       this._currentStep = state._currentStep;
+//     } catch (err) {
+//       this.debug = '';
+//       this._coachmarks = [];
+//       this._users = [];
+//       //   this._currentCoachmark = {};
+//       this._coachmarksState = ContentStore.StateUninit;
+//       this._usersState = ContentStore.StateUninit;
+//       this._currentStep = {};
+//     }
+//   }
   // @action setX(x) {
   //   this.x = x;
   //   this.writeState();

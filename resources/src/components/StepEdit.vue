@@ -21,7 +21,10 @@
           </md-field>
           <md-field>
             <label>Tooltip Position</label>
-            <md-select v-model="tooltipPosition">
+            <md-select
+              v-model="tooltipPosition"
+              @change="e => $store.currentStep.setToolTipPosition(e.target.value)"
+            >
               <md-option value="top">Top</md-option>
               <md-option value="right">Right</md-option>
               <md-option value="bottom">Bottom</md-option>
@@ -33,7 +36,7 @@
             <md-input disabled v-model="nodeSelector" />
             <md-button
               @click="() => componentSelectMode = !componentSelectMode"
-            >{{ !componentSelectMode ? 'Select' : 'Cancel' }}</md-button>
+            >{{ componentSelectMode ? 'Cancel' : 'Select' }}</md-button>
           </md-field>
         </div>
       </form>
@@ -50,8 +53,8 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail';
 import {
-  addCompomnentSelectedListener,
-  removeComponentSelectListener,
+//   addCompomnentSelectedListener,
+//   removeComponentSelectListener,
   handleMouseMove,
   handleMouseClick,
 } from '../util/ComponentSelection';
@@ -69,27 +72,36 @@ export default class StepEdit extends Vue {
   componentSelectMode = false;
 
   created() {
-    this.componentSelectMode = this.$store.ui.componentSelectMode;
+    // this.componentSelectMode = this.$store.ui.componentSelectMode;
+    this.tooltipPosition = this.$store.currentStep.tooltipPosition;
+    this.nodeSelector = this.$store.currentStep.nodeSelector;
+    this.label = this.$store.currentStep.label;
   }
 
   @Watch('componentSelectMode')
   onComponentSelectModeChange(val, oldVal) {
     console.log(val);
-    this.$store.ui.setComponentSelectMode(val);
+    
     if (val === true) {
       document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('click', e =>
-        handleMouseClick(e, this.setSelectedComponent)
-      );
-      addCompomnentSelectedListener(this.componentSelectListenerCallback);
+      document.addEventListener('click', this.setSelectedComponent);
+    //   this.$store.ui.setComponentSelectMode(val);
+
+    //   addCompomnentSelectedListener(this.componentSelectListenerCallback);
     } else {
-      console.log('AUTORUN - componentSelectMode deactivated');
       document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('click', e =>
-        handleMouseClick(e, this.setSelectedComponent)
-      );
-      removeComponentSelectListener(this.componentSelectListenerCallback);
+      document.removeEventListener('click', this.setSelectedComponent);
+      
+    //   removeComponentSelectListener(this.componentSelectListenerCallback);
     }
+  }
+
+  setSelectedComponent(e) {
+    e.preventDefault();
+    console.log(e.target.getSelector());
+    this.nodeSelector = e.target.getSelector();
+    this.$store.currentStep.setSelectedNode(e.target.getSelector());
+    this.componentSelectMode = false;
   }
 
   componentSelectListenerCallback(e) {

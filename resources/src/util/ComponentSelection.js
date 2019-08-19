@@ -1,5 +1,3 @@
-// const CssSelectorGenerator = require('css-selector-generator');
-// const css = require('css-selector-tools');
 import 'css-selector-tools';
 
 // Based on https://jsfiddle.net/rFc8E/9/
@@ -67,10 +65,10 @@ export const handleMouseClick = e => {
   document.body.dispatchEvent(componentSelectedEvent);
 };
 
-export const addCompomnentSelectedListener = callback => {
-  document.body.addEventListener('component-selected', callback);
-};
+// export const addCompomnentSelectedListener = callback => {
+//   document.body.addEventListener('component-selected', callback);
+// };
 
-export const removeComponentSelectListener = callback => {
-    document.body.removeEventListener('component-selected', callback);
-}
+// export const removeComponentSelectListener = callback => {
+//     document.body.removeEventListener('component-selected', callback);
+// }

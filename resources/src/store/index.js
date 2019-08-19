@@ -2,12 +2,16 @@ import { observable, action, computed, autorun, toJS } from 'mobx';
 import UiStore from './UiStore';
 import ContentStore from './ContentStore';
 import CurrentCoachmarkStore from './CurrentCoachmarkStore';
+import CurrentStepStore from './CurrentStepStore';
 
 export default class RootStore {
   @observable ui = new UiStore();
   @observable content = new ContentStore();
   @observable currentCoachmark = new CurrentCoachmarkStore();
-  
+  @observable currentStep = new CurrentStepStore();
+  constructor() {
+      console.log(this.currentCoachmark);
+  }
   /** Navigation */
   @action.bound goToCoachmark(id) {
     this.ui.setCoachmarkId(id);
@@ -55,7 +59,7 @@ export default class RootStore {
 
   @action.bound newStep() {
     this.ui.setPageType(UiStore.PTStepEdit);
-    this.content.setCurrentStep({
+    this.currentStep.set({
       id: ContentStore.NewCoachmarkId,
       coachmarkId: this.ui.coachmarkId,
       label: '',
@@ -114,6 +118,8 @@ export default class RootStore {
   restore() {
     this.ui.restore();
     this.content.restore();
+    this.currentCoachmark.restore();
+    this.currentStep.restore();
   }
 
   

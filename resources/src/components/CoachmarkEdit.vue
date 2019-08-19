@@ -108,7 +108,7 @@ export default class CoachmarkEdit extends Vue {
       this.$store.currentCoachmark.readWriteUsers || [];
     
     const users = this.$store.content.users;
-    console.log(users);
+    // console.log(users);
     this.availableReadonlyUsers = users.filter(
       user => !this.readWriteUsers.includes(user.id)
     );

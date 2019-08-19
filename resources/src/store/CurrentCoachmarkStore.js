@@ -1,8 +1,9 @@
 import { observable, action, computed, toJS } from 'mobx';
 import { newCoachmark, getCoachmarkById } from '../api/Coachmarks';
 import ContentStore from './ContentStore';
+import BaseCoachmarksStore from './BaseCoachmarksStore';
 
-export default class CurrentCoachmarkStore {
+export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
   @observable _id = 0;
   @observable _title = '';
   @observable _readOnlyUsers = [];
@@ -11,10 +12,10 @@ export default class CurrentCoachmarkStore {
   @observable _saveStatus = ContentStore.StateUninit;
 
   @action.bound reset() {
-    this.id = 0;
-    this.title = '';
-    this.readOnlyUsers = [];
-    this.readWriteUsers = [];
+    this._id = 0;
+    this._title = '';
+    this._readOnlyUsers = [];
+    this._readWriteUsers = [];
   }
 
   @action.bound setId(id) {
@@ -54,10 +55,10 @@ export default class CurrentCoachmarkStore {
   }
 
   @action.bound set(cm) {
-    this.setTitle(cm.title);
-    this.setId(cm.id);
-    this.setReadOnlyUsers(cm.readOnlyUsers);
-    this.setReadWriteUsers(cm.readWriteUsers);
+    this._title = cm.title;
+    this._id = cm.id;
+    this._readOnlyUsers = cm.readOnlyUsers;
+    this._readWriteUsers = cm.readWriteUsers;
     this.writeState();
   }
 
@@ -81,7 +82,7 @@ export default class CurrentCoachmarkStore {
       }
   }
 
-  writeState() {
-    
+  cookieName() {
+      return 'cm-current-coachmark';
   }
 }
