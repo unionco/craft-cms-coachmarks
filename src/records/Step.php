@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Coacher plugin for Craft CMS 3.x
  *
@@ -34,7 +35,7 @@ class Step extends ActiveRecord
     // Public Static Methods
     // =========================================================================
 
-     /**
+    /**
      * Declares the name of the database table associated with this AR class.
      * By default this method returns the class name as the table name by calling [[Inflector::camel2id()]]
      * with prefix [[Connection::tablePrefix]]. For example if [[Connection::tablePrefix]] is `tbl_`,
@@ -51,7 +52,13 @@ class Step extends ActiveRecord
         return '{{%coachmarks_steps}}';
     }
 
-    public function getCoachmark() {
+    public function getCoachmark()
+    {
         return $this->hasOne(Coachmark::className(), ['id' => 'coachmarkId']);
     }
+
+    // public function setOrder(int $order)
+    // {
+    //     $this->order = 
+    //  }
 }

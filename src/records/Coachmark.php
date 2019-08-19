@@ -17,6 +17,7 @@ use craft\db\ActiveRecord;
 use unionco\coachmarks\Coacher;
 use unionco\coachmarks\records\db\CoachmarkQuery;
 use unionco\coachmarks\records\Step;
+use craft\records\User;
 
 /**
  * Coachmark Record
@@ -49,7 +50,7 @@ class Coachmark extends ActiveRecord
     public function getUsers()
     {
         $data = Json::decode($this->permissions);
-        
+
         $mapped = array_map(
             function ($permission) {
                 return $permission->userId;
@@ -61,7 +62,7 @@ class Coachmark extends ActiveRecord
 
     public function getReadOnlyUsers()
     {
-        $data = Json::decode($this->permissions);
+        $data = Json::decode($this->permissions, false) ?? [];
         $filtered = array_filter($data, function ($permission) {
             return $permission->readWrite === false;
         });
@@ -76,6 +77,10 @@ class Coachmark extends ActiveRecord
 
     public function addReadOnlyUser($id)
     {
+        if ($id instanceof User) {
+            $id = $id->id;
+        }
+        $this->removeUserPermission($id);
         $data = Json::decode($this->permissions);
         $data[] = [
             'userId' => $id,
@@ -84,9 +89,36 @@ class Coachmark extends ActiveRecord
         $this->permissions = Json::encode($data);
     }
 
+    public function removeUserPermission($id)
+    {
+        if ($id instanceof User) {
+            $id = $id->id;
+        }
+        $data = Json::decode($this->permissions, false) ?? [];
+        $data = array_filter($data, function ($permission) use ($id) {
+            $permission->userId !== $id;
+        });
+        $this->permissions = Json::encode($data);
+    }
+
+    public function addReadWriteUser($id)
+    {
+        if ($id instanceof User) {
+            $id = $id->id;
+        }
+        // Remove from readonly, if user is already on this coachmark
+        $this->removeUserPermission($id);
+        $data = Json::decode($this->permissions, false) ?? [];
+        $data[] = [
+            'userId' => $id,
+            'readWrite' => true,
+        ];
+        $this->permissions = Json::encode($data);
+    }
+
     public function getReadWriteUsers()
     {
-        $data = Json::decode($this->permissions);
+        $data = Json::decode($this->permissions) ?? [];
         $filtered = array_filter($data, function ($permission) {
             return $permission->readWrite === true;
         });
@@ -97,20 +129,10 @@ class Coachmark extends ActiveRecord
             $filtered
         );
         return $mapped;
-        // return $this->hasMany(\craft\records\User::className(), ['id' => 'userId'])
-        //     ->viaTable(
-        //         '{{%coachmarks_coachmarks_users}}',
-        //         ['coachmarkId' => 'id'],
-        //         function ($query) {
-        //             $query->where('{{%coachmarks_coachmarks_users}}.readOnly = 0');
-        //         }
-        //     );
     }
-
-
 
     public function getSteps()
     {
-        return $this->hasMany(Step::className(), ['coachmarkId' => 'id']);
+        return $this->hasMany(Step::className(), ['coachmarkId' => 'id'])->orderBy('order asc');
     }
 }

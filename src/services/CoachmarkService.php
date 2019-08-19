@@ -28,22 +28,22 @@ class CoachmarkService extends Component
      */
     public function getPageCoachmarks(): array
     {
-        $request = Craft::$app->getRequest();
-        if (! Craft::$app instanceof ConsoleApplication) {
-            $page = $request->getParam('p');
+        // $request = Craft::$app->getRequest();
+        // if (! Craft::$app instanceof ConsoleApplication) {
+        //     $page = $request->getParam('p');
 
-            if (strpos($page, 'dashboard') >= -1) {
-                return CoachmarkElement::find()
-                    ->context('global')
-                    ->all();
-            }
+        //     if (strpos($page, 'dashboard') >= -1) {
+        //         return CoachmarkElement::find()
+        //             ->context('global')
+        //             ->all();
+        //     }
 
-            if (strpos($page, 'entries') >= -1) {
-                return CoachmarkElement::find()
-                    ->context('entries')
-                    ->all();
-            }
-        }
+        //     if (strpos($page, 'entries') >= -1) {
+        //         return CoachmarkElement::find()
+        //             ->context('entries')
+        //             ->all();
+        //     }
+        // }
 
         return [];
     }
