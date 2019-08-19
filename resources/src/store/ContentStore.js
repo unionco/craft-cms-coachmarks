@@ -1,76 +1,78 @@
 import { observable, action, runInAction, toJS, computed } from 'mobx';
 import Cookies from 'js-cookie';
+import { getCoachmarks as getCoachmarksApi } from '../api/Coachmarks';
+import { getUsers as getUsersApi } from '../api/Users';
 /**
  * Mock data until backend is ready
  */
-const coachmarks = [
-  {
-    id: 1,
-    name: 'Get started',
-    readOnly: true,
-    steps: [
-      {
-        id: 1,
-        coachmarkId: 1,
-        name: 'Click on entries in the left panel',
-        description: 'Click on entries in the left panel',
-        label: 'Click on entries on the left panel',
-        url: '/relative',
-        order: 1,
-        selectorNode: '.node-here',
-        tooltipPosition: 'top',
-      },
-      {
-        id: 2,
-        coachmarkId: 1,
-        name: 'Click on entries in the left panel',
-        description: 'Click on entries in the left panel',
-        label: 'Click on entries on the left panel',
-        url: '/relative',
-        order: 2,
-        selectorNode: '.node-here',
-        tooltipPosition: 'top',
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: 'Create an entry',
-    readOnly: true,
-    steps: [],
-  },
-];
+// const coachmarks = [
+//   {
+//     id: 1,
+//     name: 'Get started',
+//     readOnly: true,
+//     steps: [
+//       {
+//         id: 1,
+//         coachmarkId: 1,
+//         name: 'Click on entries in the left panel',
+//         description: 'Click on entries in the left panel',
+//         label: 'Click on entries on the left panel',
+//         url: '/relative',
+//         order: 1,
+//         selectorNode: '.node-here',
+//         tooltipPosition: 'top',
+//       },
+//       {
+//         id: 2,
+//         coachmarkId: 1,
+//         name: 'Click on entries in the left panel',
+//         description: 'Click on entries in the left panel',
+//         label: 'Click on entries on the left panel',
+//         url: '/relative',
+//         order: 2,
+//         selectorNode: '.node-here',
+//         tooltipPosition: 'top',
+//       },
+//     ],
+//   },
+//   {
+//     id: 2,
+//     name: 'Create an entry',
+//     readOnly: true,
+//     steps: [],
+//   },
+// ];
 
-const users = [
-  {
-    id: 99,
-    name: 'Admin',
-  },
-  {
-    id: 100,
-    name: 'Client 1',
-  },
-  {
-    id: 101,
-    name: 'Account Manager',
-  },
-];
+// const users = [
+//   {
+//     id: 99,
+//     name: 'Admin',
+//   },
+//   {
+//     id: 100,
+//     name: 'Client 1',
+//   },
+//   {
+//     id: 101,
+//     name: 'Account Manager',
+//   },
+// ];
 
-const getCoachmarks = () => new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        coachmarks,
-      });
-    }, 500);
-  });
+// const getCoachmarks = () => new Promise(resolve => {
+//     setTimeout(() => {
+//       resolve({
+//         coachmarks,
+//       });
+//     }, 500);
+//   });
 
-const getUsers = () => new Promise(resolve => {
-    setTimeout(() => {
-      resolve({
-        users,
-      });
-    }, 300);
-  });
+// const getUsers = () => new Promise(resolve => {
+//     setTimeout(() => {
+//       resolve({
+//         users,
+//       });
+//     }, 300);
+//   });
 
 export default class ContentStore {
   static CookieName = 'cm-content';
@@ -136,10 +138,12 @@ export default class ContentStore {
     this._coachmarks = [];
     this._coachmarksState = ContentStore.StateLoading;
     try {
-      const result = await getCoachmarks();
+      const result = await getCoachmarksApi();
+    //   debugger;
       runInAction(() => {
         this._coachmarksState = ContentStore.StateComplete;
-        this._coachmarks = result.coachmarks;
+        this.setCoachmarks(result.coachmarks); //_coachmarks = result;
+        console.log(result);
         // console.log('loaded coachmarks');
         // console.log(toJS(this.coachmarks));
       });
@@ -183,7 +187,7 @@ export default class ContentStore {
     this._users = [];
     this._usersState = ContentStore.StateLoading;
     try {
-      const result = await getUsers();
+      const result = await getUsersApi();
       runInAction(() => {
         this._usersState = ContentStore.StateComplete;
         this.setUsers(result.users); // = result.coachmarks;

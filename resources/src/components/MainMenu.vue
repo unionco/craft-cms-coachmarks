@@ -17,7 +17,7 @@
             v-for="coachmark in $store.content.coachmarks"
             :key="coachmark.id"
             @click="() => $store.goToCoachmark(coachmark.id)"
-          >{{ coachmark.name }}</md-list-item>
+          >{{ coachmark.title }}</md-list-item>
         </md-list>
       </div>
     </md-card-content>
