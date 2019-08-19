@@ -62,6 +62,9 @@ class Install extends Migration
                 'id' => $this->primaryKey(),
                 'title' => $this->string(255)->notNull(),
                 // 'read_only' => $this->boolean(),
+                // 'readOnlyUsersJson' => $this->text(),
+                // 'readWriteUsersJson' => $this->text(),
+                'permissions' => $this->text(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid(),
@@ -86,23 +89,24 @@ class Install extends Migration
             ]
         );
 
-        $this->createTable('{{%coachmarks_coachmarks_ro_users}}', [
-            'id' => $this->primaryKey(),
-            'coachmarkId' => $this->integer()->notNull(),
-            'userId' => $this->integer()->notNull(),
-            'uid' => $this->uid(),
-            'dateCreated' => $this->dateTime()->notNull(),
-            'dateUpdated' => $this->dateTime()->notNull(),
-        ]);
+        // $this->createTable('{{%coachmarks_coachmarks_ro_users}}', [
+        //     'id' => $this->primaryKey(),
+        //     'coachmarkId' => $this->integer()->notNull(),
+        //     'userId' => $this->integer()->notNull(),
+        //     'uid' => $this->uid(),
+        //     'dateCreated' => $this->dateTime()->notNull(),
+        //     'dateUpdated' => $this->dateTime()->notNull(),
+        // ]);
 
-        $this->createTable('{{%coachmarks_coachmarks_rw_users}}', [
-            'id' => $this->primaryKey(),
-            'coachmarkId' => $this->integer()->notNull(),
-            'userId' => $this->integer()->notNull(),
-            'uid' => $this->uid(),
-            'dateCreated' => $this->dateTime()->notNull(),
-            'dateUpdated' => $this->dateTime()->notNull(),
-        ]);
+        // $this->createTable('{{%coachmarks_coachmarks_users}}', [
+        //     'id' => $this->primaryKey(),
+        //     'coachmarkId' => $this->integer()->notNull(),
+        //     'userId' => $this->integer()->notNull(),
+        //     'readOnly' => $this->boolean(),
+        //     'uid' => $this->uid(),
+        //     'dateCreated' => $this->dateTime()->notNull(),
+        //     'dateUpdated' => $this->dateTime()->notNull(),
+        // ]);
     }
 
     /**
@@ -119,8 +123,8 @@ class Install extends Migration
     {
         $this->dropTableIfExists('{{%coachmarks_coachmarks}}');
         $this->dropTableIfExists('{{%coachmarks_steps}}');
-        $this->dropTableIfExists('{{%coachmarks_coachmarks_ro_users}}');
-        $this->dropTableIfExists('{{%coachmarks_coachmarks_rw_users}}');
+        // $this->dropTableIfExists('{{%coachmarks_coachma«rks_ro_users}}');
+        $this->dropTableIfExists('{{%coachmarks_coachmarks_users}}');
 
         return true;
     }

@@ -12,9 +12,10 @@
 namespace unionco\coachmarks\records;
 
 use Craft;
-
+use craft\helpers\Json;
 use craft\db\ActiveRecord;
 use unionco\coachmarks\Coacher;
+use unionco\coachmarks\records\db\CoachmarkQuery;
 use unionco\coachmarks\records\Step;
 
 /**
@@ -40,17 +41,73 @@ class Coachmark extends ActiveRecord
         return '{{%coachmarks_coachmarks}}';
     }
 
+    public static function find(): CoachmarkQuery
+    {
+        return new CoachmarkQuery(get_called_class());
+    }
+
+    public function getUsers()
+    {
+        $data = Json::decode($this->permissions);
+        
+        $mapped = array_map(
+            function ($permission) {
+                return $permission->userId;
+            },
+            $data
+        );
+        return $mapped;
+    }
+
     public function getReadOnlyUsers()
     {
-        return $this->hasMany(\craft\records\User::className(), ['id' => 'userId'])
-            ->viaTable('{{%coachmarks_coachmarks_ro_users}}', ['coachmarkId' => 'id']);
+        $data = Json::decode($this->permissions);
+        $filtered = array_filter($data, function ($permission) {
+            return $permission->readWrite === false;
+        });
+        $mapped = array_map(
+            function ($permission) {
+                return $permission->userId;
+            },
+            $filtered
+        );
+        return $mapped;
+    }
+
+    public function addReadOnlyUser($id)
+    {
+        $data = Json::decode($this->permissions);
+        $data[] = [
+            'userId' => $id,
+            'readWrite' => false,
+        ];
+        $this->permissions = Json::encode($data);
     }
 
     public function getReadWriteUsers()
     {
-        return $this->hasMany(\craft\records\User::className(), ['id' => 'userId'])
-            ->viaTable('{{%coachmarks_coachmarks_rw_users}}', ['coachmarkId' => 'id']);
+        $data = Json::decode($this->permissions);
+        $filtered = array_filter($data, function ($permission) {
+            return $permission->readWrite === true;
+        });
+        $mapped = array_map(
+            function ($permission) {
+                return $permission->userId;
+            },
+            $filtered
+        );
+        return $mapped;
+        // return $this->hasMany(\craft\records\User::className(), ['id' => 'userId'])
+        //     ->viaTable(
+        //         '{{%coachmarks_coachmarks_users}}',
+        //         ['coachmarkId' => 'id'],
+        //         function ($query) {
+        //             $query->where('{{%coachmarks_coachmarks_users}}.readOnly = 0');
+        //         }
+        //     );
     }
+
+
 
     public function getSteps()
     {

@@ -29,9 +29,21 @@ class CoachmarksController extends Controller
             // // ->innerJoin('{{%users}}', 'users.id = ro.userId')
             // ->where(['=', 'ro.userId', $user->id])
             // ->orWhere(['=', 'rw.userId', $user->id])
-            ->with(['steps', 'readOnlyUsers', 'readWriteUsers'])
-            ->asArray()
+            ->userId($user->id)
+            ->with(['steps'])
+            // ->asArray()
             ->all();
-        return $this->asJson($coachmarks);
+        $coachmarksData = array_map(
+            function ($coachmark) {
+                return [
+                    'id' => $coachmark->id,
+                    // 'readOnlyUsers' => $coachmark->readOnlyUsers,
+                    // 'readWriteUsers' => $coachmark->readWriteUsers,
+                    'steps' => $coachmark->steps,
+                ];
+            },
+            $coachmarks
+        );
+        return $this->asJson($coachmarksData);
     }
 }

@@ -17,13 +17,14 @@ class DebugController extends Controller
         //$coachmark->readOnlyUsers = [1];
 
         $coachmark->title = 'Testing';
+        $coachmark->addReadOnlyUser(1);
         // $coachmark->siteId = 1;
         // /** @var User */
         // $user = User::find()->id(1)->one();
 
-        $user = UserRecord::find()->where(['=', '{{%users}}.id', '1'])->one();
-        var_dump($coachmark->save());
-        $coachmark->link('readOnlyUsers', $user);
+        // $user = UserRecord::find()->where(['=', '{{%users}}.id', '1'])->one();
+        // var_dump($coachmark->save());
+            // $coachmark->link('readOnlyUsers', $user);
         var_dump($coachmark->save());
     }
 
