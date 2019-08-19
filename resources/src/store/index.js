@@ -1,12 +1,13 @@
 import { observable, action, computed, autorun, toJS } from 'mobx';
 import UiStore from './UiStore';
 import ContentStore from './ContentStore';
+import CurrentCoachmarkStore from './CurrentCoachmarkStore';
 
 export default class RootStore {
   @observable ui = new UiStore();
-
   @observable content = new ContentStore();
-
+  @observable currentCoachmark = new CurrentCoachmarkStore();
+  
   /** Navigation */
   @action.bound goToCoachmark(id) {
     this.ui.setCoachmarkId(id);
@@ -25,18 +26,24 @@ export default class RootStore {
     }
     this.ui.setCoachmarkId(id);
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
-    this.content.setCurrentCoachmark(this.coachmark);
+    const coachmark = this.content.coachmarks.find(c => c.id === id);
+    this.currentCoachmark.set({
+        id: id,
+        title: coachmark.title,
+        readOnlyUsers: coachmark.readOnlyUsers,
+        readWriteUsers: coachmark.readWriteUsers
+    });
   }
 
   @action.bound createNewCoachmark() {
     this.ui.setCoachmarkId(ContentStore.NewCoachmarkId);
     this.ui.setStepId(null);
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
-    this.content.setCurrentCoachmark({
+    this.currentCoachmark.set({
       id: ContentStore.NewCoachmarkId,
       name: '',
-      steps: [],
-      createdBy: 'someUser',
+    //   steps: [],
+    //   createdBy: 'someUser',
       readonlyUsers: [],
       readWriteUsers: [],
     });

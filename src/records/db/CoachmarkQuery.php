@@ -12,6 +12,11 @@ class CoachmarkQuery extends ActiveQuery
         parent::init();
     }
 
+    public function id($id)
+    {
+        return $this->andOnCondition("id = :id", ['id' => $id]);
+    }
+
     public function userId($id)
     {
         return $this->andOnCondition("permissions like '%\"userId\":" . $id . ",%'");

@@ -1,78 +1,7 @@
 import { observable, action, runInAction, toJS, computed } from 'mobx';
 import Cookies from 'js-cookie';
-import { getCoachmarks as getCoachmarksApi } from '../api/Coachmarks';
+import { getCoachmarks as getCoachmarksApi, newCoachmark } from '../api/Coachmarks';
 import { getUsers as getUsersApi } from '../api/Users';
-/**
- * Mock data until backend is ready
- */
-// const coachmarks = [
-//   {
-//     id: 1,
-//     name: 'Get started',
-//     readOnly: true,
-//     steps: [
-//       {
-//         id: 1,
-//         coachmarkId: 1,
-//         name: 'Click on entries in the left panel',
-//         description: 'Click on entries in the left panel',
-//         label: 'Click on entries on the left panel',
-//         url: '/relative',
-//         order: 1,
-//         selectorNode: '.node-here',
-//         tooltipPosition: 'top',
-//       },
-//       {
-//         id: 2,
-//         coachmarkId: 1,
-//         name: 'Click on entries in the left panel',
-//         description: 'Click on entries in the left panel',
-//         label: 'Click on entries on the left panel',
-//         url: '/relative',
-//         order: 2,
-//         selectorNode: '.node-here',
-//         tooltipPosition: 'top',
-//       },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     name: 'Create an entry',
-//     readOnly: true,
-//     steps: [],
-//   },
-// ];
-
-// const users = [
-//   {
-//     id: 99,
-//     name: 'Admin',
-//   },
-//   {
-//     id: 100,
-//     name: 'Client 1',
-//   },
-//   {
-//     id: 101,
-//     name: 'Account Manager',
-//   },
-// ];
-
-// const getCoachmarks = () => new Promise(resolve => {
-//     setTimeout(() => {
-//       resolve({
-//         coachmarks,
-//       });
-//     }, 500);
-//   });
-
-// const getUsers = () => new Promise(resolve => {
-//     setTimeout(() => {
-//       resolve({
-//         users,
-//       });
-//     }, 300);
-//   });
 
 export default class ContentStore {
   static CookieName = 'cm-content';
@@ -89,6 +18,16 @@ export default class ContentStore {
 
   /** Coachmarks */
   @observable _coachmarks = [];
+  @observable _users = [];
+
+  @observable _coachmarksState = ContentStore.StateUninit;
+  @observable _coachmarkSaveState = ContentStore.StateUninit;
+  @observable _usersState = ContentStore.StateUninit;
+  
+//   @observable _currentCoachmark = {};
+  @observable _currentStep = {};
+  
+  
 
   @action.bound setCoachmarks(cm) {
     this._coachmarks = cm;
@@ -100,30 +39,19 @@ export default class ContentStore {
   }
 
   /** Current Coachmark */
-  @observable _currentCoachmark = {};
 
-  @action.bound setCurrentCoachmark(cm) {
-    this._currentCoachmark = cm;
+  
+  /** Current Step */
+
+  @action.bound setCurrentStep(step) {
+    this._currentStep = step;
     this.writeState();
   }
-
-  @computed get currentCoachmark() {
-    return this._currentCoachmark;
-  }
-
-  /** Current Step */
-  @observable _currentStep = {};
-  @action.bound setCurrentStep(step) {
-      this._currentStep = step;
-      this.writeState();
-  }
   @computed get currentState() {
-      return this._currentStep;
+    return this._currentStep;
   }
-
 
   /** Coachmarks State */
-  @observable _coachmarksState = this.StateUninit;
 
   @action.bound setCoachmarksState(state) {
     this._coachmarksState = state;
@@ -139,10 +67,10 @@ export default class ContentStore {
     this._coachmarksState = ContentStore.StateLoading;
     try {
       const result = await getCoachmarksApi();
-    //   debugger;
+      //   debugger;
       runInAction(() => {
         this._coachmarksState = ContentStore.StateComplete;
-        this.setCoachmarks(result.coachmarks); //_coachmarks = result;
+        this.setCoachmarks(result.coachmarks); // _coachmarks = result;
         console.log(result);
         // console.log('loaded coachmarks');
         // console.log(toJS(this.coachmarks));
@@ -152,6 +80,14 @@ export default class ContentStore {
         this._coachmarksState = ContentStore.StateError;
       });
     }
+  }
+
+  @action async saveCoachmark(data) {
+    this._coachmarkSaveState = ContentStore.StateUninit;
+    this._coachmarkSaveState = ContentStore.StateLoading;
+    const result = await newCoachmark(data);
+    this._coachmarkSaveState = ContentStore.StateComplete;
+    console.log(result);
   }
 
   @computed get steps() {
@@ -170,8 +106,7 @@ export default class ContentStore {
     return this.coachmarksState === ContentStore.StateComplete;
   }
 
-  @observable _users = [];
-  @observable _usersState = ContentStore.StateUninit;
+
   @computed get usersState() {
     return this._usersState;
   }
@@ -213,11 +148,11 @@ export default class ContentStore {
   serialize() {
     return JSON.stringify({
       debug: toJS(this.debug),
-      _coachmarks: toJS(this._coachmarks),
-      _coachmarksState: toJS(this._coachmarksState),
-      _currentCoachmark: toJS(this._currentCoachmark),
-      _users: toJS(this._users),
-      _usersState: toJS(this._usersState),
+    //   _coachmarks: toJS(this._coachmarks),
+    //   _coachmarksState: toJS(this._coachmarksState),
+    //   _currentCoachmark: toJS(this._currentCoachmark),
+    //   _users: toJS(this._users),
+    //   _usersState: toJS(this._usersState),
       _currentStep: toJS(this._currentStep),
     });
   }
@@ -227,23 +162,22 @@ export default class ContentStore {
       const state = JSON.parse(json);
       //   this = {...this, ...state};
       // Object.merge({}, this, state);
-      this.debug = state.debug;
-      this._coachmarks = state._coachmarks;
-      this._users = state._users;
-      this._currentCoachmark = state._currentCoachmark;
-      this._coachmarksState = state._coachmarksState;
+    //   this.debug = state.debug;
+    //   this._coachmarks = state._coachmarks;
+    //   this._users = state._users;
+    //   this._currentCoachmark = state._currentCoachmark;
+    //   this._coachmarksState = state._coachmarksState;
       this._currentStep = state._currentStep;
     } catch (err) {
       this.debug = '';
       this._coachmarks = [];
       this._users = [];
-      this._currentCoachmark = {};
+    //   this._currentCoachmark = {};
       this._coachmarksState = ContentStore.StateUninit;
       this._usersState = ContentStore.StateUninit;
       this._currentStep = {};
     }
   }
-
   // @action setX(x) {
   //   this.x = x;
   //   this.writeState();

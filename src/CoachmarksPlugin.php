@@ -158,7 +158,9 @@ class CoachmarksPlugin extends Plugin
                 $event->rules['coachmarks/edit/<id:\d+>'] = 'coachmarks/cp/edit';
 
                 $event->rules['coachmarks/api/coachmarks'] = 'coacher/coachmarks/coachmarks';
+                $event->rules['coachmarks/api/coachmarks/new'] = 'coacher/coachmarks/new';
                 $event->rules['coachmarks/api/users'] = 'coacher/users/users';
+                
             }
         );
 

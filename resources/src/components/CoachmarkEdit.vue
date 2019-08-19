@@ -20,17 +20,17 @@
       <form novalidate class="md-layout" @submit.prevent="validate">
         <div class="md-layout md-gutter">
           <md-field>
-            <label>Name</label>
-            <md-input v-model="name" />
+            <label>Title</label>
+            <md-input v-bind:value="title" @change="e => $store.currentCoachmark.setTitle(e.target.value)"/>
           </md-field>
           <md-field>
             <label>Readonly Users</label>
-            <md-select multiple v-model="readonlyUsers">
+            <md-select multiple v-model="readOnlyUsers">
               <md-option
                 v-for="user in availableReadonlyUsers"
                 :value="user.id"
                 :key="user.id"
-              >{{ user.name }}</md-option>
+              >{{ user.username }}</md-option>
             </md-select>
           </md-field>
           <md-field>
@@ -40,7 +40,7 @@
                 v-for="user in availableReadWriteUsers"
                 :value="user.id"
                 :key="user.id"
-              >{{ user.name }}</md-option>
+              >{{ user.username }}</md-option>
             </md-select>
           </md-field>
         </div>
@@ -48,8 +48,8 @@
     </template>
 
     <template v-slot:actions>
-      <md-button v-if="$store.content.currentCoachmark.id > 0" @click="$store.editSteps">Edit Steps</md-button>
-      <md-button type="submit" class="md-primary" :disabled="sending">Save</md-button>
+      <md-button v-if="$store.currentCoachmark.id > 0" @click="$store.editSteps">Edit Steps</md-button>
+      <md-button type="submit" class="md-primary" :disabled="sending" @click="save">Save</md-button>
     </template>
   </BaseDetail>
 </template>
@@ -66,23 +66,25 @@ import BaseDetail from './BaseDetail.vue';
   },
 })
 export default class CoachmarkEdit extends Vue {
-  name = '';
-  readonlyUsers = [];
+  title = '';
+  readOnlyUsers = [];
   availableReadonlyUsers = [];
   readWriteUsers = [];
   availableReadWriteUsers = [];
   sending = false;
 
+
   /**
    * If a user is added to read only users, he cannot also be added to read/write
    */
-  @Watch('readonlyUsers')
+  @Watch('readOnlyUsers')
   onReadonlyUsersChange(val, oldVal) {
     val.forEach(userId => {
       this.availableReadWriteUsers = this.availableReadWriteUsers.filter(
         availableUser => availableUser.id !== userId
       );
     });
+    this.$store.currentCoachmark.setReadOnlyUsers(val);
   }
 
   /**
@@ -95,25 +97,32 @@ export default class CoachmarkEdit extends Vue {
         availableUser => availableUser.id !== userId
       );
     });
+    this.$store.currentCoachmark.setReadWriteUsers(val);
   }
 
   created() {
-    this.name = this.$store.content.currentCoachmark.name;
-    this.readonlyUsers =
-      this.$store.content.currentCoachmark.readonlyUsers || [];
+    this.title = this.$store.currentCoachmark.title;
+    this.readOnlyUsers =
+      this.$store.currentCoachmark.readOnlyUsers || [];
     this.readWriteUsers =
-      this.$store.content.currentCoachmark.readWriteUsers || [];
+      this.$store.currentCoachmark.readWriteUsers || [];
+    
     const users = this.$store.content.users;
+    console.log(users);
     this.availableReadonlyUsers = users.filter(
       user => !this.readWriteUsers.includes(user.id)
     );
     this.availableReadWriteUsers = users.filter(
-      user => !this.readonlyUsers.includes(user.id)
+      user => !this.readOnlyUsers.includes(user.id)
     );
   }
 
   validate() {
     console.log('validate');
+  }
+
+  save() {
+    this.$store.currentCoachmark.save();
   }
 }
 </script>

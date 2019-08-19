@@ -24,7 +24,7 @@
     <template v-slot:content>
       <div>
         <div v-if="coachmark" class="steps">
-          <md-steppers md-vertical :md-active-step="`step-${$store.step.id}`">
+          <md-steppers md-vertical md-active-step="0">
             <md-step
               v-for="step in coachmark.steps"
               :key="step.id"
