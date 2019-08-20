@@ -60,6 +60,7 @@ class CoachmarksController extends Controller
         $input = $data->coachmark;
 
         try {
+            /** @var null|bool */
             $result = null;
             /** @var Coachmark|null */
             $cm = null;

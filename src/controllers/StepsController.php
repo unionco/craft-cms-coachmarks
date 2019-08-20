@@ -20,12 +20,14 @@ class StepsController extends Controller
         $input = $data->step;
 
         try {
+            /** @var null|bool */
             $result = null;
+            /** @var Step|null */
             $s = null;
-            
+
             if (isset($input->id) && $input->id > 0) {
                 $s = Step::findOne($input->id);
-                if (!$cm) {
+                if (!$s) {
                     throw new \Exception('Step not found: ' . $input->id);
                 }
             } else {
