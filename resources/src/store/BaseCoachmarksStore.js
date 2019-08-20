@@ -6,11 +6,15 @@ export default class BaseCoachmarksStore {
         return '';
     }
     
+    skipProperties() {
+        return [];
+    }
+
     serialize() {
         let data = {}
         for (const key of Object.keys(this)) {
-            if (key.indexOf('_') === 0 && this[key] !== undefined) {
-                // console.log(key, toJS(this[key]));
+            if (key.indexOf('_') === 0 && this[key] !== undefined && !this.skipProperties().includes(key)) {
+                console.log(key, toJS(this[key]));
                 data[key] = this[key];
             }
         }
@@ -19,16 +23,19 @@ export default class BaseCoachmarksStore {
     }
 
     @action.bound deserialize(json) {
+        // debugger;
         try {
             const data = JSON.parse(json);
             for (const key of Object.keys(data)) {
-                if (json[key] !== undefined) {
-                    console.log(key, json[key]);
-                    this[key] = json[key];
+                if (data[key] !== undefined && !this.skipProperties().includes(key)) { 
+                    // console.log(key, data[key]);
+                    this.set(key, data[key], false);
                 }
             }
         }
         catch (e) {
+            console.error(e);
+            console.error('reseting');
             this.reset();
             // console.error(e);
         }
@@ -46,5 +53,12 @@ export default class BaseCoachmarksStore {
     
     @action.bound reset() {
         return;
+    }
+
+    @action.bound set(prop, val, write = true) {
+        this[prop] = val;
+        if (write) {
+            this.writeState();
+        }
     }
 }

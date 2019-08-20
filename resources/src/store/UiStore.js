@@ -1,17 +1,17 @@
 import { observable, action, computed, autorun, toJS } from 'mobx';
-import Cookies from 'js-cookie';
-import { handleMouseMove, handleMouseClick } from '../util/ComponentSelection';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 
 export default class UiStore extends BaseCoachmarksStore {
   cookieName() {
     return 'cm-ui';
   }
-  reset() {
+  
+  @action.bound reset() {
       this._open = false;
       this._pageType = UiStore.PTMainMenu;
       this._coachmarkId = 0;
   }
+
   static CookieName = 'cm-ui';
   /** Page Types */
   static PTCoachmarkDetail = 'CoachmarkDetail';
@@ -24,10 +24,11 @@ export default class UiStore extends BaseCoachmarksStore {
   @observable _open = false;
 
   @action.bound toggleOpen() {
-    this._open = !this._open;
+    this.setOpen(!this.open);
   }
 
   @action setOpen(open) {
+      console.log('setOpen', open);
     this._open = open;
     if (!this._pageType) {
       this.setPageType(UiStore.PTMainMenu);

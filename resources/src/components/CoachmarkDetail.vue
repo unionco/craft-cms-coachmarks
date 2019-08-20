@@ -24,7 +24,7 @@
     <template v-slot:content>
       <div>
         <div v-if="coachmark" class="steps">
-          <md-steppers md-vertical md-active-step="0">
+          <md-steppers v-if="coachmark.steps !== undefined && coachmark.steps.length" md-vertical md-active-step="0">
             <md-step
               v-for="step in coachmark.steps"
               :key="step.id"
@@ -33,6 +33,8 @@
               :md-editable="false"
               />
           </md-steppers>
+          <md-empty-state v-else md-icon="list" md-label="Create your first step" md-description="Steps guide your client through the CMS">
+          </md-empty-state>
         </div>
 
         <div v-else>

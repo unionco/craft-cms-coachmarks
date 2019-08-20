@@ -1,10 +1,4 @@
-import axios from 'axios';
-
-const client = axios.create({
-  headers: {
-    'X-CSRF-Token': window.Craft.csrfTokenValue,
-  },
-});
+import client from './Client';
 
 export async function getCoachmarks() {
   return client

@@ -11,6 +11,11 @@ export default class ContentStore extends BaseCoachmarksStore {
   cookieName() {
     return 'cm-content';
   }
+
+  skipProperties() {
+    return ['_coachmarks', '_coachmarksState', '_coachmarkSaveState'];
+  }
+
   static CookieName = 'cm-content';
 
   static NewCoachmarkId = -1;
@@ -21,8 +26,6 @@ export default class ContentStore extends BaseCoachmarksStore {
   static StateError = 'error';
   static StateComplete = 'complete';
 
-  @observable debug = '';
-
   /** Coachmarks */
   @observable _coachmarks = [];
   @observable _users = [];
@@ -32,7 +35,7 @@ export default class ContentStore extends BaseCoachmarksStore {
   @observable _usersState = ContentStore.StateUninit;
 
   //   @observable _currentCoachmark = {};
-  @observable _currentStep = {};
+//   @observable _currentStep = {};
 
   @action.bound setCoachmarks(cm) {
     this._coachmarks = cm;
@@ -41,18 +44,6 @@ export default class ContentStore extends BaseCoachmarksStore {
 
   @computed get coachmarks() {
     return this._coachmarks;
-  }
-
-  /** Current Coachmark */
-
-  /** Current Step */
-
-  @action.bound setCurrentStep(step) {
-    this._currentStep = step;
-    this.writeState();
-  }
-  @computed get currentState() {
-    return this._currentStep;
   }
 
   /** Coachmarks State */
@@ -67,6 +58,7 @@ export default class ContentStore extends BaseCoachmarksStore {
   }
 
   @action async fetchCoachmarks() {
+    console.log('ContentStore.fetchCoachmarks()');
     this._coachmarks = [];
     this._coachmarksState = ContentStore.StateLoading;
     try {
@@ -74,8 +66,8 @@ export default class ContentStore extends BaseCoachmarksStore {
       //   debugger;
       runInAction(() => {
         this._coachmarksState = ContentStore.StateComplete;
-        this.setCoachmarks(result.coachmarks); // _coachmarks = result;
-        console.log(result);
+        this.set('_coachmarks', result.coachmarks, false); // _coachmarks = result;
+        // console.log(result);
         // console.log('loaded coachmarks');
         // console.log(toJS(this.coachmarks));
       });
@@ -107,7 +99,10 @@ export default class ContentStore extends BaseCoachmarksStore {
   }
 
   @computed get loaded() {
-    return this.coachmarksState === ContentStore.StateComplete;
+    return (
+      this.coachmarksState === ContentStore.StateComplete &&
+      this.usersState === ContentStore.StateComplete
+    );
   }
 
   @computed get usersState() {
@@ -122,13 +117,14 @@ export default class ContentStore extends BaseCoachmarksStore {
   }
 
   @action.bound async fetchUsers() {
+    console.log('ContentStore.fetchUsers');
     this._users = [];
     this._usersState = ContentStore.StateLoading;
     try {
       const result = await getUsersApi();
       runInAction(() => {
         this._usersState = ContentStore.StateComplete;
-        this.setUsers(result.users); // = result.coachmarks;
+        this.set('_users', result.users, false); // = result.coachmarks;
         // console.log('loaded users');
         // console.log(toJS(this._users));
       });
@@ -139,54 +135,10 @@ export default class ContentStore extends BaseCoachmarksStore {
     }
   }
 
-//   /** Persistance */
-//   writeState() {
-//     Cookies.set(ContentStore.CookieName, this.serialize());
-//   }
-
-//   restore() {
-//     const state = Cookies.get(ContentStore.CookieName);
-//     this.deserialize(state);
-//   }
-//   serialize() {
-//     return JSON.stringify({
-//       debug: toJS(this.debug),
-//       //   _coachmarks: toJS(this._coachmarks),
-//       //   _coachmarksState: toJS(this._coachmarksState),
-//       //   _currentCoachmark: toJS(this._currentCoachmark),
-//       //   _users: toJS(this._users),
-//       //   _usersState: toJS(this._usersState),
-//       _currentStep: toJS(this._currentStep),
-//     });
-//   }
-
-//   @action deserialize(json) {
-//     try {
-//       const state = JSON.parse(json);
-//       //   this = {...this, ...state};
-//       // Object.merge({}, this, state);
-//       //   this.debug = state.debug;
-//       //   this._coachmarks = state._coachmarks;
-//       //   this._users = state._users;
-//       //   this._currentCoachmark = state._currentCoachmark;
-//       //   this._coachmarksState = state._coachmarksState;
-//       this._currentStep = state._currentStep;
-//     } catch (err) {
-//       this.debug = '';
-//       this._coachmarks = [];
-//       this._users = [];
-//       //   this._currentCoachmark = {};
-//       this._coachmarksState = ContentStore.StateUninit;
-//       this._usersState = ContentStore.StateUninit;
-//       this._currentStep = {};
-//     }
-//   }
-  // @action setX(x) {
-  //   this.x = x;
-  //   this.writeState();
-  // }
-
-  // get x() {
-  // this.deser
-  //   }
+  getUser(id) {
+      if (this.usersState !== ContentStore.StateComplete) {
+          return null;
+      }
+      return this.users.find(u => u.id === id);
+  }
 }

@@ -17,13 +17,13 @@
         <div class="md-layout md-gutter">
           <md-field>
             <label>Label</label>
-            <md-input v-model="label" />
+            <md-input v-model="label" @change="e => $store.currentStep.setLabel(e.target.value)" />
           </md-field>
           <md-field>
             <label>Tooltip Position</label>
             <md-select
               v-model="tooltipPosition"
-              @change="e => $store.currentStep.setToolTipPosition(e.target.value)"
+              @md-selected="$store.currentStep.setTooltipPosition"
             >
               <md-option value="top">Top</md-option>
               <md-option value="right">Right</md-option>
@@ -43,8 +43,10 @@
     </template>
 
     <template v-slot:actions>
-      <md-button class="md-primary">Save</md-button>
+      <md-button class="md-primary" @click="save">Save</md-button>
     </template>
+  </BaseDetail>
+</template>
   </BaseDetail>
 </template>
 
@@ -53,8 +55,8 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail';
 import {
-//   addCompomnentSelectedListener,
-//   removeComponentSelectListener,
+  //   addCompomnentSelectedListener,
+  //   removeComponentSelectListener,
   handleMouseMove,
   handleMouseClick,
 } from '../util/ComponentSelection';
@@ -74,26 +76,27 @@ export default class StepEdit extends Vue {
   created() {
     // this.componentSelectMode = this.$store.ui.componentSelectMode;
     this.tooltipPosition = this.$store.currentStep.tooltipPosition;
-    this.nodeSelector = this.$store.currentStep.nodeSelector;
+    this.nodeSelector = this.$store.currentStep.selectedNode;
     this.label = this.$store.currentStep.label;
   }
 
   @Watch('componentSelectMode')
   onComponentSelectModeChange(val, oldVal) {
-    console.log(val);
-    
-    if (val === true) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('click', this.setSelectedComponent);
-    //   this.$store.ui.setComponentSelectMode(val);
+    console.log('onComponentSelectModeChanged', val);
+    setTimeout(() => {
+      if (val === true) {
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('click', this.setSelectedComponent);
+        //   this.$store.ui.setComponentSelectMode(val);
 
-    //   addCompomnentSelectedListener(this.componentSelectListenerCallback);
-    } else {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('click', this.setSelectedComponent);
-      
-    //   removeComponentSelectListener(this.componentSelectListenerCallback);
-    }
+        //   addCompomnentSelectedListener(this.componentSelectListenerCallback);
+      } else {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('click', this.setSelectedComponent);
+
+        //   removeComponentSelectListener(this.componentSelectListenerCallback);
+      }
+    }, 100);
   }
 
   setSelectedComponent(e) {
@@ -107,6 +110,10 @@ export default class StepEdit extends Vue {
   componentSelectListenerCallback(e) {
     this.componentSelectMode = false;
     this.nodeSelector = e.detail.selector;
+  }
+
+  save() {
+      this.$store.currentStep.save(this.$store.ui.coachmarkId);
   }
 }
 </script>

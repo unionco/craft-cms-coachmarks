@@ -25,6 +25,8 @@ class CoachmarksController extends Controller
                     'id' => $coachmark->id,
                     'title' => $coachmark->title,
                     'steps' => $coachmark->steps,
+                    'readOnlyUsers' => $coachmark->readOnlyUsers,
+                    'readWriteUsers' => $coachmark->readWriteUsers,
                 ];
             },
             $coachmarks
@@ -59,28 +61,21 @@ class CoachmarksController extends Controller
 
         try {
             $result = null;
+            /** @var Coachmark|null */
+            $cm = null;
 
             if (isset($input->id) && $input->id > 0) {
                 $cm = Coachmark::findOne($input->id);
                 if (!$cm) {
                     throw new \Exception('Coachmark not found: ' . $input->id);
                 }
-                $result = true;
             } else {
                 $cm = new Coachmark();
-                $cm->title = $input->title;
-                if (count($input->readOnlyUsers ?? [])) {
-                    foreach ($input->readOnlyUsers as $userId) {
-                        $cm->addReadOnlyUser($userId);
-                    }
-                }
-                if (count($input->readWriteUsers ?? [])) {
-                    foreach ($input->readWriteUsers as $userId) {
-                        $cm->addReadWriteUser($userId);
-                    }
-                }
-                $result = $cm->save();
             }
+            $cm->title = $input->title;
+            $cm->setReadOnlyUsers($input->readOnlyUsers);
+            $cm->setReadWriteUsers($input->readWriteUsers);
+            $result = $cm->save();
 
             return $this->asJson([
                 'success' => $result,

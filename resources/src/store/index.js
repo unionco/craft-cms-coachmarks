@@ -9,9 +9,7 @@ export default class RootStore {
   @observable content = new ContentStore();
   @observable currentCoachmark = new CurrentCoachmarkStore();
   @observable currentStep = new CurrentStepStore();
-  constructor() {
-      console.log(this.currentCoachmark);
-  }
+
   /** Navigation */
   @action.bound goToCoachmark(id) {
     this.ui.setCoachmarkId(id);
@@ -59,7 +57,7 @@ export default class RootStore {
 
   @action.bound newStep() {
     this.ui.setPageType(UiStore.PTStepEdit);
-    this.currentStep.set({
+    this.currentStep.configure({
       id: ContentStore.NewCoachmarkId,
       coachmarkId: this.ui.coachmarkId,
       label: '',

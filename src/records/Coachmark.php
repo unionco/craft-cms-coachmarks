@@ -89,6 +89,27 @@ class Coachmark extends ActiveRecord
         $this->permissions = Json::encode($data);
     }
 
+    public function removeAllReadOnlyUsers()
+    {
+        $data = Json::decode($this->permissions, false);
+        // Remove all readOnly users
+        $data = array_filter(
+            $data,
+            function ($permission) {
+                return $permission->readWrite === true;
+            }
+        );
+        $this->permissions = Json::encode($data);
+    }
+
+    public function setReadOnlyUsers($ids)
+    {
+        $this->removeAllReadOnlyUsers();
+        foreach ($ids as $id) {
+            $this->addReadOnlyUser($id);
+        }
+    }
+
     public function removeUserPermission($id)
     {
         if ($id instanceof User) {
@@ -118,7 +139,7 @@ class Coachmark extends ActiveRecord
 
     public function getReadWriteUsers()
     {
-        $data = Json::decode($this->permissions) ?? [];
+        $data = Json::decode($this->permissions, false) ?? [];
         $filtered = array_filter($data, function ($permission) {
             return $permission->readWrite === true;
         });
@@ -129,6 +150,27 @@ class Coachmark extends ActiveRecord
             $filtered
         );
         return $mapped;
+    }
+
+    public function removeAllReadWriteUsers()
+    {
+        $data = Json::decode($this->permissions, false);
+        // Remove all read/write users
+        $data = array_filter(
+            $data,
+            function ($permission) {
+                return $permission->readWrite === false;
+            }
+        );
+        $this->permissions = Json::encode($data);
+    }
+
+    public function setReadWriteUsers($ids)
+    {
+        $this->removeAllReadWriteUsers();
+        foreach ($ids as $id) {
+            $this->addReadWriteUser($id);
+        }
     }
 
     public function getSteps()
