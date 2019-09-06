@@ -3,11 +3,14 @@
   <BaseDetail>
     <template v-slot:toolbar>
       <md-toolbar class="md-accent" md-elevation="1">
-        <md-button @click="() => goToCoachmark($store.ui.coachmarkId)">
+        <!-- Back Button -->
+        <md-button class="md-icon-button" @click="() => goToCoachmark($store.ui.coachmarkId)">
           <md-icon>arrow_back</md-icon>
         </md-button>
+        <!-- Title  -->
         <h3 class="md-title" style="flex: 1">{{ step.name }}</h3>
-        <md-button class="md-primary">
+        <!-- Edit Button -->
+        <md-button class="md-primary md-icon-button">
           <md-icon>edit</md-icon>
         </md-button>
       </md-toolbar>

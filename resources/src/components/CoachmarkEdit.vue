@@ -50,7 +50,7 @@
     </template>
 
     <template v-slot:actions>
-      <md-button v-if="$store.currentCoachmark.id > 0" @click="$store.editSteps">Edit Steps</md-button>
+      <md-button v-if="$store.currentCoachmark.id > 0" class="md-secondary md-raised" @click="$store.editSteps">Edit Steps</md-button>
       <md-button type="submit" class="md-primary md-raised" :disabled="sending" @click="save">Save</md-button>
     </template>
   </BaseDetail>

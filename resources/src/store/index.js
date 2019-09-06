@@ -30,10 +30,10 @@ export default class RootStore {
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
     const coachmark = this.content.coachmarks.find(c => c.id === id);
     this.currentCoachmark.setCurrentCoachmark({
-        id: id,
-        title: coachmark.title,
-        readOnlyUsers: coachmark.readOnlyUsers,
-        readWriteUsers: coachmark.readWriteUsers
+      id,
+      title: coachmark.title,
+      readOnlyUsers: coachmark.readOnlyUsers,
+      readWriteUsers: coachmark.readWriteUsers,
     });
   }
 
@@ -44,8 +44,8 @@ export default class RootStore {
     this.currentCoachmark.setCurrentCoachmark({
       id: ContentStore.NewCoachmarkId,
       name: '',
-    //   steps: [],
-    //   createdBy: 'someUser',
+      //   steps: [],
+      //   createdBy: 'someUser',
       readonlyUsers: [],
       readWriteUsers: [],
     });
@@ -53,6 +53,11 @@ export default class RootStore {
 
   @action.bound editSteps() {
     this.ui.setPageType(UiStore.PTStepsEdit);
+  }
+
+  @action.bound editStep(id) {
+      this.ui.setCoachmarkId(id);
+      this.ui.setPageType(UiStore.PTStepEdit);
   }
 
   @action.bound newStep() {
@@ -119,6 +124,4 @@ export default class RootStore {
     this.currentCoachmark.restore();
     this.currentStep.restore();
   }
-
-  
 }

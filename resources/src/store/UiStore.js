@@ -5,12 +5,6 @@ export default class UiStore extends BaseCoachmarksStore {
   cookieName() {
     return 'cm-ui';
   }
-  
-  @action.bound reset() {
-      this._open = false;
-      this._pageType = UiStore.PTMainMenu;
-      this._coachmarkId = 0;
-  }
 
   static CookieName = 'cm-ui';
   /** Page Types */
@@ -27,8 +21,22 @@ export default class UiStore extends BaseCoachmarksStore {
     this.setOpen(!this.open);
   }
 
+  @action.bound reset() {
+    this._open = false;
+    this._pageType = UiStore.PTMainMenu;
+    this._coachmarkId = 0;
+  }
+
+  @observable _stepActive = false;
+  @computed get stepIsActive() {
+    return this._stepActive;
+  }
+  @action.bound toggleStepActive() {
+      this._stepActive = !this._stepActive;
+  }
+
   @action setOpen(open) {
-      console.log('setOpen', open);
+    console.log('setOpen', open);
     this._open = open;
     if (!this._pageType) {
       this.setPageType(UiStore.PTMainMenu);
@@ -39,16 +47,6 @@ export default class UiStore extends BaseCoachmarksStore {
   @computed get open() {
     return this._open;
   }
-
-  //   @observable _selectedComponent;
-  //   @action.bound setSelectedComponent(comp) {
-  //       this.setComponentSelectMode(false);
-  //       console.log('setSelectedComponent', comp);
-  //       this._selectedComponent = comp;
-  //   }
-  //   @computed get selectedComponent() {
-  //       return this._selectedComponent;
-  //   }
 
   /**
    * Page Type
@@ -61,7 +59,6 @@ export default class UiStore extends BaseCoachmarksStore {
   }
 
   @computed get pageType() {
-    // console.log('pageType: ', this._pageType);
     return this._pageType;
   }
 
