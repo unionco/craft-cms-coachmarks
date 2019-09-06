@@ -1,11 +1,11 @@
 {% extends "_layouts/cp" %}
-{% set title = "Coachmarks"|t('coacher') %}
+{% set title = "Coachmarks"|t('coachmarks') %}
 {% set fullPageForm = true %}
 
 {% import "_includes/forms" as forms %}
 
 {% block content %}
-    <input type="hidden" name="action" value="coacher/cp/save">
+    <input type="hidden" name="action" value="coachmarks/cp/save">
     <input type="hidden" name="siteId" value="{{ currentSite.id }}">
     {{ redirectInput('coachmarks') }}
 
@@ -14,8 +14,8 @@
     {{ 
         forms.textField({
             first: true,
-            label: "Title"|t('coacher'),
-            instructions: "Title of coachmark group"|t('coacher'),
+            label: "Title"|t('coachmarks'),
+            instructions: "Title of coachmark group"|t('coachmarks'),
             id: 'title',
             name: 'title',
             value: coachmark.title,
@@ -27,24 +27,24 @@
 
     {{ 
         forms.selectField({
-            label: "Context"|t('coacher'),
-            instructions: "Context of the coachmarks"|t('coacher'),
+            label: "Context"|t('coachmarks'),
+            instructions: "Context of the coachmarks"|t('coachmarks'),
             id: 'context',
             name: 'context',
             value: coachmark.context,
             errors: coachmark.getErrors('context'),
-            options: craft.coacher.contextOptions,
+            options: craft.coachmarks.contextOptions,
             required: true
         })
     }}
 
     {{
         forms.editableTableField({
-            label: "Steps"|t('coacher'),
-            instructions: "List out all steps in coachmarks"|t('coacher'),
+            label: "Steps"|t('coachmarks'),
+            instructions: "List out all steps in coachmarks"|t('coachmarks'),
             id: 'steps',
             name: 'steps',
-            cols: craft.coacher.stepColumns,
+            cols: craft.coachmarks.stepColumns,
             rows: coachmark.steps
         })
     }}

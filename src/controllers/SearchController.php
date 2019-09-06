@@ -53,7 +53,7 @@ class SearchController extends Controller
 
     /**
      * Handle a request going to our plugin's index action URL,
-     * e.g.: actions/coacher/search-controller
+     * e.g.: actions/coachmarks/search-controller
      *
      * @return mixed
      */
@@ -66,7 +66,7 @@ class SearchController extends Controller
 
     /**
      * Handle a request going to our plugin's actionDoSomething URL,
-     * e.g.: actions/coacher/search-controller/do-something
+     * e.g.: actions/coachmarks/search-controller/do-something
      *
      * @return mixed
      */

@@ -8,11 +8,11 @@
         "cms",
         "craftcms",
         "craft-plugin",
-        "coacher"
+        "coachmarks"
     ],
     "support": {
-        "docs": "https://github.com/fvaldes33/coacher/blob/master/README.md",
-        "issues": "https://github.com/fvaldes33/coacher/issues"
+        "docs": "https://github.com/fvaldes33/coachmarks/blob/master/README.md",
+        "issues": "https://github.com/fvaldes33/coachmarks/issues"
     },
     "license": "MIT",
     "authors": [
@@ -31,8 +31,8 @@
     },
     "extra": {
         "name": "Coacher",
-        "handle": "coacher",
-        "changelogUrl": "https://raw.githubusercontent.com/fvaldes33/coacher/master/CHANGELOG.md",
+        "handle": "coachmarks",
+        "changelogUrl": "https://raw.githubusercontent.com/fvaldes33/coachmarks/master/CHANGELOG.md",
         "class": "unionco\\coachmarks\\CoachmarksPlugin"
     }
 }

@@ -18,7 +18,7 @@ To install the plugin, follow these instructions.
 
 2. Then tell Composer to load the plugin:
 
-        composer require fvaldes33/coacher
+        composer require fvaldes33/coachmarks
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Coacher.
 

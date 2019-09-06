@@ -149,20 +149,20 @@ class CoachmarksPlugin extends Plugin
         // );
 
         // Register our CP routes
-        Event::on(
-            UrlManager::class,
-            UrlManager::EVENT_REGISTER_CP_URL_RULES,
-            function (RegisterUrlRulesEvent $event) {
-                $event->rules['coachmarks'] = 'coachmarks/cp/index';
-                $event->rules['coachmarks/new'] = 'coachmarks/cp/new';
-                $event->rules['coachmarks/edit/<id:\d+>'] = 'coachmarks/cp/edit';
+        // Event::on(
+        //     UrlManager::class,
+        //     UrlManager::EVENT_REGISTER_CP_URL_RULES,
+        //     function (RegisterUrlRulesEvent $event) {
+        //         $event->rules['coachmarks'] = 'coachmarks/cp/index';
+        //         $event->rules['coachmarks/new'] = 'coachmarks/cp/new';
+        //         $event->rules['coachmarks/edit/<id:\d+>'] = 'coachmarks/cp/edit';
 
-                $event->rules['coachmarks/api/coachmarks'] = 'coacher/coachmarks/coachmarks';
-                $event->rules['coachmarks/api/coachmarks/new'] = 'coacher/coachmarks/new';
-                $event->rules['coachmarks/api/users'] = 'coacher/users/users';
+        //         $event->rules['coachmarks/api/coachmarks'] = 'coachmarks/coachmarks/coachmarks';
+        //         $event->rules['coachmarks/api/coachmarks/new'] = 'coachmarks/coachmarks/new';
+        //         $event->rules['coachmarks/api/users'] = 'coachmarks/users/users';
                 
-            }
-        );
+        //     }
+        // );
 
         // Do something after we're installed
         Event::on(
@@ -235,7 +235,7 @@ class CoachmarksPlugin extends Plugin
     protected function settingsHtml(): string
     {
         return Craft::$app->view->renderTemplate(
-            'coacher/settings',
+            'coachmarks/settings',
             [
                 'settings' => $this->getSettings()
             ]

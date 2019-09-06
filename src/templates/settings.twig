@@ -15,15 +15,15 @@
 
 {% import "_includes/forms" as forms %}
 
-{% do view.registerAssetBundle("franco\\coacher\\assetbundles\\coacher\\CoacherAsset") %}
+{% do view.registerAssetBundle("franco\\coachmarks\\assetbundles\\coachmarks\\CoacherAsset") %}
 
 {% set showCoachMarks = settings['showCoachMarks'] %}
 
 {{ forms.lightswitchField({
         on: (showCoachMarks in settings),
         name: 'showCoachMarks',
-        label: 'Show Coachmarks'|t('coacher'),
-        instructions: 'This toggle will add/remove coachmarks from the Control Panel'|t('coacher'),
+        label: 'Show Coachmarks'|t('coachmarks'),
+        instructions: 'This toggle will add/remove coachmarks from the Control Panel'|t('coachmarks'),
         id: 'showCoachMarks',
         value: showCoachMarks
     })
