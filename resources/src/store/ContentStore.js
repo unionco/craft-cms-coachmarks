@@ -37,6 +37,14 @@ export default class ContentStore extends BaseCoachmarksStore {
   //   @observable _currentCoachmark = {};
 //   @observable _currentStep = {};
 
+  @action.bound reset() {
+      this._coachmarks = [];
+      this._users = [];
+      this._coachmarkSaveState = ContentStore.StateUninit;
+      this._coachmarkState = ContentStore.StateUninit;
+      this._usersState = ContentStore.StateUninit;
+  }
+
   @action.bound setCoachmarks(cm) {
     this._coachmarks = cm;
     this.writeState();

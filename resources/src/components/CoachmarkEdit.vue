@@ -1,24 +1,26 @@
-
 <template>
   <BaseDetail>
     <template v-slot:toolbar>
       <md-toolbar class="md-accent" md-elevation="1">
-        <md-button @click="$store.goToMainMenu">
+          <!-- Back Button -->
+        <md-button class="md-icon-button" @click="$store.goToMainMenu">
           <md-icon>arrow_back</md-icon>
         </md-button>
+        <!-- Title -->
         <h3
           class="md-title"
           style="flex: 1"
         >{{ $store.isNewCoachmark ? 'New Coachmark' : 'Edit Coachmark' }}</h3>
-        <md-button class="md-primary">
+        <!-- Cancel Button -->
+        <md-button class="md-icon-button" @click="$store.currentCoachmark.reset">
           <md-icon>cancel</md-icon>
         </md-button>
       </md-toolbar>
     </template>
 
     <template v-slot:content>
-      <form novalidate class="md-layout" @submit.prevent="validate">
-        <div class="md-layout md-gutter">
+      <form novalidate class="" @submit.prevent="validate">
+        <div class="md-gutter md-layout">
           <md-field>
             <label>Title</label>
             <md-input v-bind:value="title" @change="e => $store.currentCoachmark.setTitle(e.target.value)"/>
@@ -49,7 +51,7 @@
 
     <template v-slot:actions>
       <md-button v-if="$store.currentCoachmark.id > 0" @click="$store.editSteps">Edit Steps</md-button>
-      <md-button type="submit" class="md-primary" :disabled="sending" @click="save">Save</md-button>
+      <md-button type="submit" class="md-primary md-raised" :disabled="sending" @click="save">Save</md-button>
     </template>
   </BaseDetail>
 </template>

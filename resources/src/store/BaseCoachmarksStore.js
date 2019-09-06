@@ -25,6 +25,13 @@ export default class BaseCoachmarksStore {
     @action.bound deserialize(json) {
         // debugger;
         try {
+            // console.log(this.cookieName());
+            // console.log(json);
+            if (!json) {
+                this.reset();
+                return;
+            }
+            // console.log(json);
             const data = JSON.parse(json);
             for (const key of Object.keys(data)) {
                 if (data[key] !== undefined && !this.skipProperties().includes(key)) { 
@@ -35,6 +42,7 @@ export default class BaseCoachmarksStore {
         }
         catch (e) {
             console.error(e);
+            console.log(json);
             console.error('reseting');
             this.reset();
             // console.error(e);
@@ -42,7 +50,7 @@ export default class BaseCoachmarksStore {
     }
 
     writeState() {
-        console.log('writeState');
+        console.log('writeState', this.cookieName());
         Cookies.set(this.cookieName(), this.serialize());
     }
 

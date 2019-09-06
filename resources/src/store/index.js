@@ -29,7 +29,7 @@ export default class RootStore {
     this.ui.setCoachmarkId(id);
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
     const coachmark = this.content.coachmarks.find(c => c.id === id);
-    this.currentCoachmark.set({
+    this.currentCoachmark.setCurrentCoachmark({
         id: id,
         title: coachmark.title,
         readOnlyUsers: coachmark.readOnlyUsers,
@@ -41,7 +41,7 @@ export default class RootStore {
     this.ui.setCoachmarkId(ContentStore.NewCoachmarkId);
     this.ui.setStepId(null);
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
-    this.currentCoachmark.set({
+    this.currentCoachmark.setCurrentCoachmark({
       id: ContentStore.NewCoachmarkId,
       name: '',
     //   steps: [],

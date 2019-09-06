@@ -1,5 +1,5 @@
 <template>
-  <div class="MainMenu md-elevation-6">
+  <div class="MainMenu">
     <md-card class="md-primary">
       <md-card-header>
         <md-card-header-text>
@@ -10,15 +10,27 @@
     </md-card>
     <md-card-content>
       <div class="content">
-        <md-button @click="$store.createNewCoachmark">Create a new coachmark</md-button>
-        <md-divider />Your coachmarks
-        <md-list>
+        <md-button
+          @click="$store.createNewCoachmark"
+          class="md-raised md-primary"
+        >Create a new coachmark</md-button>
+        <md-divider />
+        <div class="md-headline">Your coachmarks</div>
+        <md-list v-if="$store.content.coachmarks.length">
           <md-list-item
             v-for="coachmark in $store.content.coachmarks"
             :key="coachmark.id"
             @click="() => $store.goToCoachmark(coachmark.id)"
           >{{ coachmark.title }}</md-list-item>
         </md-list>
+        <md-empty-state
+          v-else
+          md-size="120"
+          class="md-primary"
+          md-icon="menu"
+          md-label="No Coachmarks Yet"
+          md-description="Create a new Coachmark to get started"
+        />
       </div>
     </md-card-content>
   </div>
@@ -47,9 +59,10 @@ export default class MainMenu extends Vue {
 }
 
 .MainMenu {
-    background-color: white;
-    .content {
-        min-height: 200px;
-    }
+  background-color: white;
+  .content {
+    min-height: 200px;
+    text-align: center;
+  }
 }
 </style>

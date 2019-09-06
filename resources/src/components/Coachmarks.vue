@@ -3,8 +3,12 @@
     <div class="Coachmarks">
       <Toggle />
       <div class="Coachmarks-main">
-        <div v-if="$store.content.loaded">
-          <component v-if="$store.ui.open" v-bind:is="$store.ui.pageType" />
+        <div v-if="$store.content.loaded" class="page">
+          <component
+            v-if="$store.ui.open"
+            v-bind:is="$store.ui.pageType"
+            :class="{isOpen: $store.ui.open, 'md-elevation-6': true}"
+          />
         </div>
         <div v-else>
           <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
@@ -58,7 +62,7 @@ export default class Coachmarks extends Vue {
 
 <style lang="scss" scoped>
 .Coachmarks-main {
-  z-index: 0;
+  z-index: 10;
   position: fixed;
   bottom: 100px;
   right: 20px;
@@ -69,10 +73,19 @@ export default class Coachmarks extends Vue {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+  pointer-events: none;
+
+  .isOpen {
+    pointer-events: all;
+  }
 
   .content-container {
     display: flex;
     flex-direction: column;
+  }
+  .page {
+    z-index: 0;
+    background-color: white;
   }
 }
 </style>

@@ -24,7 +24,7 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
   }
 
   @computed get id() {
-      return this._id;
+    return this._id;
   }
 
   @action.bound setTitle(title) {
@@ -33,7 +33,7 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
   }
 
   @computed get title() {
-      return this._title;
+    return this._title;
   }
 
   @action.bound setReadOnlyUsers(users) {
@@ -42,7 +42,7 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
   }
 
   @computed get readOnlyUsers() {
-      return this._readOnlyUsers;
+    return this._readOnlyUsers;
   }
 
   @action.bound setReadWriteUsers(users) {
@@ -54,7 +54,8 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
     return this._readWriteUsers;
   }
 
-  @action.bound set(cm) {
+  @action.bound setCurrentCoachmark(cm) {
+    console.error('currentCoachmarkStore::set');
     this._title = cm.title;
     this._id = cm.id;
     this._readOnlyUsers = cm.readOnlyUsers;
@@ -67,22 +68,23 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
   }
 
   @action.bound async save() {
-      const result = await newCoachmark({
-        id: toJS(this.id),
-        title: toJS(this.title),
-        readOnlyUsers: toJS(this.readOnlyUsers),
-        readWriteUsers: toJS(this.readWriteUsers),
-      });
+    console.log('start current coachmark save');
+    const result = await newCoachmark({
+      id: toJS(this.id),
+      title: toJS(this.title),
+      readOnlyUsers: toJS(this.readOnlyUsers),
+      readWriteUsers: toJS(this.readWriteUsers),
+    });
     //   console.log(result);
-      if (result.success && result.id) {
-        this._saveStatus = ContentStore.StateComplete;
-        this.setId(result.id);
-      } else {
-          this._saveStatus = ContentStore.StateError;
-      }
+    if (result.success && result.id) {
+      this._saveStatus = ContentStore.StateComplete;
+      this.setId(result.id);
+    } else {
+      this._saveStatus = ContentStore.StateError;
+    }
   }
 
   cookieName() {
-      return 'cm-current-coachmark';
+    return 'cm-current-coachmark';
   }
 }

@@ -1,10 +1,11 @@
 <template>
   <div md-elevation="6" class="Detail">
-    <div class="toolbar">
-      <slot name="toolbar"></slot>
-    </div>
     <md-card>
-      <md-card-header></md-card-header>
+      <!-- <md-card-header> -->
+        <div class="toolbar">
+          <slot name="toolbar"></slot>
+        </div>
+      <!-- </md-card-header> -->
       <md-card-content>
         <div class="content">
           <slot name="content"></slot>
@@ -31,6 +32,7 @@ export default class BaseDetail extends Vue {}
 
   .content {
     min-height: 200px;
+    text-align: center;
   }
 }
 </style>
