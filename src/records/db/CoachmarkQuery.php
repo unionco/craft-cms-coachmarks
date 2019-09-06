@@ -19,6 +19,6 @@ class CoachmarkQuery extends ActiveQuery
 
     public function userId($id)
     {
-        return $this->andOnCondition("permissions like '%\"userId\":" . $id . ",%'");
+        return $this->andOnCondition("permissions like '%userId\":\"" . $id . "\"%'");
     }
 }

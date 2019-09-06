@@ -11,13 +11,14 @@ class CoachmarksController extends Controller
 {
     protected $allowAnonymous = true;
 
-    public function actionCoachmarks()
+    public function actionIndex()
     {
         $user = Craft::$app->getUser()->getIdentity();
-
+        $all = Coachmark::find()->all();
         $coachmarks = Coachmark::find()
             ->userId($user->id)
             ->with(['steps'])
+        // var_dump($coachmarks->rawSql); die;
             ->all();
         $coachmarksData = array_map(
             function ($coachmark) {
@@ -32,6 +33,7 @@ class CoachmarksController extends Controller
             $coachmarks
         );
         return $this->asJson([
+            'all' => $all,
             'coachmarks' => $coachmarksData,
         ]);
     }
@@ -51,7 +53,7 @@ class CoachmarksController extends Controller
         ]);
     }
 
-    public function actionNew()
+    public function actionEdit()
     {
         $this->requirePostRequest();
 
@@ -83,7 +85,7 @@ class CoachmarksController extends Controller
                 'id' => $cm->id,
             ]);
         } catch (\Throwable $e) {
-            return $this->asJson($e);
+            return $this->asErrorJson($e);
         }
     }
 }

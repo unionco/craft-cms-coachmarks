@@ -37,6 +37,8 @@ use craft\records\User;
  */
 class Coachmark extends ActiveRecord
 {
+    const DEFAULT_PERMISSIONS = [];
+    
     public static function tableName()
     {
         return '{{%coachmarks_coachmarks}}';
@@ -92,6 +94,10 @@ class Coachmark extends ActiveRecord
     public function removeAllReadOnlyUsers()
     {
         $data = Json::decode($this->permissions, false);
+        if (!$data) {
+            $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
+            return;
+        }
         // Remove all readOnly users
         $data = array_filter(
             $data,
@@ -155,6 +161,9 @@ class Coachmark extends ActiveRecord
     public function removeAllReadWriteUsers()
     {
         $data = Json::decode($this->permissions, false);
+        if (!$data) {
+            $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
+        }
         // Remove all read/write users
         $data = array_filter(
             $data,

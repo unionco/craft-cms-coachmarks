@@ -1,5 +1,5 @@
 import { observable, action, computed, toJS } from 'mobx';
-import { newCoachmark, getCoachmarkById } from '../api/Coachmarks';
+import { saveCoachmark, getCoachmarkById } from '../api/Coachmarks';
 import ContentStore from './ContentStore';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 
@@ -69,7 +69,7 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
 
   @action.bound async save() {
     console.log('start current coachmark save');
-    const result = await newCoachmark({
+    const result = await saveCoachmark({
       id: toJS(this.id),
       title: toJS(this.title),
       readOnlyUsers: toJS(this.readOnlyUsers),
