@@ -124,4 +124,21 @@ export default class RootStore {
     this.currentCoachmark.restore();
     this.currentStep.restore();
   }
+
+  @action.bound toggleStepActive() {
+    const selector = this.step.selectorNode;
+    const element = document.querySelector(selector);
+    const rect = element.getBoundingClientRect();
+    this.ui.setStepBoxPosition(rect);
+    console.log(element);
+    
+    this.ui._stepActive = !this.ui._stepActive;
+    if (this.ui.stepActive) {
+      document.body.classList.add('u-coachmarks');
+    } else {
+      document.body.classList.remove('u-coachmarks');
+    }
+    this.ui.setTooltipPosition(this.step.tooltipPosition);
+  }
+
 }

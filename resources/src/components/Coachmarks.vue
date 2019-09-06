@@ -1,20 +1,21 @@
 <template>
-  <div>
+  <div class="md-theme-default">
     <div class="Coachmarks">
       <Toggle />
       <div class="Coachmarks-main">
-        <div v-if="$store.content.loaded" class="page">
+        <div v-if="!$store.content.loaded">
+          <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
+        </div>
+        <div v-else-if="!$store.ui.stepActive" class="page">
           <component
             v-if="$store.ui.open"
             v-bind:is="$store.ui.pageType"
             :class="{isOpen: $store.ui.open, 'md-elevation-6': true}"
           />
         </div>
-        <div v-else>
-          <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
-        </div>
       </div>
     </div>
+    <StepBox v-if="$store.ui.stepActive" />
   </div>
 </template>
 
@@ -28,6 +29,8 @@ import ContentStore from '../store/ContentStore';
 import CoachmarkEdit from './CoachmarkEdit.vue';
 import StepsEdit from './StepsEdit.vue';
 import StepEdit from './StepEdit.vue';
+import '../scss/global.scss';
+import StepBox from './StepBox.vue';
 
 @Observer
 @Component({
@@ -40,6 +43,7 @@ import StepEdit from './StepEdit.vue';
     CoachmarkEdit,
     StepsEdit,
     StepEdit,
+    StepBox,
   },
 })
 export default class Coachmarks extends Vue {

@@ -35,11 +35,11 @@
             v-if="$store.step.id !== $store.ui.stepId"
             class="md-raised"
             @click="() => $store.ui.setStepId($store.step.id)"
-          >Start Coachmarks</md-button> -->
+          >Start Coachmarks</md-button>-->
           <md-button
             class="md-raised"
-            @click="toggleStepActive"
-          >{{stepActive ? 'Disable' : 'Enable' }} Step</md-button>
+            @click="$store.toggleStepActive"
+          >{{$store.ui.stepActive ? 'Disable' : 'Enable' }} Step</md-button>
 
           <md-steppers
             v-if="coachmark.steps !== undefined && coachmark.steps.length"
@@ -94,13 +94,17 @@ import { toJS } from 'mobx';
 export default class CoachmarkDetail extends Vue {
   id = 0;
   coachmark = {};
-  stepActive = false;
+//   stepActive = false;
   stepId = 0;
-    stepDetails = {};
+  stepDetails = {};
+//   position = '';
 
   mounted() {
     this.id = this.$store.ui.coachmarkId;
-    this.stepActive = this.$store.ui.stepActive;
+    // this.stepActive = this.$store.ui.stepActive;
+    // if (this.stepActive) {
+    //   document.body.classList.add('u-coachmarks');
+    // }
     this.stepId = this.$store.step.id;
     this.stepDetails = this.$store.step;
     console.log(toJS(this.stepDetails));
@@ -113,23 +117,20 @@ export default class CoachmarkDetail extends Vue {
 
   @Watch('stepId')
   onStepActiveChange(val) {
-      this.$store.ui.setStepId = val;
-      this.stepDetails = this.$store.step;
-      console.log(this.stepDetails);
+    this.$store.ui.setStepId(val);
+    this.stepDetails = this.$store.step;
+    console.log(this.stepDetails);
   }
 
-  toggleStepActive() {
-      this.stepActive = !this.stepActive;
-      const selector = this.stepDetails.selectorNode;
-      const element = document.querySelector(selector);
-      console.log(element);
+  toggleStepActive(e) {
+    // this.stepActive = !this.stepActive;
+    this.$store.ui.toggleStepActive();
   }
 
-  @Watch('stepActive')
-  onStepActiveChange(val) {
-      this.$store.ui._stepActive = val;
-  }
-
+//   @Watch('stepActive')
+//   onStepActiveChange(val) {
+//     this.$store.ui._stepActive = val;
+//   }
 }
 </script>
 

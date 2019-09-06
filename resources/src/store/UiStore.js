@@ -28,11 +28,8 @@ export default class UiStore extends BaseCoachmarksStore {
   }
 
   @observable _stepActive = false;
-  @computed get stepIsActive() {
+  @computed get stepActive() {
     return this._stepActive;
-  }
-  @action.bound toggleStepActive() {
-      this._stepActive = !this._stepActive;
   }
 
   @action setOpen(open) {
@@ -90,6 +87,42 @@ export default class UiStore extends BaseCoachmarksStore {
     return this._stepId;
   }
 
+  @observable _rect = '';
+
+  @observable _stepBoxPosition = '';
+  @computed get stepBoxPosition() {
+    return this._stepBoxPosition;
+  }
+  @action.bound setStepBoxPosition(rect) {
+    this._rect = rect;
+    this._stepBoxPosition = `top: ${rect.top}px; left: ${rect.left}px; width: ${
+      rect.width
+    }px; height: ${rect.height}px`;
+  }
+
+  @observable _tooltipPosition = '';
+  @computed get tooltipPosition() {
+    return this._tooltipPosition;
+  }
+  @action.bound setTooltipPosition(orientation) {
+    console.log('orientation', orientation);
+    switch (orientation) {
+      case 'bottom':
+        this._tooltipPosition = 'top: 100%; left: 0px;';
+        break;
+      case 'top':
+        this._tooltipPosition = 'top: 0px; left: 0px; transform: translateY(-100%); margin-top: 0px; margin-bottom: 10px;';
+        break;
+      case 'left':
+        this._tooltipPosition = `top: ${this._rect.top}px; left: ${
+          this._rect.left
+        }px;`;
+        break;
+      case 'right':
+        this._tooltipPosition = 'top: 0px; left: 100%; margin-top: 0px; margin-left: 10px;';
+        break;
+    }
+  }
   /** Component select mode */
   //   @observable _componentSelectMode = false;
 

@@ -18,4 +18,6 @@ if (typeof window !== 'undefined' && window.Vue) {
       render: h => h(Coachmarks),
     }).$mount(vueRoot);
   }
+
+  document.querySelector('html').classList.remove('md-theme-default');
 }
