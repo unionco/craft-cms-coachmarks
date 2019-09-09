@@ -38,7 +38,7 @@ use craft\records\User;
 class Coachmark extends ActiveRecord
 {
     const DEFAULT_PERMISSIONS = [];
-    
+
     public static function tableName()
     {
         return '{{%coachmarks_coachmarks}}';
@@ -77,17 +77,22 @@ class Coachmark extends ActiveRecord
         return $mapped;
     }
 
-    public function addReadOnlyUser($id)
+    public function addUsers($input)
     {
-        if ($id instanceof User) {
-            $id = $id->id;
+        // Getting the users ids and determining privileges:
+        $ids = $input->readOnlyUsers ? $input->readOnlyUsers : $input->readWriteUsers;
+        $privileges = $input->readWriteUsers ? true : false;
+
+        $data = [];
+        foreach ($ids as $id) {
+            $this->removeUserPermission($id);
+
+            array_push($data, [
+                'userId' => $id,
+                'readWrite' => $privileges
+            ]);
         }
-        $this->removeUserPermission($id);
-        $data = Json::decode($this->permissions);
-        $data[] = [
-            'userId' => $id,
-            'readWrite' => false,
-        ];
+
         $this->permissions = Json::encode($data);
     }
 
@@ -108,12 +113,11 @@ class Coachmark extends ActiveRecord
         $this->permissions = Json::encode($data);
     }
 
-    public function setReadOnlyUsers($ids)
+    public function setUsers($input)
     {
         $this->removeAllReadOnlyUsers();
-        foreach ($ids as $id) {
-            $this->addReadOnlyUser($id);
-        }
+
+        $this->addUsers($input);
     }
 
     public function removeUserPermission($id)
@@ -125,21 +129,6 @@ class Coachmark extends ActiveRecord
         $data = array_filter($data, function ($permission) use ($id) {
             $permission->userId !== $id;
         });
-        $this->permissions = Json::encode($data);
-    }
-
-    public function addReadWriteUser($id)
-    {
-        if ($id instanceof User) {
-            $id = $id->id;
-        }
-        // Remove from readonly, if user is already on this coachmark
-        $this->removeUserPermission($id);
-        $data = Json::decode($this->permissions, false) ?? [];
-        $data[] = [
-            'userId' => $id,
-            'readWrite' => true,
-        ];
         $this->permissions = Json::encode($data);
     }
 

@@ -76,8 +76,7 @@ class CoachmarksController extends Controller
                 $cm = new Coachmark();
             }
             $cm->title = $input->title;
-            $cm->setReadOnlyUsers($input->readOnlyUsers ?? null);
-            $cm->setReadWriteUsers($input->readWriteUsers ?? null);
+            $cm->setUsers($input);
             $result = $cm->save();
 
             return $this->asJson([
