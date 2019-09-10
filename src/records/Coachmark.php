@@ -77,12 +77,11 @@ class Coachmark extends ActiveRecord
         return $mapped;
     }
 
-    public function addUsers($input)
+    public function setUsers($input)
     {
-        // Getting the users ids and determining privileges:
+        // Getting the users ids and determining the privileges:
         $ids = $input->readOnlyUsers ? $input->readOnlyUsers : $input->readWriteUsers;
         $privileges = $input->readWriteUsers ? true : false;
-
         $data = [];
         foreach ($ids as $id) {
             $this->removeUserPermission($id);
@@ -92,7 +91,6 @@ class Coachmark extends ActiveRecord
                 'readWrite' => $privileges
             ]);
         }
-
         $this->permissions = Json::encode($data);
     }
 
@@ -111,13 +109,6 @@ class Coachmark extends ActiveRecord
             }
         );
         $this->permissions = Json::encode($data);
-    }
-
-    public function setUsers($input)
-    {
-        $this->removeAllReadOnlyUsers();
-
-        $this->addUsers($input);
     }
 
     public function removeUserPermission($id)
