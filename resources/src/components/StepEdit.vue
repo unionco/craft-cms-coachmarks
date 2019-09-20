@@ -15,14 +15,18 @@
     <template v-slot:content>
       <form novalidate class="md-layout" @submit.prevent="validate">
         <div class="md-layout md-gutter">
-          <md-field>
-            <label>Label</label>
-            <md-input v-model="label" @change="e => $store.currentStep.setLabel(e.target.value)" />
-          </md-field>
+          <div class="md-layout-item md-small-size-100">
+            <md-field :class="getValidationClass('label')">
+              <label>Label</label>
+              <md-input v-model="form.label" :disabled="loading"/>
+              <span class="md-error" v-if="!$v.form.label.required">Label is required</span>
+              <span class="md-error" v-if="!$v.form.label.minLength">Label min length is 5</span>
+            </md-field>
+          </div>
           <md-field>
             <label>Tooltip Position</label>
             <md-select
-              v-model="tooltipPosition"
+              v-model="form.tooltipPosition"
               @md-selected="$store.currentStep.setTooltipPosition"
             >
               <md-option value="top">Top</md-option>
@@ -33,17 +37,21 @@
           </md-field>
           <md-field>
             <label>Node Selector</label>
-            <md-input disabled v-model="nodeSelector" />
+            <md-input disabled v-model="form.nodeSelector" />
             <md-button
               @click="() => componentSelectMode = !componentSelectMode"
             >{{ componentSelectMode ? 'Cancel' : 'Select' }}</md-button>
           </md-field>
+          <md-button class="md-primary" @click="save">Save</md-button>
         </div>
       </form>
     </template>
-
-    <template v-slot:actions>
-      <md-button class="md-primary" @click="save">Save</md-button>
+    <template v-slot:activity>
+      <Activity :loading="loading" />
+    </template>
+    <template v-slot:actions></template>
+    <template v-slot:snackbar>
+        <md-snackbar :md-active.sync="success">Step saved</md-snackbar>
     </template>
   </BaseDetail>
 </template>
@@ -60,24 +68,43 @@ import {
   handleMouseMove,
   handleMouseClick,
 } from '../util/ComponentSelection';
+import { required, minLength } from 'vuelidate/lib/validators';
+import { validationMixin } from 'vuelidate';
+import Activity from './Activity.vue';
 
 @Observer
 @Component({
   components: {
     BaseDetail,
+    Activity,
+  },
+  mixins: [validationMixin],
+  validations: {
+    form: {
+      label: {
+        required,
+        minLength: minLength(5),
+      },
+    },
   },
 })
 export default class StepEdit extends Vue {
-  label = '';
-  nodeSelector = '';
-  tooltipPosition = 'top';
+  form = {
+    label: this.$store.currentStep.label,
+    nodeSelector: this.$store.currentStep.nodeSelector,
+    tooltipPosition: this.$store.currentStep.tooltipPosition,
+  };
+
+  loading = false;
+  success = false;
+  error = false;
   componentSelectMode = false;
 
   created() {
     // this.componentSelectMode = this.$store.ui.componentSelectMode;
-    this.tooltipPosition = this.$store.currentStep.tooltipPosition;
-    this.nodeSelector = this.$store.currentStep.selectedNode;
-    this.label = this.$store.currentStep.label;
+    this.form.tooltipPosition = this.$store.currentStep.tooltipPosition;
+    this.form.nodeSelector = this.$store.currentStep.selectedNode;
+    this.form.label = this.$store.currentStep.label;
   }
 
   @Watch('componentSelectMode')
@@ -112,8 +139,39 @@ export default class StepEdit extends Vue {
     this.nodeSelector = e.detail.selector;
   }
 
-  save() {
-      this.$store.currentStep.save(this.$store.ui.coachmarkId);
+  async save() {
+    this.success = false;
+    this.error = false;
+    this.loading = true;
+    const result = await this.$store.currentStep.save(
+      this.$store.ui.coachmarkId
+    );
+    this.loading = false;
+    if (result.success && result.id) {
+      this.success = true;
+    } else {
+      this.error = true;
+    }
+  }
+
+  validate() {
+    console.log('validate');
+    this.$v.$touch();
+    if (!this.$v.$invalid) {
+      this.save();
+    } else {
+      console.error(this.$v);
+    }
+  }
+
+  getValidationClass(fieldName) {
+    const field = this.$v.form[fieldName];
+
+    if (field) {
+      return {
+        'md-invalid': field.$invalid && field.$dirty,
+      };
+    }
   }
 }
 </script>

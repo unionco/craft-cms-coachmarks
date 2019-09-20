@@ -11,11 +11,20 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
 
   @observable _saveStatus = ContentStore.StateUninit;
 
+  @computed get saveStatus() {
+      return this._saveStatus;
+  }
+  @action.bound setSaveStatus(status) {
+      console.log('setSaveStatus: ', status);
+      this._saveStatus = status;
+  }
+
   @action.bound reset() {
     this._id = 0;
     this._title = '';
     this._readOnlyUsers = [];
     this._readWriteUsers = [];
+    this._saveStatus = ContentStore.StateUninit;
   }
 
   @action.bound setId(id) {
@@ -68,20 +77,25 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
   }
 
   @action.bound async save() {
+    this.setSaveStatus(ContentStore.StateLoading);
     console.log('start current coachmark save');
+    // await new Promise((resolve) => {
+    //     setTimeout(() => resolve(true), 500);
+    // });
     const result = await saveCoachmark({
       id: toJS(this.id),
       title: toJS(this.title),
       readOnlyUsers: toJS(this.readOnlyUsers),
       readWriteUsers: toJS(this.readWriteUsers),
     });
-    //   console.log(result);
+    
     if (result.success && result.id) {
-      this._saveStatus = ContentStore.StateComplete;
+      this.setSaveStatus(ContentStore.StateComplete);
       this.setId(result.id);
     } else {
-      this._saveStatus = ContentStore.StateError;
+      this.setSaveStatus(ContentStore.StateError);
     }
+    return result;
   }
 
   cookieName() {

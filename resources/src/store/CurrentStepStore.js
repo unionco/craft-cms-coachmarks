@@ -79,5 +79,6 @@ export default class CurrentStepStore extends BaseCoachmarksStore {
     } else {
       this._saveStatus = ContentStore.StateError;
     }
+    return result;
   }
 }

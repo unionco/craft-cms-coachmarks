@@ -31,7 +31,6 @@ export default class ContentStore extends BaseCoachmarksStore {
   @observable _users = [];
 
   @observable _coachmarksState = ContentStore.StateUninit;
-  @observable _coachmarkSaveState = ContentStore.StateUninit;
   @observable _usersState = ContentStore.StateUninit;
 
   //   @observable _currentCoachmark = {};
@@ -84,13 +83,15 @@ export default class ContentStore extends BaseCoachmarksStore {
     }
   }
 
-  @action async saveCoachmark(data) {
-    this._coachmarkSaveState = ContentStore.StateUninit;
-    this._coachmarkSaveState = ContentStore.StateLoading;
-    const result = await newCoachmark(data);
-    this._coachmarkSaveState = ContentStore.StateComplete;
-    console.log(result);
-  }
+//   @action async saveCoachmark(data) {
+//     // this._coachmarkSaveState = ContentStore.StateUninit;
+//     this._coachmarkSaveState = ContentStore.StateLoading;
+//     await setTimeout(() => {}, 5000);
+//     debugger;
+//     const result = await newCoachmark(data);
+//     this._coachmarkSaveState = ContentStore.StateComplete;
+//     console.log(result);
+//   }
 
   @computed get steps() {
     const steps = [];

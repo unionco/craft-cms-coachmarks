@@ -2,7 +2,7 @@
   <BaseDetail>
     <template v-slot:toolbar>
       <md-toolbar class="md-accent" md-elevation="1">
-          <!-- Back Button -->
+        <!-- Back Button -->
         <md-button class="md-icon-button" @click="$store.goToMainMenu">
           <md-icon>arrow_back</md-icon>
         </md-button>
@@ -19,15 +19,19 @@
     </template>
 
     <template v-slot:content>
-      <form novalidate class="" @submit.prevent="validate">
+      <form novalidate class="md-layout" @submit.prevent="validate">
         <div class="md-gutter md-layout">
-          <md-field>
-            <label>Title</label>
-            <md-input v-bind:value="title" @change="e => $store.currentCoachmark.setTitle(e.target.value)"/>
-          </md-field>
+          <div class="md-layout-item md-small-size-100">
+            <md-field :class="getValidationClass('title')">
+              <label>Title</label>
+              <md-input v-model="form.title" :disabled="loading" />
+              <span class="md-error" v-if="!$v.form.title.required">Title is required</span>
+              <span class="md-error" v-if="!$v.form.title.minLength">Title min length is 5</span>
+            </md-field>
+          </div>
           <md-field>
             <label>Readonly Users</label>
-            <md-select multiple v-model="readOnlyUsers">
+            <md-select multiple v-model="form.readOnlyUsers">
               <md-option
                 v-for="user in availableReadonlyUsers"
                 :value="user.id"
@@ -37,7 +41,7 @@
           </md-field>
           <md-field>
             <label>Read/Write Users</label>
-            <md-select multiple v-model="readWriteUsers">
+            <md-select multiple v-model="form.readWriteUsers">
               <md-option
                 v-for="user in availableReadWriteUsers"
                 :value="user.id"
@@ -45,42 +49,75 @@
               >{{ user.username }}</md-option>
             </md-select>
           </md-field>
+          <md-button type="submit" class="md-primary md-raised" :disabled="loading">Save</md-button>
         </div>
       </form>
     </template>
 
     <template v-slot:actions>
-      <md-button v-if="$store.currentCoachmark.id > 0" class="md-secondary md-raised" @click="$store.editSteps">Edit Steps</md-button>
-      <md-button type="submit" class="md-primary md-raised" :disabled="sending" @click="save">Save</md-button>
+      <md-button
+        v-if="$store.currentCoachmark.id > 0"
+        class="md-secondary md-raised"
+        @click="$store.editSteps"
+      >Edit Steps</md-button>
+    </template>
+    <template v-slot:activity>
+      <Activity :loading="loading" />
+    </template>
+    <template v-slot:snackbar>
+      <md-snackbar :md-active.sync="success">Coachmark saved</md-snackbar>
     </template>
   </BaseDetail>
 </template>
 
 <script>
+// v-bind:value="form.title"
+// @change="e => $store.currentCoachmark.setTitle(e.target.value)" -->
 import { Vue, Component, Inject, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail.vue';
-
+import ContentStore from '../store/ContentStore';
+import Activity from './Activity.vue';
+import { validationMixin } from 'vuelidate';
+import { required, minLength } from 'vuelidate/lib/validators';
 @Observer
 @Component({
   components: {
     BaseDetail,
+    Activity,
+  },
+  mixins: [validationMixin],
+  validations: {
+    form: {
+      title: {
+        required,
+        minLength: minLength(5),
+      },
+    },
   },
 })
 export default class CoachmarkEdit extends Vue {
-  title = '';
-  readOnlyUsers = [];
+  form = {
+    title: '',
+    readOnlyUsers: [],
+    readWriteUsers: [],
+  };
   availableReadonlyUsers = [];
-  readWriteUsers = [];
   availableReadWriteUsers = [];
   sending = false;
 
+  loading = false;
+  success = false;
+  error = false;
+  stateLoading = ContentStore.StateLoading;
+  stateComplete = ContentStore.StateComplete;
 
   /**
    * If a user is added to read only users, he cannot also be added to read/write
    */
   @Watch('readOnlyUsers')
-  onReadonlyUsersChange(val, oldVal) {
+  onReadonlyUsersChange(val) {
+    this.resetSaveStatus();
     val.forEach(userId => {
       this.availableReadWriteUsers = this.availableReadWriteUsers.filter(
         availableUser => availableUser.id !== userId
@@ -93,7 +130,8 @@ export default class CoachmarkEdit extends Vue {
    * If a user is added to read/write users, he cannot also be added to read only
    */
   @Watch('readWriteUsers')
-  onReadWriteUsersChange(val, oldVal) {
+  onReadWriteUsersChange(val) {
+    this.resetSaveStatus();
     val.forEach(userId => {
       this.availableReadonlyUsers = this.availableReadonlyUsers.filter(
         availableUser => availableUser.id !== userId
@@ -103,28 +141,56 @@ export default class CoachmarkEdit extends Vue {
   }
 
   created() {
-    this.title = this.$store.currentCoachmark.title;
-    this.readOnlyUsers =
-      this.$store.currentCoachmark.readOnlyUsers || [];
-    this.readWriteUsers =
+    this.form.title = this.$store.currentCoachmark.title;
+    this.form.readOnlyUsers = this.$store.currentCoachmark.readOnlyUsers || [];
+    this.form.readWriteUsers =
       this.$store.currentCoachmark.readWriteUsers || [];
-    
+
     const users = this.$store.content.users;
     // console.log(users);
     this.availableReadonlyUsers = users.filter(
-      user => !this.readWriteUsers.includes(user.id)
+      user => !this.form.readWriteUsers.includes(user.id)
     );
     this.availableReadWriteUsers = users.filter(
-      user => !this.readOnlyUsers.includes(user.id)
+      user => !this.form.readOnlyUsers.includes(user.id)
     );
   }
 
   validate() {
     console.log('validate');
+    this.$v.$touch();
+    if (!this.$v.$invalid) {
+      this.save();
+    } else {
+      console.error(this.$v);
+    }
   }
 
-  save() {
-    this.$store.currentCoachmark.save();
+  async save() {
+    this.success = false;
+    this.error = false;
+    this.loading = true;
+    const result = await this.$store.currentCoachmark.save();
+    this.loading = false;
+    if (result.success && result.id) {
+      this.success = true;
+    } else {
+      this.error = true;
+    }
+  }
+
+  resetSaveStatus() {
+    this.$store.currentCoachmark.setSaveStatus(ContentStore.StateUninit);
+  }
+
+  getValidationClass(fieldName) {
+    const field = this.$v.form[fieldName];
+
+    if (field) {
+      return {
+        'md-invalid': field.$invalid && field.$dirty,
+      };
+    }
   }
 }
 </script>

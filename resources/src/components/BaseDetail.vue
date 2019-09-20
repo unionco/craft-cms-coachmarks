@@ -2,9 +2,9 @@
   <div md-elevation="6" class="Detail">
     <md-card>
       <!-- <md-card-header> -->
-        <div class="toolbar">
-          <slot name="toolbar"></slot>
-        </div>
+      <div class="toolbar">
+        <slot name="toolbar"></slot>
+      </div>
       <!-- </md-card-header> -->
       <md-card-content>
         <div class="content">
@@ -14,7 +14,11 @@
       <md-card-actions>
         <slot name="actions"></slot>
       </md-card-actions>
+      <div class="activity">
+        <slot name="activity"></slot>
+      </div>
     </md-card>
+    <slot name="snackbar"></slot>
   </div>
 </template>
 
@@ -33,6 +37,12 @@ export default class BaseDetail extends Vue {}
   .content {
     min-height: 200px;
     text-align: center;
+  }
+  .activity {
+      min-height: 25px;
+      .md-progress-bar {
+          margin: 12px;
+      }
   }
 }
 </style>

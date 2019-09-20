@@ -97,6 +97,9 @@ class CoachmarksController extends Controller
             // $cm->setReadWriteUsers($input->readWriteUsers);
             $result = $cm->save();
             foreach ($input->readOnlyUsers as $roUserId) {
+                if ($roUserId instanceof \stdClass) {
+                    $roUserId = $roUserId->id;
+                }
                 $user = User::find()
                     ->where(['=', 'element.id', new Expression($roUserId)])
                     ->one();
@@ -105,6 +108,9 @@ class CoachmarksController extends Controller
                 }
             }
             foreach ($input->readWriteUsers as $rwUserId) {
+                if ($rwUserId instanceof \stdClass) {
+                    $rwUserId = $rwUserId->id;
+                }
                 $user = User::find()
                     ->where(['=', 'element.id', new Expression($rwUserId)])
                     ->one();
