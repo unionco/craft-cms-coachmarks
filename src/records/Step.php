@@ -52,7 +52,7 @@ class Step extends ActiveRecord implements ApiTransformable
                     'tooltipPosition' => $step->tooltipPosition,
                     'url' => $step->url,
                     'order' => $step->order,
-                    'selectorNode' => $step->seletorNode,
+                    'selectorNode' => $step->selectorNode,
                 ];
             },
             $data

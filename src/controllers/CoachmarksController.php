@@ -33,25 +33,26 @@ class CoachmarksController extends Controller
             ])->all();
         // $coachmarksQuery = $coachmarks->createCommand()->getRawSql();
         
-        $coachmarksData = array_map(
-            /**
-             * @param Coachmark $coachmark
-             * @return array
-             */
-            function ($coachmark) {
-                return [
-                    'steps' => Step::apiTransform($coachmark->steps),
-                    'readOnlyUsers' => UserRecord::apiTransform($coachmark->readOnlyUsers),
-                    'readWriteUsers'=> UserRecord::apiTransform($coachmark->readWriteUsers),
-                ];
-            },
-            $coachmarks
-        );
+        // $coachmarksData = array_map(
+        //     /**
+        //      * @param Coachmark $coachmark
+        //      * @return array
+        //      */
+        //     function ($coachmark) {
+        //         return [
+        //             'steps' => Step::apiTransform($coachmark->steps),
+        //             'readOnlyUsers' => UserRecord::apiTransform($coachmark->readOnlyUsers),
+        //             'readWriteUsers'=> UserRecord::apiTransform($coachmark->readWriteUsers),
+        //         ];
+        //     },
+        //     $coachmarks
+        // );
         
-        return $this->asJson([
-            'all' => $all,
-            'coachmarks' => $coachmarksData,
-        ]);
+        return $this->asJson(Coachmark::apiTransform($coachmarks));
+        // ;$this->asJson([
+        //     'all' => $all,
+        //     'coachmarks' => $coachmarksData,
+        // ]);
     }
 
     public function actionOne($id)

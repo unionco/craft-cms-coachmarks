@@ -74,10 +74,8 @@ export default class ContentStore extends BaseCoachmarksStore {
       //   debugger;
       runInAction(() => {
         this._coachmarksState = ContentStore.StateComplete;
-        this.set('_coachmarks', result.coachmarks, false); // _coachmarks = result;
-        // console.log(result);
-        // console.log('loaded coachmarks');
-        // console.log(toJS(this.coachmarks));
+        this.set('_coachmarks', result, false); // _coachmarks = result;
+        console.log(toJS(result));
       });
     } catch (err) {
       runInAction(() => {

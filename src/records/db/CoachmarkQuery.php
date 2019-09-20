@@ -14,7 +14,7 @@ class CoachmarkQuery extends ActiveQuery
     public function userId($id)
     {
         return $this
-            ->addSelect('co.id')
+            ->addSelect(['co.id', 'co.title'])
             ->from('{{%coachmarks_coachmarks}} co')
             ->leftJoin('{{%coachmarks_ro_permissions}} ro', 'ro.coachmarkId = co.id')
             ->leftJoin('{{%coachmarks_rw_permissions}} rw', 'rw.coachmarkId = co.id')

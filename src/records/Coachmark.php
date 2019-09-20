@@ -18,6 +18,8 @@ use unionco\coachmarks\Coacher;
 use unionco\coachmarks\records\db\CoachmarkQuery;
 use unionco\coachmarks\records\Step;
 use craft\records\User;
+use unionco\coachmarks\models\ApiTransformable;
+use unionco\coachmarks\models\UserRecord;
 
 /**
  * Coachmark Record
@@ -35,7 +37,7 @@ use craft\records\User;
  * @package   Coacher
  * @since     1.0.0
  */
-class Coachmark extends ActiveRecord
+class Coachmark extends ActiveRecord implements ApiTransformable
 {
     public static function tableName()
     {
@@ -78,6 +80,30 @@ class Coachmark extends ActiveRecord
             $data
         );
         return $mapped;
+    }
+
+    /**
+     * @param Coachmark[] $data
+     * @return array
+     */
+    public static function apiTransform($data): array
+    {
+        return array_map(
+            /**
+             * @param Coachmark $coachmark
+             * @return array
+             */
+            function (Coachmark $coachmark) {
+                return [
+                    'id' => $coachmark->id,
+                    'title' => $coachmark->title,
+                    'steps' => Step::apiTransform($coachmark->steps),
+                    'readOnlyUsers' => UserRecord::apiTransform($coachmark->readOnlyUsers),
+                    'readWriteUsers' => UserRecord::apiTransform($coachmark->readWriteUsers),
+                ];
+            },
+            $data
+        );
     }
 
     // public function getReadOnlyUsers()
