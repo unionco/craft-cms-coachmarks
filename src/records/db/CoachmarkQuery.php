@@ -6,12 +6,6 @@ use yii\db\ActiveQuery;
 
 class CoachmarkQuery extends ActiveQuery
 {
-    public function init()
-    {
-        //
-        parent::init();
-    }
-
     public function id($id)
     {
         return $this->andOnCondition("id = :id", ['id' => $id]);
@@ -19,6 +13,12 @@ class CoachmarkQuery extends ActiveQuery
 
     public function userId($id)
     {
-        return $this->andOnCondition("permissions like '%userId\":\"" . $id . "\"%'");
+        return $this
+            ->addSelect('co.id')
+            ->from('{{%coachmarks_coachmarks}} co')
+            ->leftJoin('{{%coachmarks_ro_permissions}} ro', 'ro.coachmarkId = co.id')
+            ->leftJoin('{{%coachmarks_rw_permissions}} rw', 'rw.coachmarkId = co.id')
+            ->andWhere(['=', 'ro.userId', $id])
+            ->orWhere(['=', 'rw.userid', $id]);
     }
 }

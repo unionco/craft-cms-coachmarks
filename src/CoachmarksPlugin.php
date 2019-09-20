@@ -137,7 +137,11 @@ class CoachmarksPlugin extends Plugin
         } else {
             $this->controllerNamespace = 'unionco\coachmarks\controllers';
             // Craft::$app->getView()->registerTwigExtension(new SyncDbTwigExtension());
-        } 
+        }
+        
+        if (!Craft::$app->getRequest()->getIsCpRequest()) {
+            return;
+        }
 
         // Register our elements
         // Event::on(

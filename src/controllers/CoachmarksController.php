@@ -3,8 +3,12 @@
 namespace unionco\coachmarks\controllers;
 
 use Craft;
+use yii\db\Expression;
 use craft\helpers\Json;
+use craft\records\User;
 use craft\web\Controller;
+use unionco\coachmarks\records\Step;
+use unionco\coachmarks\models\UserRecord;
 use unionco\coachmarks\records\Coachmark;
 
 class CoachmarksController extends Controller
@@ -13,25 +17,37 @@ class CoachmarksController extends Controller
 
     public function actionIndex()
     {
-        $user = Craft::$app->getUser()->getIdentity();
+        // During development, allow user id to be passed in
+        $userId = Craft::$app->getRequest()->getQueryParam('userId');
+        if (!$userId) {
+            $user = Craft::$app->getUser()->getIdentity();
+            $userId = $user->id;
+        }
         $all = Coachmark::find()->all();
         $coachmarks = Coachmark::find()
-            ->userId($user->id)
-            ->with(['steps'])
-        // var_dump($coachmarks->rawSql); die;
-            ->all();
+            ->userId($userId)
+            ->with([
+                'steps',
+                'readOnlyUsers',
+                'readWriteUsers',
+            ])->all();
+        // $coachmarksQuery = $coachmarks->createCommand()->getRawSql();
+        
         $coachmarksData = array_map(
+            /**
+             * @param Coachmark $coachmark
+             * @return array
+             */
             function ($coachmark) {
                 return [
-                    'id' => $coachmark->id,
-                    'title' => $coachmark->title,
-                    'steps' => $coachmark->steps,
-                    'readOnlyUsers' => $coachmark->readOnlyUsers,
-                    'readWriteUsers' => $coachmark->readWriteUsers,
+                    'steps' => Step::apiTransform($coachmark->steps),
+                    'readOnlyUsers' => UserRecord::apiTransform($coachmark->readOnlyUsers),
+                    'readWriteUsers'=> UserRecord::apiTransform($coachmark->readWriteUsers),
                 ];
             },
             $coachmarks
         );
+        
         return $this->asJson([
             'all' => $all,
             'coachmarks' => $coachmarksData,
@@ -76,9 +92,25 @@ class CoachmarksController extends Controller
                 $cm = new Coachmark();
             }
             $cm->title = $input->title;
-            $cm->setReadOnlyUsers($input->readOnlyUsers);
-            $cm->setReadWriteUsers($input->readWriteUsers);
+            // $cm->setReadOnlyUsers($input->readOnlyUsers);
+            // $cm->setReadWriteUsers($input->readWriteUsers);
             $result = $cm->save();
+            foreach ($input->readOnlyUsers as $roUserId) {
+                $user = User::find()
+                    ->where(['=', 'element.id', new Expression($roUserId)])
+                    ->one();
+                if ($user) {
+                    $cm->link('readOnlyUsers', $user);
+                }
+            }
+            foreach ($input->readWriteUsers as $rwUserId) {
+                $user = User::find()
+                    ->where(['=', 'element.id', new Expression($rwUserId)])
+                    ->one();
+                if ($user) {
+                    $cm->link('readWriteUsers', $user);
+                }
+            }
 
             return $this->asJson([
                 'success' => $result,

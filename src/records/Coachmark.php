@@ -37,11 +37,29 @@ use craft\records\User;
  */
 class Coachmark extends ActiveRecord
 {
-    const DEFAULT_PERMISSIONS = [];
-    
     public static function tableName()
     {
         return '{{%coachmarks_coachmarks}}';
+    }
+
+    public function getReadOnlyUsers()
+    {
+        return $this->hasMany(User::className(), [
+            'id' => 'userId',
+        ])
+            ->viaTable('{{%coachmarks_ro_permissions}}', [
+                'coachmarkId' => 'id',
+            ]);
+    }
+
+    public function getReadWriteUsers()
+    {
+        return $this->hasMany(User::className(), [
+            'id' => 'userId',
+        ])
+            ->viaTable('{{%coachmarks_rw_permissions}}', [
+                'coachmarkId' => 'id',
+            ]);
     }
 
     public static function find(): CoachmarkQuery
@@ -62,125 +80,125 @@ class Coachmark extends ActiveRecord
         return $mapped;
     }
 
-    public function getReadOnlyUsers()
-    {
-        $data = Json::decode($this->permissions, false) ?? [];
-        $filtered = array_filter($data, function ($permission) {
-            return $permission->readWrite === false;
-        });
-        $mapped = array_map(
-            function ($permission) {
-                return $permission->userId;
-            },
-            $filtered
-        );
-        return $mapped;
-    }
+    // public function getReadOnlyUsers()
+    // {
+    //     $data = Json::decode($this->permissions, false) ?? [];
+    //     $filtered = array_filter($data, function ($permission) {
+    //         return $permission->readWrite === false;
+    //     });
+    //     $mapped = array_map(
+    //         function ($permission) {
+    //             return $permission->userId;
+    //         },
+    //         $filtered
+    //     );
+    //     return $mapped;
+    // }
 
-    public function addReadOnlyUser($id)
-    {
-        if ($id instanceof User) {
-            $id = $id->id;
-        }
-        $this->removeUserPermission($id);
-        $data = Json::decode($this->permissions);
-        $data[] = [
-            'userId' => $id,
-            'readWrite' => false,
-        ];
-        $this->permissions = Json::encode($data);
-    }
+    // public function addReadOnlyUser($id)
+    // {
+    //     if ($id instanceof User) {
+    //         $id = $id->id;
+    //     }
+    //     $this->removeUserPermission($id);
+    //     $data = Json::decode($this->permissions);
+    //     $data[] = [
+    //         'userId' => $id,
+    //         'readWrite' => false,
+    //     ];
+    //     $this->permissions = Json::encode($data);
+    // }
 
-    public function removeAllReadOnlyUsers()
-    {
-        $data = Json::decode($this->permissions, false);
-        if (!$data) {
-            $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
-            return;
-        }
-        // Remove all readOnly users
-        $data = array_filter(
-            $data,
-            function ($permission) {
-                return $permission->readWrite === true;
-            }
-        );
-        $this->permissions = Json::encode($data);
-    }
+    // public function removeAllReadOnlyUsers()
+    // {
+    //     $data = Json::decode($this->permissions, false);
+    //     if (!$data) {
+    //         $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
+    //         return;
+    //     }
+    //     // Remove all readOnly users
+    //     $data = array_filter(
+    //         $data,
+    //         function ($permission) {
+    //             return $permission->readWrite === true;
+    //         }
+    //     );
+    //     $this->permissions = Json::encode($data);
+    // }
 
-    public function setReadOnlyUsers($ids)
-    {
-        $this->removeAllReadOnlyUsers();
-        foreach ($ids as $id) {
-            $this->addReadOnlyUser($id);
-        }
-    }
+    // public function setReadOnlyUsers($ids)
+    // {
+    //     $this->removeAllReadOnlyUsers();
+    //     foreach ($ids as $id) {
+    //         $this->addReadOnlyUser($id);
+    //     }
+    // }
 
-    public function removeUserPermission($id)
-    {
-        if ($id instanceof User) {
-            $id = $id->id;
-        }
-        $data = Json::decode($this->permissions, false) ?? [];
-        $data = array_filter($data, function ($permission) use ($id) {
-            $permission->userId !== $id;
-        });
-        $this->permissions = Json::encode($data);
-    }
+    // public function removeUserPermission($id)
+    // {
+    //     if ($id instanceof User) {
+    //         $id = $id->id;
+    //     }
+    //     $data = Json::decode($this->permissions, false) ?? [];
+    //     $data = array_filter($data, function ($permission) use ($id) {
+    //         $permission->userId !== $id;
+    //     });
+    //     $this->permissions = Json::encode($data);
+    // }
 
-    public function addReadWriteUser($id)
-    {
-        if ($id instanceof User) {
-            $id = $id->id;
-        }
-        // Remove from readonly, if user is already on this coachmark
-        $this->removeUserPermission($id);
-        $data = Json::decode($this->permissions, false) ?? [];
-        $data[] = [
-            'userId' => $id,
-            'readWrite' => true,
-        ];
-        $this->permissions = Json::encode($data);
-    }
+    // public function addReadWriteUser($id)
+    // {
+    //     if ($id instanceof User) {
+    //         $id = $id->id;
+    //     }
+    //     // Remove from readonly, if user is already on this coachmark
+    //     $this->removeUserPermission($id);
+    //     $data = Json::decode($this->permissions, false) ?? [];
+    //     $data[] = [
+    //         'userId' => $id,
+    //         'readWrite' => true,
+    //     ];
+    //     $this->permissions = Json::encode($data);
+    // }
 
-    public function getReadWriteUsers()
-    {
-        $data = Json::decode($this->permissions, false) ?? [];
-        $filtered = array_filter($data, function ($permission) {
-            return $permission->readWrite === true;
-        });
-        $mapped = array_map(
-            function ($permission) {
-                return $permission->userId;
-            },
-            $filtered
-        );
-        return $mapped;
-    }
+    // public function getReadWriteUsers()
+    // {
+    //     $data = Json::decode($this->permissions, false) ?? [];
+    //     $filtered = array_filter($data, function ($permission) {
+    //         return $permission->readWrite === true;
+    //     });
+    //     $mapped = array_map(
+    //         function ($permission) {
+    //             return $permission->userId;
+    //         },
+    //         $filtered
+    //     );
+    //     return $mapped;
+    // }
 
-    public function removeAllReadWriteUsers()
-    {
-        $data = Json::decode($this->permissions, false);
-        if (!$data) {
-            $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
-        }
-        // Remove all read/write users
-        $data = array_filter(
-            $data,
-            function ($permission) {
-                return $permission->readWrite === false;
-            }
-        );
-        $this->permissions = Json::encode($data);
-    }
+    // public function removeAllReadWriteUsers()
+    // {
+    //     $data = Json::decode($this->permissions, false);
+    //     if (!$data) {
+    //         $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
+    //     }
+    //     // Remove all read/write users
+    //     $data = array_filter(
+    //         $data,
+    //         function ($permission) {
+    //             return $permission->readWrite === false;
+    //         }
+    //     );
+    //     $this->permissions = Json::encode($data);
+    // }
 
-    public function setReadWriteUsers($ids)
-    {
-        $this->removeAllReadWriteUsers();
-        foreach ($ids as $id) {
-            $this->addReadWriteUser($id);
-        }
-    }
+    // public function setReadWriteUsers($ids)
+    // {
+    //     $this->removeAllReadWriteUsers();
+    //     foreach ($ids as $id) {
+    //         $this->addReadWriteUser($id);
+    //     }
+    // }
 
     public function getSteps()
     {
