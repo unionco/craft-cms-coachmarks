@@ -1,5 +1,5 @@
 import { observable, action, runInAction, toJS, computed } from 'mobx';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 import {
   getCoachmarks as getCoachmarksApi,
   newCoachmark,

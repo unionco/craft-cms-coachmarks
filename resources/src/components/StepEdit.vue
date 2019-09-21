@@ -52,6 +52,7 @@
     <template v-slot:actions></template>
     <template v-slot:snackbar>
         <md-snackbar :md-active.sync="success">Step saved</md-snackbar>
+        <md-snackbar :md-active.sync="error">Error</md-snackbar>
     </template>
   </BaseDetail>
 </template>
@@ -129,8 +130,9 @@ export default class StepEdit extends Vue {
   setSelectedComponent(e) {
     e.preventDefault();
     console.log(e.target.getSelector());
-    this.nodeSelector = e.target.getSelector();
-    this.$store.currentStep.setSelectedNode(e.target.getSelector());
+    this.form.nodeSelector = e.target.getSelector();
+    // this.form.selectedNode = e.target.getSelector();
+    // this.$store.currentStep.setSelectedNode(e.target.getSelector());
     this.componentSelectMode = false;
   }
 
@@ -143,6 +145,9 @@ export default class StepEdit extends Vue {
     this.success = false;
     this.error = false;
     this.loading = true;
+    this.$store.currentStep.setTooltipPosition(this.form.tooltipPosition);
+    this.$store.currentStep.setLabel(this.form.label);
+    this.$store.currentStep.setSelectedNode(this.form.nodeSelector);
     const result = await this.$store.currentStep.save(
       this.$store.ui.coachmarkId
     );

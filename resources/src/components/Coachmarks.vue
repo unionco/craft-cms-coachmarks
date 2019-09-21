@@ -16,6 +16,7 @@
       </div>
     </div>
     <StepBox v-if="$store.ui.stepActive" />
+    <DebugCard/>
   </div>
 </template>
 
@@ -31,6 +32,7 @@ import StepsEdit from './StepsEdit.vue';
 import StepEdit from './StepEdit.vue';
 import '../scss/global.scss';
 import StepBox from './StepBox.vue';
+import DebugCard from './debug/DebugCard.vue';
 
 @Observer
 @Component({
@@ -44,6 +46,7 @@ import StepBox from './StepBox.vue';
     StepsEdit,
     StepEdit,
     StepBox,
+    DebugCard,
   },
 })
 export default class Coachmarks extends Vue {

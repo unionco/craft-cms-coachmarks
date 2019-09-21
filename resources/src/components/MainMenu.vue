@@ -15,22 +15,8 @@
           class="md-raised md-primary"
         >Create a new coachmark</md-button>
         <md-divider />
-        <div class="md-headline">Your coachmarks</div>
-        <md-list v-if="$store.content.coachmarks.length">
-          <md-list-item
-            v-for="coachmark in $store.content.coachmarks"
-            :key="coachmark.id"
-            @click="() => $store.goToCoachmark(coachmark.id)"
-          >{{ coachmark.title }}</md-list-item>
-        </md-list>
-        <md-empty-state
-          v-else
-          md-size="120"
-          class="md-primary"
-          md-icon="menu"
-          md-label="No Coachmarks Yet"
-          md-description="Create a new Coachmark to get started"
-        />
+        <div class="md-title">Your coachmarks</div>
+        <CoachmarkList :coachmarks="$store.content.coachmarks" />
       </div>
     </md-card-content>
   </div>
@@ -39,11 +25,14 @@
 <script>
 import { Component, Vue, Inject } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
+import CoachmarkList from './CoachmarkList.vue';
 
 @Observer
 @Component({
   name: 'main-menu',
-  components: {},
+  components: {
+    CoachmarkList,
+  },
 })
 export default class MainMenu extends Vue {
   handleOpenChanged(e) {

@@ -9,8 +9,8 @@
         <!-- Title -->
         <h3 class="md-title" style="flex: 1">Edit Steps</h3>
         <!-- Cancel Button -->
-        <md-button class="md-primary md-icon-button">
-          <md-icon>cancel</md-icon>
+        <md-button class="md-primary md-icon-button" @click="$store.newStep">
+          <md-icon>add</md-icon>
         </md-button>
       </md-toolbar>
     </template>

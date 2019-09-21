@@ -22,13 +22,22 @@ export default class RootStore {
     this.ui.setStepId(null);
   }
 
+  /**
+   * Navigate to the Edit Coachmark view
+   * @param {Number|Event|null} id 
+   */
   @action.bound editCoachmark(id = false) {
-    if (!id) {
+    // console.log('editCoachmark', id);
+    if (!id || id instanceof Event) {
       id = this.ui.coachmarkId;
     }
     this.ui.setCoachmarkId(id);
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
     const coachmark = this.content.coachmarks.find(c => c.id === id);
+    if (!coachmark) {
+        console.error('Could not find coachmark with ID: ', id);
+        return;
+    }
     this.currentCoachmark.setCurrentCoachmark({
       id,
       title: coachmark.title,

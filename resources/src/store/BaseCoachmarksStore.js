@@ -1,5 +1,5 @@
 import { toJS, action } from 'mobx';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 
 export default class BaseCoachmarksStore {
     cookieName() {
@@ -14,7 +14,7 @@ export default class BaseCoachmarksStore {
         let data = {}
         for (const key of Object.keys(this)) {
             if (key.indexOf('_') === 0 && this[key] !== undefined && !this.skipProperties().includes(key)) {
-                console.log(key, toJS(this[key]));
+                // console.log(key, toJS(this[key]));
                 data[key] = this[key];
             }
         }
@@ -51,11 +51,11 @@ export default class BaseCoachmarksStore {
 
     writeState() {
         console.log('writeState', this.cookieName());
-        Cookies.set(this.cookieName(), this.serialize());
+        localStorage.setItem(this.cookieName(), this.serialize());
     }
 
     @action.bound restore() {
-        const state = Cookies.get(this.cookieName());
+        const state = localStorage.getItem(this.cookieName());
         this.deserialize(state);
     }
     
