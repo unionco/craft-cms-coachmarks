@@ -3,10 +3,10 @@
     <md-list-item v-for="coachmark in $props.coachmarks" :key="coachmark.id">
       {{ coachmark.title }}
       <div>
-        <md-button class="md-icon-button" @click="() => $store.editCoachmark(coachmark.id)">
+        <md-button class="md-icon-button" @click="() => $store.ui.editCoachmark(coachmark.id)">
             <md-icon>edit</md-icon>
         </md-button>
-        <md-button class="md-icon-button" @click="() => $store.startCoachmark(coachmark.id)">
+        <md-button class="md-icon-button" @click="() => $store.ui.startCoachmark(coachmark.id)">
             <md-icon>play_arrow</md-icon>
         </md-button>
       </div>

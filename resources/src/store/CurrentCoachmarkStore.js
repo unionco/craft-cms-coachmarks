@@ -4,6 +4,11 @@ import ContentStore from './ContentStore';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 
 export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
+  constructor(rootStore) {
+      super();
+      this.rootStore = rootStore;
+  }
+  rootStore = undefined;
   @observable _id = 0;
   @observable _title = '';
   @observable _readOnlyUsers = [];
@@ -92,6 +97,7 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
     if (result.success && result.id) {
       this.setSaveStatus(ContentStore.StateComplete);
       this.setId(result.id);
+      this.rootStore.content.fetchCoachmarks(true);
     } else {
       this.setSaveStatus(ContentStore.StateError);
     }

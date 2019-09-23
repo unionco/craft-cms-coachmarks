@@ -2,9 +2,15 @@ import { observable, action, computed, autorun, toJS } from 'mobx';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 
 export default class UiStore extends BaseCoachmarksStore {
+  constructor(rootStore) {
+    super();
+    this.rootStore = rootStore;
+  }
   cookieName() {
     return 'cm-ui';
   }
+
+  rootStore = undefined;
 
   static CookieName = 'cm-ui';
   /** Page Types */
@@ -39,6 +45,11 @@ export default class UiStore extends BaseCoachmarksStore {
 
   @computed get stepActive() {
     return this._stepActive;
+  }
+
+  @action.bound setStepActive(active) {
+    this._stepActive = active;
+    this.writeState();
   }
 
   @action setOpen(open) {
@@ -121,21 +132,20 @@ export default class UiStore extends BaseCoachmarksStore {
   }
 
   @computed get currentStepIndex() {
-      const currentIndex = this._steps.indexOf(this.stepId);
-      return currentIndex > -1 ? currentIndex : false;
+    const currentIndex = this._steps.indexOf(this.stepId);
+    return currentIndex > -1 ? currentIndex : false;
   }
 
   @computed get numberOfSteps() {
-      return this._steps.length;
+    return this._steps.length;
   }
 
   @computed get stepProgress() {
-      if (this.numberOfSteps) {
-        return 100*(this.currentStepIndex + 1)/(this.numberOfSteps);
-      } else {
-          return 0;
-      }
-
+    if (this.numberOfSteps) {
+      return (100 * (this.currentStepIndex + 1)) / this.numberOfSteps;
+    } else {
+      return 0;
+    }
   }
 
   @computed get previousStepIndex() {
@@ -147,8 +157,13 @@ export default class UiStore extends BaseCoachmarksStore {
   @computed get nextStepIndex() {
     const currentStepIndex = this._steps.indexOf(this.stepId);
     const nextIndex =
-      currentStepIndex < (this._steps.length - 1) ? currentStepIndex + 1 : false;
+      currentStepIndex < this._steps.length - 1 ? currentStepIndex + 1 : false;
     return nextIndex;
+  }
+
+  @action.bound exitPlayMode() {
+    this.setPageType(UiStore.PTMainMenu);
+    this.setStepActive(false);
   }
 
   @action.bound goToNextStep() {
@@ -156,6 +171,7 @@ export default class UiStore extends BaseCoachmarksStore {
     const nextStep = this._steps[nextStepIndex] || false;
     if (nextStep) {
       this.setStepId(nextStep);
+      this.updateStepBoxParams();
     }
     return nextStep;
   }
@@ -165,7 +181,120 @@ export default class UiStore extends BaseCoachmarksStore {
     const previousStep = this._steps[previousStepIndex] || false;
     if (previousStep) {
       this.setStepId(previousStep);
+      this.updateStepBoxParams();
     }
     return previousStep;
+  }
+
+  @action.bound updateStepBoxParams() {
+    const selector = this.rootStore.step.selectorNode;
+    console.log(selector);
+    const element = document.querySelector(selector);
+    const rect = element.getBoundingClientRect();
+    this.setStepBoxPosition(rect);
+    console.log(element);
+
+    this.setStepActive(true);
+    if (this.stepActive) {
+      document.body.classList.add('u-coachmarks');
+    } else {
+      document.body.classList.remove('u-coachmarks');
+    }
+    this.setTooltipPosition(this.rootStore.step.tooltipPosition);
+  }
+
+  @action.bound startCoachmark(id = false) {
+    if (!id || id instanceof Event) {
+      id = this.coachmarkId;
+    }
+    this.setCoachmarkId(id);
+    this.setPageType(UiStore.PTCoachmarkPlay);
+    if (!this.stepId) {
+      const steps = this.rootStore.content.getCoachmarkSteps(id);
+      if (!steps) {
+        console.warn('steps is undefined');
+        return;
+      }
+      const stepIds = steps.map(step => step.id);
+      this.setSteps(stepIds);
+      this.setStepId(stepIds[0]);
+    }
+    // Activate play
+    this.setStepActive(true);
+  }
+
+  /** Navigation */
+  @action.bound goToMainMenu() {
+    this.setPageType(UiStore.PTMainMenu);
+    this.setCoachmarkId(null);
+    this.setStepId(null);
+  }
+
+  @action.bound goToCoachmark(id = false) {
+    if (!id || id instanceof Event) {
+      id = this.coachmarkId;
+    }
+    this.setCoachmarkId(id);
+    this.setPageType(UiStore.PTCoachmarkDetail);
+  }
+
+  /**
+   * Navigate to the Edit Coachmark view
+   * @param {Number|Event|null} id
+   */
+  @action.bound editCoachmark(id = false) {
+    // console.log('editCoachmark', id);
+    if (!id || id instanceof Event) {
+      id = this.coachmarkId;
+    }
+    this.setCoachmarkId(id);
+    this.setPageType(UiStore.PTCoachmarkEdit);
+    const coachmark = this.rootStore.content.coachmarks.find(c => c.id === id);
+    if (!coachmark) {
+      console.error('Could not find coachmark with ID: ', id);
+      return;
+    }
+    this.rootStore.currentCoachmark.setCurrentCoachmark({
+      id,
+      title: coachmark.title,
+      readOnlyUsers: coachmark.readOnlyUsers,
+      readWriteUsers: coachmark.readWriteUsers,
+    });
+  }
+
+  @action.bound createNewCoachmark() {
+    this.setCoachmarkId(ContentStore.NewCoachmarkId);
+    this.setStepId(null);
+    this.setPageType(UiStore.PTCoachmarkEdit);
+    this.rootStore.currentCoachmark.setCurrentCoachmark({
+      id: ContentStore.NewCoachmarkId,
+      name: '',
+      //   steps: [],
+      //   createdBy: 'someUser',
+      readonlyUsers: [],
+      readWriteUsers: [],
+    });
+  }
+
+  @action.bound editSteps() {
+    this.setPageType(UiStore.PTStepsEdit);
+  }
+
+  @action.bound editStep(id) {
+    this.setStepId(id);
+    // this.setCoachmarkId(id);
+    this.setPageType(UiStore.PTStepEdit);
+  }
+
+  @action.bound newStep() {
+    this.setPageType(UiStore.PTStepEdit);
+    this.rootStore.currentStep.configure({
+      id: ContentStore.NewCoachmarkId,
+      coachmarkId: this.coachmarkId,
+      label: '',
+      nodeSelector: '',
+      tooltipPosition: 'bottom',
+      order: 1,
+    });
   }
 }

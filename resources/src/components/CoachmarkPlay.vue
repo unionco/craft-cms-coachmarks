@@ -4,7 +4,7 @@
       <md-progress-bar md-mode="determinate" :md-value="$store.ui.stepProgress" />
     </div>
     <div class="row">
-      <md-button class="md-icon-button" @click="$store.goToCoachmark">
+      <md-button class="md-icon-button" @click="$store.ui.exitPlayMode">
         <md-icon>cancel</md-icon>
       </md-button>
       <md-button

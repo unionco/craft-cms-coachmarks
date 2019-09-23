@@ -4,6 +4,11 @@ import { newStep } from '../api/Steps';
 import ContentStore from './ContentStore';
 
 export default class CurrentStepStore extends BaseCoachmarksStore {
+  constructor(rootStore) {
+      super();
+      this.rootStore = rootStore;
+  }
+  rootStore = undefined;
   @observable _id = 0;
   @observable _selectedNode = '';
   @observable _label = '';
@@ -76,6 +81,7 @@ export default class CurrentStepStore extends BaseCoachmarksStore {
     if (result.success && result.id) {
       this._saveStatus = ContentStore.StateComplete;
       this.setId(result.id);
+      this.rootStore.content.fetchCoachmarks(true);
     } else {
       this._saveStatus = ContentStore.StateError;
     }

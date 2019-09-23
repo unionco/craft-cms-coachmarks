@@ -3,7 +3,7 @@
     <template v-slot:toolbar>
       <md-toolbar class="md-accent" md-elevation="1">
         <!-- Back Button -->
-        <md-button class="md-icon-button" @click="$store.goToMainMenu">
+        <md-button class="md-icon-button" @click="$store.ui.goToMainMenu">
           <md-icon>arrow_back</md-icon>
         </md-button>
         <!-- Title -->
@@ -58,7 +58,7 @@
       <md-button
         v-if="$store.currentCoachmark.id > 0"
         class="md-secondary md-raised"
-        @click="$store.editSteps"
+        @click="$store.ui.editSteps"
       >Edit Steps</md-button>
     </template>
     <template v-slot:activity>

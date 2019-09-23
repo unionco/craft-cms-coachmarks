@@ -1,13 +1,14 @@
 import { observable, action, runInAction, toJS, computed } from 'mobx';
 // import Cookies from 'js-cookie';
-import {
-  getCoachmarks as getCoachmarksApi,
-  newCoachmark,
-} from '../api/Coachmarks';
+import { getCoachmarks as getCoachmarksApi } from '../api/Coachmarks';
 import { getUsers as getUsersApi } from '../api/Users';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 
 export default class ContentStore extends BaseCoachmarksStore {
+  constructor(rootStore) {
+    super();
+    this.rootStore = rootStore;
+  }
   cookieName() {
     return 'cm-content';
   }
@@ -26,6 +27,8 @@ export default class ContentStore extends BaseCoachmarksStore {
   static StateError = 'error';
   static StateComplete = 'complete';
 
+  rootStore = undefined;
+
   /** Coachmarks */
   @observable _coachmarks = [];
   @observable _users = [];
@@ -34,14 +37,14 @@ export default class ContentStore extends BaseCoachmarksStore {
   @observable _usersState = ContentStore.StateUninit;
 
   //   @observable _currentCoachmark = {};
-//   @observable _currentStep = {};
+  //   @observable _currentStep = {};
 
   @action.bound reset() {
-      this._coachmarks = [];
-      this._users = [];
-      this._coachmarkSaveState = ContentStore.StateUninit;
-      this._coachmarkState = ContentStore.StateUninit;
-      this._usersState = ContentStore.StateUninit;
+    this._coachmarks = [];
+    this._users = [];
+    this._coachmarkSaveState = ContentStore.StateUninit;
+    this._coachmarkState = ContentStore.StateUninit;
+    this._usersState = ContentStore.StateUninit;
   }
 
   @action.bound setCoachmarks(cm) {
@@ -64,34 +67,30 @@ export default class ContentStore extends BaseCoachmarksStore {
     return this._coachmarksState;
   }
 
-  @action async fetchCoachmarks() {
+  @action async fetchCoachmarks(background = false) {
     console.log('ContentStore.fetchCoachmarks()');
     this._coachmarks = [];
-    this._coachmarksState = ContentStore.StateLoading;
+    if (!background) {
+      this._coachmarksState = ContentStore.StateLoading;
+    }
     try {
       const result = await getCoachmarksApi();
       //   debugger;
       runInAction(() => {
-        this._coachmarksState = ContentStore.StateComplete;
+        if (!background) {
+          this._coachmarksState = ContentStore.StateComplete;
+        }
         this.set('_coachmarks', result, false); // _coachmarks = result;
         console.log(toJS(result));
       });
     } catch (err) {
       runInAction(() => {
-        this._coachmarksState = ContentStore.StateError;
+        if (!background) {
+          this._coachmarksState = ContentStore.StateError;
+        }
       });
     }
   }
-
-//   @action async saveCoachmark(data) {
-//     // this._coachmarkSaveState = ContentStore.StateUninit;
-//     this._coachmarkSaveState = ContentStore.StateLoading;
-//     await setTimeout(() => {}, 5000);
-//     debugger;
-//     const result = await newCoachmark(data);
-//     this._coachmarkSaveState = ContentStore.StateComplete;
-//     console.log(result);
-//   }
 
   @computed get steps() {
     const steps = [];
@@ -143,25 +142,28 @@ export default class ContentStore extends BaseCoachmarksStore {
   }
 
   getUser(id) {
-      if (this.usersState !== ContentStore.StateComplete) {
-          return null;
-      }
-      return this.users.find(u => u.id === id);
+    if (this.usersState !== ContentStore.StateComplete) {
+      return null;
+    }
+    return this.users.find(u => u.id === id);
   }
 
   getCoachmark(coachmarkId) {
-      const coachmark = this._coachmarks.filter(c => c.id === coachmarkId);
-      if (coachmark.length) {
-          return coachmark[0];
-      }
-      return coachmark;
+    const coachmark = this._coachmarks.filter(c => c.id === coachmarkId);
+    if (coachmark.length) {
+      return coachmark[0];
+    }
+    return coachmark;
   }
 
-  getCoachmarkSteps(coachmarkId) {
+  getCoachmarkSteps(coachmarkId = null) {
+    if (!coachmarkId || coachmarkId instanceof Event) {
+      coachmarkId = this.rootStore.ui.coachmarkId;
+    }
     const coachmark = this.getCoachmark(coachmarkId);
     if (coachmark) {
-        console.log(toJS(coachmark));
-        return coachmark.steps;
+      console.log(toJS(coachmark));
+      return coachmark.steps;
     }
     return [];
   }

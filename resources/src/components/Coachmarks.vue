@@ -6,7 +6,7 @@
         <div v-if="!$store.content.loaded">
           <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
         </div>
-        <div v-else-if="!$store.ui.stepActive" class="page">
+        <div v-else class="page">
           <component
             v-if="$store.ui.open"
             v-bind:is="$store.ui.pageType"
@@ -15,7 +15,10 @@
         </div>
       </div>
     </div>
-    <StepBox v-if="$store.ui.stepActive" />
+    <StepBox v-if="$store.ui.stepActive" 
+    :position="$store.ui.stepBoxPosition"
+    :tooltip-position="$store.ui.tooltipPosition"
+    />
     <DebugCard/>
   </div>
 </template>

@@ -4,7 +4,7 @@
       <div v-if="coachmark">
         <md-toolbar class="md-accent" md-elevation="1">
           <!-- Back Button  -->
-          <md-button class="md-icon-button" @click="$store.goToMainMenu">
+          <md-button class="md-icon-button" @click="$store.ui.goToMainMenu">
             <md-icon>arrow_back</md-icon>
           </md-button>
           <!-- Title -->
@@ -13,7 +13,7 @@
           <md-button
             v-if="$store.coachmarkEditable"
             class="md-primary md-icon-button"
-            @click="() => $store.editCoachmark(coachmark.id)"
+            @click="() => $store.ui.editCoachmark(coachmark.id)"
           >
             <md-icon>edit</md-icon>
           </md-button>
@@ -21,7 +21,7 @@
       </div>
       <div v-else>
         <md-toolbar class="md-accent" md-elevation="1">
-          <md-button @click="$store.goToMainMenu">
+          <md-button @click="$store.ui.goToMainMenu">
             <md-icon>arrow_back</md-icon>
           </md-button>
         </md-toolbar>
@@ -36,10 +36,10 @@
             class="md-raised"
             @click="() => $store.ui.setStepId($store.step.id)"
           >Start Coachmarks</md-button>-->
-          <md-button
+          <!-- <md-button
             class="md-raised"
             @click="$store.toggleStepActive"
-          >{{$store.ui.stepActive ? 'Disable' : 'Enable' }} Step</md-button>
+          >{{$store.ui.stepActive ? 'Disable' : 'Enable' }} Step</md-button> -->
 
           <md-steppers
             v-if="coachmark.steps !== undefined && coachmark.steps.length"

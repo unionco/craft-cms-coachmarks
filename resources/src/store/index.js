@@ -5,102 +5,10 @@ import CurrentCoachmarkStore from './CurrentCoachmarkStore';
 import CurrentStepStore from './CurrentStepStore';
 
 export default class RootStore {
-  @observable ui = new UiStore();
-  @observable content = new ContentStore();
-  @observable currentCoachmark = new CurrentCoachmarkStore();
-  @observable currentStep = new CurrentStepStore();
-
-  /** Navigation */
-  @action.bound goToCoachmark(id = false) {
-    if (!id || id instanceof Event) {
-      id = this.ui.coachmarkId;
-    }
-    this.ui.setCoachmarkId(id);
-    this.ui.setPageType(UiStore.PTCoachmarkDetail);
-  }
-
-  @action.bound goToMainMenu() {
-    this.ui.setPageType(UiStore.PTMainMenu);
-    this.ui.setCoachmarkId(null);
-    this.ui.setStepId(null);
-  }
-
-  /**
-   * Navigate to the Edit Coachmark view
-   * @param {Number|Event|null} id
-   */
-  @action.bound editCoachmark(id = false) {
-    // console.log('editCoachmark', id);
-    if (!id || id instanceof Event) {
-      id = this.ui.coachmarkId;
-    }
-    this.ui.setCoachmarkId(id);
-    this.ui.setPageType(UiStore.PTCoachmarkEdit);
-    const coachmark = this.content.coachmarks.find(c => c.id === id);
-    if (!coachmark) {
-      console.error('Could not find coachmark with ID: ', id);
-      return;
-    }
-    this.currentCoachmark.setCurrentCoachmark({
-      id,
-      title: coachmark.title,
-      readOnlyUsers: coachmark.readOnlyUsers,
-      readWriteUsers: coachmark.readWriteUsers,
-    });
-  }
-
-  @action.bound startCoachmark(id = false) {
-    if (!id || id instanceof Event) {
-      id = this.ui.coachmarkId;
-    }
-    this.ui.setCoachmarkId(id);
-    this.ui.setPageType(UiStore.PTCoachmarkPlay);
-    if (!this.ui.stepId) {
-      const steps = this.content.getCoachmarkSteps(id);
-      if (!steps) {
-          console.warn('steps is undefined');
-          return;
-      }
-      const stepIds = steps.map(step => step.id);
-      this.ui.setSteps(stepIds);
-      this.ui.setStepId(stepIds[0]);
-    }
-  }
-
-  @action.bound createNewCoachmark() {
-    this.ui.setCoachmarkId(ContentStore.NewCoachmarkId);
-    this.ui.setStepId(null);
-    this.ui.setPageType(UiStore.PTCoachmarkEdit);
-    this.currentCoachmark.setCurrentCoachmark({
-      id: ContentStore.NewCoachmarkId,
-      name: '',
-      //   steps: [],
-      //   createdBy: 'someUser',
-      readonlyUsers: [],
-      readWriteUsers: [],
-    });
-  }
-
-  @action.bound editSteps() {
-    this.ui.setPageType(UiStore.PTStepsEdit);
-  }
-
-  @action.bound editStep(id) {
-    this.ui.setCoachmarkId(id);
-    this.ui.setPageType(UiStore.PTStepEdit);
-  }
-
-  @action.bound newStep() {
-    this.ui.setPageType(UiStore.PTStepEdit);
-    this.currentStep.configure({
-      id: ContentStore.NewCoachmarkId,
-      coachmarkId: this.ui.coachmarkId,
-      label: '',
-      nodeSelector: '',
-      tooltipPosition: 'bottom',
-      order: 1,
-    });
-  }
+  @observable ui = new UiStore(this);
+  @observable content = new ContentStore(this);
+  @observable currentCoachmark = new CurrentCoachmarkStore(this);
+  @observable currentStep = new CurrentStepStore(this);
 
   @computed get coachmark() {
     // console.log('getting coachmark for id: ', this.ui.coachmarkId);
@@ -120,18 +28,6 @@ export default class RootStore {
       stepId = this.ui.stepId;
     }
     return this.content.steps.find(s => s.id === stepId);
-  }
-
-  /**
-   * @return array of steps for the current coachmark (ui.coachmarkId)
-   */
-  @computed get stepsForCoachmark() {
-    if (!this.ui.coachmarkId) {
-      return [];
-    }
-    return this.content.steps.filter(
-      step => step.coachmarkId === this.ui.coachmarkId
-    );
   }
 
   /**

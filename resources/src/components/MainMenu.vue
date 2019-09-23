@@ -11,7 +11,7 @@
     <md-card-content>
       <div class="content">
         <md-button
-          @click="$store.createNewCoachmark"
+          @click="$store.ui.createNewCoachmark"
           class="md-raised md-primary"
         >Create a new coachmark</md-button>
         <md-divider />

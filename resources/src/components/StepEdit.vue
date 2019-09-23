@@ -2,7 +2,7 @@
   <BaseDetail>
     <template v-slot:toolbar>
       <md-toolbar class="md-accent" md-elevation="1">
-        <md-button @click="$store.editSteps">
+        <md-button @click="$store.ui.editSteps">
           <md-icon>arrow_back</md-icon>
         </md-button>
         <h3 class="md-title" style="flex: 1">Edit Step</h3>
