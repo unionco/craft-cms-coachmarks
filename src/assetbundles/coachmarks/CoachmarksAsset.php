@@ -30,6 +30,7 @@ class CoachmarksAsset extends AssetBundle
             ];
         } else {
             $this->depends[] = VueAsset::class;
+            $this->css[] = 'css/chunk-vendors.css';
             $this->css[] = 'css/app.css';
             $this->js = ['js/app.js', 'js/chunk-vendors.js'];
         }
