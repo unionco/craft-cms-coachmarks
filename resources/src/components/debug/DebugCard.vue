@@ -10,7 +10,7 @@
           </md-table-row>
           <md-table-row v-for="attr in display[store]" :key="attr">
             <md-table-cell>{{attr}}</md-table-cell>
-            <md-table-cell>{{$store[store][attr]}}</md-table-cell>
+            <md-table-cell><pre>{{(typeof $store[store][attr] == 'object') ? JSON.stringify($store[store][attr], null, 2) : $store[store][attr]}}</pre></md-table-cell>
           </md-table-row>
         </md-table>
       </div>
@@ -40,7 +40,8 @@ export default class DebugCard extends Vue {
       'tooltipPosition',
     ],
     currentCoachmark: ['id'],
-    content: ['coachmarks', 'users'],
+    currentStep: ['id'],
+    content: ['step', 'coachmark', 'coachmarks', 'users'],
   };
 }
 </script>

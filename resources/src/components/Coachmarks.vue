@@ -17,7 +17,8 @@
     </div>
     <StepBox v-if="$store.ui.stepActive" 
     :position="$store.ui.stepBoxPosition"
-    :tooltip-position="$store.ui.tooltipPosition"
+    :tooltip-position="$store.content.step.tooltipPosition"
+    :label="$store.content.step.label"
     />
     <DebugCard/>
   </div>

@@ -167,4 +167,27 @@ export default class ContentStore extends BaseCoachmarksStore {
     }
     return [];
   }
+
+  @computed get coachmark() {
+    const { coachmarkId } = this.rootStore.ui;
+    const coachmarks = this.coachmarks.filter(
+      coachmark => coachmark.id === coachmarkId
+    );
+    if (coachmarks.length) {
+      return coachmarks[0];
+    }
+    return false;
+  }
+
+  @computed get step() {
+    const { stepId } = this.rootStore.ui;
+    const coachmark = this.coachmark;
+    if (coachmark) {
+      const steps = coachmark.steps.filter(step => step.id === stepId);
+      if (steps.length) {
+        return steps[0];
+      }
+    }
+    return false;
+  }
 }

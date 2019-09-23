@@ -2,13 +2,14 @@
   <div>
     <div class="coachmark-overlay-background" :style="$store.ui.stepBoxPosition"></div>
     <div class="coachmark-overlay" :style="$store.ui.stepBoxPosition">
-      <div class="coachmark-overlay-box" :style="$store.ui.tooltipPosition">
+      <div class="coachmark-overlay-box" :style="$props.tooltipPosition">
         <div class="coachmark-overlay-step"><span v-html="$store.ui.currentStepIndex + 1"></span></div>
         <div class="coachmark-overlay-actions">
-          <md-button class="md-icon-button" @click="$store.toggleStepActive">
+          <!-- <md-button class="md-icon-button" @click="$store.toggleStepActive">
             <md-icon>close</md-icon>
-          </md-button>
-          <md-tooltip>Hello</md-tooltip>
+          </md-button> -->
+          <!-- <md->Hello</md-tooltip> -->
+          <span v-html="$props.label"></span>
         </div>
       </div>
     </div>
@@ -22,6 +23,7 @@ import { Observer } from 'mobx-vue';
 @Observer
 @Component({
   props: {
+    label: String,
     position: String,
     tooltipPosition: String,
   },
