@@ -148,4 +148,21 @@ export default class ContentStore extends BaseCoachmarksStore {
       }
       return this.users.find(u => u.id === id);
   }
+
+  getCoachmark(coachmarkId) {
+      const coachmark = this._coachmarks.filter(c => c.id === coachmarkId);
+      if (coachmark.length) {
+          return coachmark[0];
+      }
+      return coachmark;
+  }
+
+  getCoachmarkSteps(coachmarkId) {
+    const coachmark = this.getCoachmark(coachmarkId);
+    if (coachmark) {
+        console.log(toJS(coachmark));
+        return coachmark.steps;
+    }
+    return [];
+  }
 }

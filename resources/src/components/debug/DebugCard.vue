@@ -27,24 +27,24 @@ import { toJS } from 'mobx';
 @Component()
 export default class DebugCard extends Vue {
   display = {
-      ui: [
-          'coachmarkId',
-          'stepId',
-          'pageType',
-      ],
-      currentCoachmark: [
-          'id',
-      ],
-      content: [
-          'coachmarks',
-          'users',
-      ],
+    ui: [
+      'coachmarkId',
+      'stepId',
+      'pageType',
+      'steps',
+      'previousStepIndex',
+      'currentStepIndex',
+      'nextStepIndex',
+    ],
+    currentCoachmark: ['id'],
+    content: ['coachmarks', 'users'],
   };
 }
 </script>
 
 <style lang="scss" scoped>
 .DebugCard {
+  z-index: 100;
   position: fixed;
   bottom: 10px;
   left: 20px;

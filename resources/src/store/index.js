@@ -11,7 +11,10 @@ export default class RootStore {
   @observable currentStep = new CurrentStepStore();
 
   /** Navigation */
-  @action.bound goToCoachmark(id) {
+  @action.bound goToCoachmark(id = false) {
+    if (!id || id instanceof Event) {
+      id = this.ui.coachmarkId;
+    }
     this.ui.setCoachmarkId(id);
     this.ui.setPageType(UiStore.PTCoachmarkDetail);
   }
@@ -24,7 +27,7 @@ export default class RootStore {
 
   /**
    * Navigate to the Edit Coachmark view
-   * @param {Number|Event|null} id 
+   * @param {Number|Event|null} id
    */
   @action.bound editCoachmark(id = false) {
     // console.log('editCoachmark', id);
@@ -35,8 +38,8 @@ export default class RootStore {
     this.ui.setPageType(UiStore.PTCoachmarkEdit);
     const coachmark = this.content.coachmarks.find(c => c.id === id);
     if (!coachmark) {
-        console.error('Could not find coachmark with ID: ', id);
-        return;
+      console.error('Could not find coachmark with ID: ', id);
+      return;
     }
     this.currentCoachmark.setCurrentCoachmark({
       id,
@@ -44,6 +47,24 @@ export default class RootStore {
       readOnlyUsers: coachmark.readOnlyUsers,
       readWriteUsers: coachmark.readWriteUsers,
     });
+  }
+
+  @action.bound startCoachmark(id = false) {
+    if (!id || id instanceof Event) {
+      id = this.ui.coachmarkId;
+    }
+    this.ui.setCoachmarkId(id);
+    this.ui.setPageType(UiStore.PTCoachmarkPlay);
+    if (!this.ui.stepId) {
+      const steps = this.content.getCoachmarkSteps(id);
+      if (!steps) {
+          console.warn('steps is undefined');
+          return;
+      }
+      const stepIds = steps.map(step => step.id);
+      this.ui.setSteps(stepIds);
+      this.ui.setStepId(stepIds[0]);
+    }
   }
 
   @action.bound createNewCoachmark() {
@@ -65,8 +86,8 @@ export default class RootStore {
   }
 
   @action.bound editStep(id) {
-      this.ui.setCoachmarkId(id);
-      this.ui.setPageType(UiStore.PTStepEdit);
+    this.ui.setCoachmarkId(id);
+    this.ui.setPageType(UiStore.PTStepEdit);
   }
 
   @action.bound newStep() {
@@ -140,7 +161,7 @@ export default class RootStore {
     const rect = element.getBoundingClientRect();
     this.ui.setStepBoxPosition(rect);
     console.log(element);
-    
+
     this.ui._stepActive = !this.ui._stepActive;
     if (this.ui.stepActive) {
       document.body.classList.add('u-coachmarks');
@@ -149,5 +170,4 @@ export default class RootStore {
     }
     this.ui.setTooltipPosition(this.step.tooltipPosition);
   }
-
 }

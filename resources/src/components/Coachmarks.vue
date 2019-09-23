@@ -33,6 +33,7 @@ import StepEdit from './StepEdit.vue';
 import '../scss/global.scss';
 import StepBox from './StepBox.vue';
 import DebugCard from './debug/DebugCard.vue';
+import CoachmarkPlay from './CoachmarkPlay.vue';
 
 @Observer
 @Component({
@@ -46,6 +47,7 @@ import DebugCard from './debug/DebugCard.vue';
     StepsEdit,
     StepEdit,
     StepBox,
+    CoachmarkPlay,
     DebugCard,
   },
 })
