@@ -4,17 +4,18 @@
       <md-card-header>
         <md-card-header-text>
           <div class="md-title">Welcome to Coachmarks</div>
-          <!-- <div class="md-subhead">Subtitle here</div> -->
         </md-card-header-text>
       </md-card-header>
     </md-card>
     <md-card-content>
       <div class="content">
-        <md-button
-          @click="$store.ui.createNewCoachmark"
-          class="md-raised md-primary"
-        >Create a new coachmark</md-button>
-        <md-divider />
+        <div v-if="$store.content.userCanCreateCoachmark">
+            <md-button
+            @click="$store.ui.createNewCoachmark"
+            class="md-raised md-primary"
+            >Create a new coachmark</md-button>
+            <md-divider />
+        </div>
         <div class="md-title">Your coachmarks</div>
         <CoachmarkList :coachmarks="$store.content.coachmarks" />
       </div>

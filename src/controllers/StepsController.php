@@ -3,6 +3,7 @@
 namespace unionco\coachmarks\controllers;
 
 use Craft;
+use craft\web\Request;
 use craft\helpers\Json;
 use craft\web\Controller;
 use unionco\coachmarks\records\Step;
@@ -11,12 +12,34 @@ class StepsController extends Controller
 {
     protected $allowAnonymous = true;
 
+    protected function getUri()
+    {
+        /** @var Request */
+        $request = Craft::$app->getRequest();
+        $url = $request->getReferrer();
+        $components = \parse_url($url);
+        
+        $output = $components['path'];
+        if ($components['query'] ?? false) {
+            $output .= '?' . $components['query'];
+        }
+        if ($components['fragment'] ?? false) {
+            $output .= '#' . $components['fragment'];
+        }
+        return $output;
+    }
+
     public function actionNew()
     {
         $this->requirePostRequest();
 
-        $json = Craft::$app->getRequest()->getRawBody();
+        /** @var Request */
+        $request = Craft::$app->getRequest();
+        /** @var string */
+        $json = $request->getRawBody();
+        /** @var \stdClass */
         $data = Json::decode($json, false);
+        /** @var \stdClass */
         $input = $data->step;
 
         try {
@@ -39,8 +62,8 @@ class StepsController extends Controller
             $s->tooltipPosition = $input->tooltipPosition;
             $s->selectorNode = $input->selectedNode;
             $s->title = '';
-            $s->description = '';
-            $s->url = '';
+            $s->description = $input->description;
+            $s->url = $input->url ?? $this->getUri();
             $s->order = 5;
             $result = $s->save();
 

@@ -15,16 +15,15 @@
     <template v-slot:content>
       <form novalidate class="md-layout" @submit.prevent="validate">
         <div class="md-layout md-gutter">
-          <div class="md-layout-item md-small-size-100">
-            <md-field :class="getValidationClass('label')">
-              <label>Label</label>
-              <md-input v-model="form.label" :disabled="loading"/>
-              <span class="md-error" v-if="!$v.form.label.required">Label is required</span>
-              <span class="md-error" v-if="!$v.form.label.minLength">Label min length is 5</span>
-            </md-field>
-          </div>
-          <md-field>
-            <label>Tooltip Position</label>
+          <Field label="Step Label" :class="getValidationClass('label')">
+            <md-input v-model="form.label" :disabled="loading" />
+            <span class="md-error" v-if="!$v.form.label.required">Label is required</span>
+            <span class="md-error" v-if="!$v.form.label.minLength">Label min length is 5</span>
+          </Field>
+          <Field label="Step Description (Optional)" :class="getValidationClass('description')">
+            <md-input v-model="form.description" :disabled="loading" />
+          </Field>
+          <Field label="Tooltip Position">
             <md-select
               v-model="form.tooltipPosition"
               @md-selected="$store.currentStep.setTooltipPosition"
@@ -34,15 +33,22 @@
               <md-option value="bottom">Bottom</md-option>
               <md-option value="left">Left</md-option>
             </md-select>
-          </md-field>
-          <md-field>
-            <label>Node Selector</label>
-            <md-input disabled v-model="form.nodeSelector" />
+          </Field>
+          <Field label="Node Selector">
+            <md-input disabled v-model="form.selectedNode" />
             <md-button
               @click="() => componentSelectMode = !componentSelectMode"
             >{{ componentSelectMode ? 'Cancel' : 'Select' }}</md-button>
-          </md-field>
-          <md-button class="md-primary" @click="save">Save</md-button>
+            <span class="md-error" v-if="!$v.form.selectedNode.required">Node Selector is required</span>
+          </Field>
+          <Field label="Step Order" :class="getValidationClass('order')">
+            <md-input v-model="form.order" type="number" />
+            <span class="md-error" v-if="!$v.form.order.required">Order is required</span>
+            <span class="md-error" v-if="!$v.form.order.minValue">Order must be a positive integer</span>
+          </Field>
+          <Field>
+            <md-button type="submit" class="md-primary md-raised" :disabled="loading">Save</md-button>
+          </Field>
         </div>
       </form>
     </template>
@@ -51,8 +57,8 @@
     </template>
     <template v-slot:actions></template>
     <template v-slot:snackbar>
-        <md-snackbar :md-active.sync="success">Step saved</md-snackbar>
-        <md-snackbar :md-active.sync="error">Error</md-snackbar>
+      <md-snackbar :md-active.sync="success">Step saved</md-snackbar>
+      <md-snackbar :md-active.sync="error">Error</md-snackbar>
     </template>
   </BaseDetail>
 </template>
@@ -69,15 +75,21 @@ import {
   handleMouseMove,
   handleMouseClick,
 } from '../util/ComponentSelection';
-import { required, minLength } from 'vuelidate/lib/validators';
+import {
+  required,
+  minLength,
+  minValue,
+} from 'vuelidate/lib/validators';
 import { validationMixin } from 'vuelidate';
 import Activity from './Activity.vue';
+import Field from './forms/Field.vue';
 
 @Observer
 @Component({
   components: {
     BaseDetail,
     Activity,
+    Field,
   },
   mixins: [validationMixin],
   validations: {
@@ -86,13 +98,22 @@ import Activity from './Activity.vue';
         required,
         minLength: minLength(5),
       },
+      description: {},
+      selectedNode: {
+        required,
+      },
+      order: {
+        required,
+        minValue: minValue(0),
+      },
     },
   },
 })
 export default class StepEdit extends Vue {
   form = {
     label: this.$store.currentStep.label,
-    nodeSelector: this.$store.currentStep.nodeSelector,
+    description: this.$store.currentStep.description,
+    selectedNode: this.$store.currentStep.selectedNode,
     tooltipPosition: this.$store.currentStep.tooltipPosition,
   };
 
@@ -101,12 +122,12 @@ export default class StepEdit extends Vue {
   error = false;
   componentSelectMode = false;
 
-  created() {
-    // this.componentSelectMode = this.$store.ui.componentSelectMode;
-    this.form.tooltipPosition = this.$store.currentStep.tooltipPosition;
-    this.form.nodeSelector = this.$store.currentStep.selectedNode;
-    this.form.label = this.$store.currentStep.label;
-  }
+  //   created() {
+  //     // this.componentSelectMode = this.$store.ui.componentSelectMode;
+  //     this.form.tooltipPosition = this.$store.currentStep.tooltipPosition;
+  //     this.form.nodeSelector = this.$store.currentStep.selectedNode;
+  //     this.form.label = this.$store.currentStep.label;
+  //   }
 
   @Watch('componentSelectMode')
   onComponentSelectModeChange(val, oldVal) {
@@ -147,13 +168,17 @@ export default class StepEdit extends Vue {
     this.loading = true;
     this.$store.currentStep.setTooltipPosition(this.form.tooltipPosition);
     this.$store.currentStep.setLabel(this.form.label);
-    this.$store.currentStep.setSelectedNode(this.form.nodeSelector);
+    this.$store.currentStep.setDescription(this.form.description);
+    this.$store.currentStep.setSelectedNode(this.form.selectedNode);
     const result = await this.$store.currentStep.save(
       this.$store.ui.coachmarkId
     );
     this.loading = false;
     if (result.success && result.id) {
       this.success = true;
+      setTimeout(() => {
+        this.$store.ui.editSteps();
+      }, 500);
     } else {
       this.error = true;
     }

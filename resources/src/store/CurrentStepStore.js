@@ -5,13 +5,15 @@ import ContentStore from './ContentStore';
 
 export default class CurrentStepStore extends BaseCoachmarksStore {
   constructor(rootStore) {
-      super();
-      this.rootStore = rootStore;
+    super();
+    this.rootStore = rootStore;
   }
   rootStore = undefined;
   @observable _id = 0;
   @observable _selectedNode = '';
   @observable _label = '';
+  @observable _description = '';
+  @observable _url = '';
   @observable _tooltipPosition = 'right';
 
   @observable _saveStatus;
@@ -53,6 +55,14 @@ export default class CurrentStepStore extends BaseCoachmarksStore {
     return this._label;
   }
 
+  @action.bound setDescription(desc) {
+    this._description = desc;
+  }
+
+  @computed get description() {
+    return this._description;
+  }
+
   @action.bound setTooltipPosition(pos) {
     this._tooltipPosition = pos;
     this.writeState();
@@ -64,6 +74,8 @@ export default class CurrentStepStore extends BaseCoachmarksStore {
 
   @action.bound configure(data) {
     this._label = data.label;
+    this._description = data.description;
+    this._url = data.url;
     this._selectedNode = data.selectedNode;
     this._tooltipPosition = data.tooltipPosition;
     this.writeState();
@@ -75,6 +87,7 @@ export default class CurrentStepStore extends BaseCoachmarksStore {
       id: toJS(this.id),
       selectedNode: toJS(this.selectedNode),
       label: toJS(this.label),
+      description: toJS(this.description),
       tooltipPosition: toJS(this.tooltipPosition),
     });
 

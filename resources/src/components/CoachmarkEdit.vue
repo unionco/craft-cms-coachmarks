@@ -21,16 +21,12 @@
     <template v-slot:content>
       <form novalidate class="md-layout" @submit.prevent="validate">
         <div class="md-gutter md-layout">
-          <div class="md-layout-item md-small-size-100">
-            <md-field :class="getValidationClass('title')">
-              <label>Title</label>
-              <md-input v-model="form.title" :disabled="loading" />
-              <span class="md-error" v-if="!$v.form.title.required">Title is required</span>
-              <span class="md-error" v-if="!$v.form.title.minLength">Title min length is 5</span>
-            </md-field>
-          </div>
-          <md-field>
-            <label>Readonly Users</label>
+          <Field label="Coachmark Title" :class="getValidationClass('title')">
+            <md-input v-model="form.title" :disabled="loading" />
+            <span class="md-error" v-if="!$v.form.title.required">Title is required</span>
+            <span class="md-error" v-if="!$v.form.title.minLength">Title min length is 5</span>
+          </Field>
+          <Field label="Read-Only Users">
             <md-select multiple v-model="form.readOnlyUsers">
               <md-option
                 v-for="user in availableReadonlyUsers"
@@ -38,9 +34,8 @@
                 :key="user.id"
               >{{ user.username }}</md-option>
             </md-select>
-          </md-field>
-          <md-field>
-            <label>Read/Write Users</label>
+          </Field>
+          <Field label="Read/Write Users">
             <md-select multiple v-model="form.readWriteUsers">
               <md-option
                 v-for="user in availableReadWriteUsers"
@@ -48,8 +43,10 @@
                 :key="user.id"
               >{{ user.username }}</md-option>
             </md-select>
-          </md-field>
-          <md-button type="submit" class="md-primary md-raised" :disabled="loading">Save</md-button>
+          </Field>
+          <Field>
+            <md-button type="submit" class="md-primary md-raised" :disabled="loading">Save</md-button>
+          </Field>
         </div>
       </form>
     </template>
@@ -61,9 +58,9 @@
         @click="$store.ui.editSteps"
       >Edit Steps</md-button>
     </template>
-    <template v-slot:activity>
+    <!-- <template v-slot:activity>
       <Activity :loading="loading" />
-    </template>
+    </template>-->
     <template v-slot:snackbar>
       <md-snackbar :md-active.sync="success">Coachmark saved</md-snackbar>
     </template>
@@ -76,6 +73,7 @@
 import { Vue, Component, Inject, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail.vue';
+import Field from './forms/Field';
 import ContentStore from '../store/ContentStore';
 import Activity from './Activity.vue';
 import { validationMixin } from 'vuelidate';
@@ -85,6 +83,7 @@ import { required, minLength } from 'vuelidate/lib/validators';
   components: {
     BaseDetail,
     Activity,
+    Field,
   },
   mixins: [validationMixin],
   validations: {
@@ -99,8 +98,12 @@ import { required, minLength } from 'vuelidate/lib/validators';
 export default class CoachmarkEdit extends Vue {
   form = {
     title: '',
-    readOnlyUsers: [],
-    readWriteUsers: [],
+    readOnlyUsers: this.$store.currentCoachmark.readOnlyUsers.map(user =>
+      user.id ? user.id.toString() : user.toString()
+    ),
+    readWriteUsers: this.$store.currentCoachmark.readWriteUsers.map(user =>
+      user.id ? user.id.toString() : user.toString()
+    ),
   };
   availableReadonlyUsers = [];
   availableReadWriteUsers = [];
@@ -142,12 +145,7 @@ export default class CoachmarkEdit extends Vue {
 
   created() {
     this.form.title = this.$store.currentCoachmark.title;
-    this.form.readOnlyUsers = this.$store.currentCoachmark.readOnlyUsers || [];
-    this.form.readWriteUsers =
-      this.$store.currentCoachmark.readWriteUsers || [];
-
     const users = this.$store.content.users;
-    // console.log(users);
     this.availableReadonlyUsers = users.filter(
       user => !this.form.readWriteUsers.includes(user.id)
     );
@@ -170,9 +168,13 @@ export default class CoachmarkEdit extends Vue {
     this.success = false;
     this.error = false;
     this.loading = true;
+    this.$store.currentCoachmark.setTitle(this.form.title);
+    this.$store.currentCoachmark.setReadOnlyUsers(this.form.readOnlyUsers);
+    this.$store.currentCoachmark.setReadWriteUsers(this.form.readWriteUsers);
     const result = await this.$store.currentCoachmark.save();
     this.loading = false;
     if (result.success && result.id) {
+      this.$store.ui.setCoachmarkId(result.id);
       this.success = true;
     } else {
       this.error = true;

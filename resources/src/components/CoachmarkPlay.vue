@@ -31,12 +31,17 @@
 </template>
 
 <script>
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 
 @Observer
 @Component
-export default class CoachmarkPlay extends Vue {}
+export default class CoachmarkPlay extends Vue {
+    mounted() {
+        // this.$store.ui.checkPageUri();
+        this.$store.ui.updateStepBoxParams();
+    }
+}
 </script>
 
 <style lang="scss" scoped>

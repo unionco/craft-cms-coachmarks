@@ -1,5 +1,6 @@
 import { observable, action, computed, autorun, toJS } from 'mobx';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
+import ContentStore from './ContentStore';
 
 export default class UiStore extends BaseCoachmarksStore {
   constructor(rootStore) {
@@ -32,6 +33,7 @@ export default class UiStore extends BaseCoachmarksStore {
   @observable _tooltipPosition = '';
   /** Steps for the current coachmark */
   @observable _steps = [];
+  @observable _showDebugcard = true;
 
   @action.bound toggleOpen() {
     this.setOpen(!this.open);
@@ -171,8 +173,12 @@ export default class UiStore extends BaseCoachmarksStore {
     const nextStep = this._steps[nextStepIndex] || false;
     if (nextStep) {
       this.setStepId(nextStep);
+      this.checkPageUri();
       this.updateStepBoxParams();
+    } else {
+      console.warn('next step is false');
     }
+
     return nextStep;
   }
 
@@ -181,15 +187,24 @@ export default class UiStore extends BaseCoachmarksStore {
     const previousStep = this._steps[previousStepIndex] || false;
     if (previousStep) {
       this.setStepId(previousStep);
+      this.checkPageUri();
       this.updateStepBoxParams();
+    } else {
+      console.warn('previous step is false');
     }
     return previousStep;
   }
 
   @action.bound updateStepBoxParams() {
-    const selector = this.rootStore.step.selectorNode;
+    this.checkPageUri();
+    console.log('after checkPageUri');
+    const selector = this.rootStore.content.getStep(this.stepId).selectedNode;
     console.log(selector);
     const element = document.querySelector(selector);
+    if (!element) {
+      console.error('step target element does not exist');
+      return;
+    }
     const rect = element.getBoundingClientRect();
     this.setStepBoxPosition(rect);
     console.log(element);
@@ -209,18 +224,27 @@ export default class UiStore extends BaseCoachmarksStore {
     }
     this.setCoachmarkId(id);
     this.setPageType(UiStore.PTCoachmarkPlay);
-    if (!this.stepId) {
-      const steps = this.rootStore.content.getCoachmarkSteps(id);
-      if (!steps) {
-        console.warn('steps is undefined');
-        return;
-      }
-      const stepIds = steps.map(step => step.id);
-      this.setSteps(stepIds);
-      this.setStepId(stepIds[0]);
+    // if (!this.stepId) {
+    const steps = this.rootStore.content.getCoachmarkSteps(id);
+    if (!steps) {
+      console.warn('steps is undefined');
+      return;
     }
+    const stepIds = steps.map(step => step.id);
+    this.setSteps(stepIds);
+    this.setStepId(stepIds[0]);
+    // }
     // Activate play
     this.setStepActive(true);
+    this.checkPageUri();
+  }
+
+  @computed get showDebugCard() {
+    return this._showDebugcard;
+  }
+
+  @action.bound setShowDebugCard(val) {
+    this._showDebugcard = val;
   }
 
   /** Navigation */
@@ -282,6 +306,8 @@ export default class UiStore extends BaseCoachmarksStore {
 
   @action.bound editStep(id) {
     this.setStepId(id);
+    const step = this.rootStore.content.getStep(id);
+    this.rootStore.currentStep.configure(step);
     // this.setCoachmarkId(id);
     this.setPageType(UiStore.PTStepEdit);
   }
@@ -296,5 +322,16 @@ export default class UiStore extends BaseCoachmarksStore {
       tooltipPosition: 'bottom',
       order: 1,
     });
+  }
+
+  checkPageUri() {
+    const current = window.location.pathname;
+    const stepUri = this.rootStore.content.step.url;
+    if (current !== stepUri) {
+      console.log('mismatch', current, stepUri);
+      window.location = stepUri;
+    } else {
+      console.log('correct url');
+    }
   }
 }

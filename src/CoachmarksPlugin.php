@@ -11,22 +11,25 @@
 namespace unionco\coachmarks;
 
 use Craft;
+use yii\base\Event;
 use craft\base\Plugin;
-use craft\services\Plugins;
-use craft\events\PluginEvent;
+use craft\helpers\Json;
 use craft\web\UrlManager;
+use craft\services\Plugins;
 use craft\services\Elements;
-use craft\events\RegisterComponentTypesEvent;
+use craft\events\PluginEvent;
+use craft\records\UserPermission;
+use craft\services\UserPermissions;
 use craft\events\RegisterUrlRulesEvent;
 use unionco\coachmarks\models\Settings;
-use unionco\coachmarks\services\CoachmarkService;
-use yii\base\Event;
 use craft\web\twig\variables\CraftVariable;
+use craft\events\RegisterComponentTypesEvent;
+use unionco\coachmarks\services\CoachmarkService;
+use craft\console\Application as ConsoleApplication;
+use craft\events\RegisterUserPermissionsEvent;
 use unionco\coachmarks\variables\CoachmarksVariable;
 use unionco\coachmarks\elements\Coachmark as CoachmarkElement;
 use unionco\coachmarks\assetbundles\coachmarks\CoachmarksAsset;
-use craft\helpers\Json;
-use craft\console\Application as ConsoleApplication;
 
 /**
  * Craft plugins are very much like little applications in and of themselves. We’ve made
@@ -143,6 +146,18 @@ class CoachmarksPlugin extends Plugin
             return;
         }
 
+        Event::on(
+            UserPermissions::class,
+            UserPermissions::EVENT_REGISTER_PERMISSIONS,
+            function (RegisterUserPermissionsEvent $event) {
+                $event->permissions['Coachmarks'] = [
+                    'createCoachmarks' => [
+                        'label' => 'Create Coachmarks',
+                    ],
+                ];
+            }
+        );
+        
         // Register our elements
         // Event::on(
         //     Elements::class,

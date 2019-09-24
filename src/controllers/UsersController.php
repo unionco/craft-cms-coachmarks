@@ -3,27 +3,28 @@
 namespace unionco\coachmarks\controllers;
 
 use Craft;
+use craft\records\User;
 use craft\web\Controller;
-use craft\elements\User;
+use unionco\coachmarks\models\UserRecord;
 
 class UsersController extends Controller
 {
     protected $allowAnonymous = true;
+
     public function actionUsers()
     {
         $users = User::find()->all();
-        $data = array_map(
-            function ($user) {
-                return [
-                    'id' => $user->id,
-                    'username' => $user->username,
-                ];
-            },
-            $users
-        );
 
         return $this->asJson([
-            'users' => $data,
+            'users' => UserRecord::apiTransform($users)
+        ]);
+    }
+
+    public function actionCurrent()
+    {
+        $currentUser = Craft::$app->getUser()->getIdentity();
+        return $this->asJson([
+            'user' => $currentUser->id,
         ]);
     }
 }

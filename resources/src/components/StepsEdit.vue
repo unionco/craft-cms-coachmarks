@@ -16,13 +16,14 @@
     </template>
 
     <template v-slot:content>
-      <md-list>
+      <md-list v-if="$store.content.getCoachmarkSteps($store.ui.coachmarkId).length">
         <md-list-item
           v-for="step in $store.content.getCoachmarkSteps($store.ui.coachmarkId)"
           :key="step.id"
           @click="() => $store.ui.editStep(step.id)"
         >{{ step.label }}</md-list-item>
       </md-list>
+      <md-empty-state v-else md-label="No Steps"/>
     </template>
 
     <template v-slot:actions>

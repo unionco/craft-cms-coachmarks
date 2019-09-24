@@ -61,10 +61,6 @@ class Install extends Migration
             [
                 'id' => $this->primaryKey(),
                 'title' => $this->string(255)->notNull(),
-                // 'read_only' => $this->boolean(),
-                // 'readOnlyUsersJson' => $this->text(),
-                // 'readWriteUsersJson' => $this->text(),
-                // 'permissions' => $this->text(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid(),
@@ -106,13 +102,18 @@ class Install extends Migration
                 'tooltipPosition' => $this->string()->notNull(),
                 'url' => $this->string(255)->notNull(),
                 'order' => $this->integer()->notNull(),
-                'selectorNode' => $this->string(255)->notNull(),
+                'selectorNode' => $this->text()->notNull(),
                 // 'selectorPosition' => $this->string(255)->notNull(),
                 'dateCreated' => $this->dateTime()->notNull(),
                 'dateUpdated' => $this->dateTime()->notNull(),
                 'uid' => $this->uid()
             ]
         );
+
+        $this->createIndex('cm_ro_uniq', '{{%coachmarks_ro_permissions}}', ['userId', 'coachmarkId'], true);
+        $this->createIndex('rm_rw_uniq', '{{%coachmarks_rw_permissions}}', ['userId', 'coachmarkId'], true);
+
+        return true;
     }
 
     /**
@@ -127,6 +128,12 @@ class Install extends Migration
      */
     public function safeDown()
     {
+        try {
+            $this->dropIndex('cm_ro_uniq', '{{%coachmarks_ro_permissions}}');
+            $this->dropIndex('cm_r_uniq', '{{%coachmarks_rw_permissions}}');
+        } catch (\Throwable $e) {
+            //
+        }
         $this->dropTableIfExists('{{%coachmarks_coachmarks}}');
         $this->dropTableIfExists('{{%coachmarks_steps}}');
         $this->dropTableIfExists('{{%coachmarks_ro_permissions}}');

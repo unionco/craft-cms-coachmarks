@@ -1,7 +1,7 @@
 import { observable, action, runInAction, toJS, computed } from 'mobx';
 // import Cookies from 'js-cookie';
 import { getCoachmarks as getCoachmarksApi } from '../api/Coachmarks';
-import { getUsers as getUsersApi } from '../api/Users';
+import { getUsers as getUsersApi, getCurrentUser } from '../api/Users';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 
 export default class ContentStore extends BaseCoachmarksStore {
@@ -36,6 +36,7 @@ export default class ContentStore extends BaseCoachmarksStore {
   @observable _coachmarksState = ContentStore.StateUninit;
   @observable _usersState = ContentStore.StateUninit;
 
+  @observable _currentUser = -1;
   //   @observable _currentCoachmark = {};
   //   @observable _currentStep = {};
 
@@ -121,18 +122,24 @@ export default class ContentStore extends BaseCoachmarksStore {
   @computed get users() {
     return this._users;
   }
+  @computed get currentUser() {
+      return this._currentUser;
+  }
 
   @action.bound async fetchUsers() {
     console.log('ContentStore.fetchUsers');
     this._users = [];
+    this._currentUser = undefined;
     this._usersState = ContentStore.StateLoading;
     try {
-      const result = await getUsersApi();
+      const users = await getUsersApi();
+      const currentUser = await getCurrentUser();
       runInAction(() => {
         this._usersState = ContentStore.StateComplete;
-        this.set('_users', result.users, false); // = result.coachmarks;
-        // console.log('loaded users');
-        // console.log(toJS(this._users));
+        this.set('_users', users.users, false);
+      });
+      runInAction(() => {
+        this.set('_currentUser', parseInt(currentUser.user), false);
       });
     } catch (err) {
       runInAction(() => {
@@ -189,5 +196,30 @@ export default class ContentStore extends BaseCoachmarksStore {
       }
     }
     return false;
+  }
+
+  getStep(id) {
+      const steps = this.steps.filter(step => step.id === id);
+      if (steps.length) {
+          return steps[0];
+      }
+      return null;
+  }
+
+  userCanEditCoachmark(id) {
+    const coachmark = this.getCoachmark(id);
+    if (!coachmark) {
+      return false;
+    }
+    return coachmark.readWriteUsers.includes(this._currentUser);
+  }
+
+  @computed get userCanCreateCoachmark() {
+      const user = this.getUser(this.currentUser);
+      if (!user) {
+          console.warn('Current user is null');
+          return;
+      }
+      return user.createCoachmarks;
   }
 }

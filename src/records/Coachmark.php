@@ -14,29 +14,12 @@ namespace unionco\coachmarks\records;
 use Craft;
 use craft\helpers\Json;
 use craft\db\ActiveRecord;
-use unionco\coachmarks\Coacher;
 use unionco\coachmarks\records\db\CoachmarkQuery;
 use unionco\coachmarks\records\Step;
 use craft\records\User;
 use unionco\coachmarks\models\ApiTransformable;
 use unionco\coachmarks\models\UserRecord;
 
-/**
- * Coachmark Record
- *
- * ActiveRecord is the base class for classes representing relational data in terms of objects.
- *
- * Active Record implements the [Active Record design pattern](http://en.wikipedia.org/wiki/Active_record).
- * The premise behind Active Record is that an individual [[ActiveRecord]] object is associated with a specific
- * row in a database table. The object's attributes are mapped to the columns of the corresponding table.
- * Referencing an Active Record attribute is equivalent to accessing the corresponding table column for that record.
- *
- * http://www.yiiframework.com/doc-2.0/guide-db-active-record.html
- *
- * @author    Franco Valdes
- * @package   Coacher
- * @since     1.0.0
- */
 class Coachmark extends ActiveRecord implements ApiTransformable
 {
     public static function tableName()
@@ -88,143 +71,38 @@ class Coachmark extends ActiveRecord implements ApiTransformable
      */
     public static function apiTransform($data): array
     {
+        $userIdTransform = function (array $users) {
+            return array_map(
+                /**
+                 * @param \craft\records\User $user
+                 * @return int
+                 */
+                function ($user) {
+                    return $user->id;
+                },
+                $users
+            );
+        };
+
         return array_map(
             /**
              * @param Coachmark $coachmark
              * @return array
              */
-            function (Coachmark $coachmark) {
+            function (Coachmark $coachmark) use ($userIdTransform) {
                 return [
                     'id' => $coachmark->id,
                     'title' => $coachmark->title,
                     'steps' => Step::apiTransform($coachmark->steps),
-                    'readOnlyUsers' => UserRecord::apiTransform($coachmark->readOnlyUsers),
-                    'readWriteUsers' => UserRecord::apiTransform($coachmark->readWriteUsers),
+                    'readOnlyUsers' => $userIdTransform($coachmark->readOnlyUsers),
+                    //UserRecord::apiTransform($coachmark->readOnlyUsers),
+                    'readWriteUsers' => $userIdTransform($coachmark->readWriteUsers),
+                    //UserRecord::apiTransform($coachmark->readWriteUsers),
                 ];
             },
             $data
         );
     }
-
-    // public function getReadOnlyUsers()
-    // {
-    //     $data = Json::decode($this->permissions, false) ?? [];
-    //     $filtered = array_filter($data, function ($permission) {
-    //         return $permission->readWrite === false;
-    //     });
-    //     $mapped = array_map(
-    //         function ($permission) {
-    //             return $permission->userId;
-    //         },
-    //         $filtered
-    //     );
-    //     return $mapped;
-    // }
-
-    // public function addReadOnlyUser($id)
-    // {
-    //     if ($id instanceof User) {
-    //         $id = $id->id;
-    //     }
-    //     $this->removeUserPermission($id);
-    //     $data = Json::decode($this->permissions);
-    //     $data[] = [
-    //         'userId' => $id,
-    //         'readWrite' => false,
-    //     ];
-    //     $this->permissions = Json::encode($data);
-    // }
-
-    // public function removeAllReadOnlyUsers()
-    // {
-    //     $data = Json::decode($this->permissions, false);
-    //     if (!$data) {
-    //         $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
-    //         return;
-    //     }
-    //     // Remove all readOnly users
-    //     $data = array_filter(
-    //         $data,
-    //         function ($permission) {
-    //             return $permission->readWrite === true;
-    //         }
-    //     );
-    //     $this->permissions = Json::encode($data);
-    // }
-
-    // public function setReadOnlyUsers($ids)
-    // {
-    //     $this->removeAllReadOnlyUsers();
-    //     foreach ($ids as $id) {
-    //         $this->addReadOnlyUser($id);
-    //     }
-    // }
-
-    // public function removeUserPermission($id)
-    // {
-    //     if ($id instanceof User) {
-    //         $id = $id->id;
-    //     }
-    //     $data = Json::decode($this->permissions, false) ?? [];
-    //     $data = array_filter($data, function ($permission) use ($id) {
-    //         $permission->userId !== $id;
-    //     });
-    //     $this->permissions = Json::encode($data);
-    // }
-
-    // public function addReadWriteUser($id)
-    // {
-    //     if ($id instanceof User) {
-    //         $id = $id->id;
-    //     }
-    //     // Remove from readonly, if user is already on this coachmark
-    //     $this->removeUserPermission($id);
-    //     $data = Json::decode($this->permissions, false) ?? [];
-    //     $data[] = [
-    //         'userId' => $id,
-    //         'readWrite' => true,
-    //     ];
-    //     $this->permissions = Json::encode($data);
-    // }
-
-    // public function getReadWriteUsers()
-    // {
-    //     $data = Json::decode($this->permissions, false) ?? [];
-    //     $filtered = array_filter($data, function ($permission) {
-    //         return $permission->readWrite === true;
-    //     });
-    //     $mapped = array_map(
-    //         function ($permission) {
-    //             return $permission->userId;
-    //         },
-    //         $filtered
-    //     );
-    //     return $mapped;
-    // }
-
-    // public function removeAllReadWriteUsers()
-    // {
-    //     $data = Json::decode($this->permissions, false);
-    //     if (!$data) {
-    //         $this->permissions = Json::encode(self::DEFAULT_PERMISSIONS);
-    //     }
-    //     // Remove all read/write users
-    //     $data = array_filter(
-    //         $data,
-    //         function ($permission) {
-    //             return $permission->readWrite === false;
-    //         }
-    //     );
-    //     $this->permissions = Json::encode($data);
-    // }
-
-    // public function setReadWriteUsers($ids)
-    // {
-    //     $this->removeAllReadWriteUsers();
-    //     foreach ($ids as $id) {
-    //         $this->addReadWriteUser($id);
-    //     }
-    // }
 
     public function getSteps()
     {

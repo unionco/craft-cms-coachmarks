@@ -51,21 +51,21 @@ export default class CurrentCoachmarkStore extends BaseCoachmarksStore {
   }
 
   @action.bound setReadOnlyUsers(users) {
-    this._readOnlyUsers = users;
+    this._readOnlyUsers = users.map(user => parseInt(user)).filter(user => user);
     this.writeState();
   }
 
   @computed get readOnlyUsers() {
-    return this._readOnlyUsers;
+    return this._readOnlyUsers || [];
   }
 
   @action.bound setReadWriteUsers(users) {
-    this._readWriteUsers = users;
+    this._readWriteUsers = users.map(user => parseInt(user)).filter(user => user);
     this.writeState();
   }
 
   @computed get readWriteUsers() {
-    return this._readWriteUsers;
+    return this._readWriteUsers || [];
   }
 
   @action.bound setCurrentCoachmark(cm) {
