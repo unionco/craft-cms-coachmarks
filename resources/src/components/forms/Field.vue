@@ -10,6 +10,9 @@
 <script>
 import { Vue, Component } from 'vue-property-decorator';
 
+/**
+ * Component to wrap form fields for a more unified look and error handling
+ */
 @Component({
   props: {
     label: String,

@@ -54,9 +54,6 @@
         </div>
       </form>
     </template>
-    <template v-slot:activity>
-      <Activity :loading="loading" />
-    </template>
     <template v-slot:actions></template>
     <template v-slot:snackbar>
       <md-snackbar :md-active.sync="success">Step saved</md-snackbar>
@@ -72,22 +69,18 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail';
 import {
-  //   addCompomnentSelectedListener,
-  //   removeComponentSelectListener,
   handleMouseMove,
   handleMouseClick,
   sanitizeSelector,
 } from '../util/ComponentSelection';
 import { required, minLength, minValue } from 'vuelidate/lib/validators';
 import { validationMixin } from 'vuelidate';
-import Activity from './Activity.vue';
 import Field from './forms/Field.vue';
 
 @Observer
 @Component({
   components: {
     BaseDetail,
-    Activity,
     Field,
   },
   mixins: [validationMixin],

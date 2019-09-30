@@ -1,6 +1,10 @@
 import 'css-selector-tools';
 
-// Based on https://jsfiddle.net/rFc8E/9/
+/**
+ * Show a box around the element under the user's mouse while in component select mode
+ * Based on https://jsfiddle.net/rFc8E/9/
+ * @param {Event} e
+ */
 export const handleMouseMove = e => {
   let selector = document.querySelector('#selector');
   if (!selector) {
@@ -51,6 +55,11 @@ export const handleMouseMove = e => {
   elements.right.style.height = `${targetHeight + 8}px`;
 };
 
+/**
+ * Emit CustomEvent 'component-selected' when the user clicks while in component select mode
+ * @event CustomEvent
+ * @param {Event} e 
+ */
 export const handleMouseClick = e => {
   e.preventDefault();
   console.log(e.target);
@@ -65,20 +74,17 @@ export const handleMouseClick = e => {
   document.body.dispatchEvent(componentSelectedEvent);
 };
 
+/**
+ * Attempt to replace the auto-generated selector with a more robust one
+ * @param {string} selector 
+ */
 export const sanitizeSelector = selector => {
     let sanitized = selector;
     // Replace absolute URLs with relative ones
-    const absoluteUrlsRegex = /href="https?:\/\/[\w\.\-]+\/(.*)/;
+    const absoluteUrlsRegex = /href="https?:\/\/[\w.-]+\/(.*)/;
     if (selector.match(absoluteUrlsRegex)) {
         sanitized = sanitized.replace(absoluteUrlsRegex, 'href*=/$1');
         console.log('replaced absolute urls in selector [before, after]', selector, sanitized);
     }
     return sanitized;
 };
-// export const addCompomnentSelectedListener = callback => {
-//   document.body.addEventListener('component-selected', callback);
-// };
-
-// export const removeComponentSelectListener = callback => {
-//     document.body.removeEventListener('component-selected', callback);
-// }

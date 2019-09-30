@@ -25,6 +25,10 @@
 <script>
 import { Vue } from 'vue-property-decorator';
 
+/**
+ * This component is used as the default for CoachmarkEdit, StepsEdit, StepEdit, etc.
+ * @class BaseDetail
+ */
 export default class BaseDetail extends Vue {}
 </script>
 

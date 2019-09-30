@@ -28,15 +28,12 @@ export default class BaseCoachmarksStore {
    */
   serialize() {
     const data = {};
-    for (const key of Object.keys(this)) {
-      if (
-        key.indexOf('_') === 0 &&
-        this[key] !== undefined &&
-        !this.skipProperties().includes(key)
-      ) {
-        data[key] = this[key];
-      }
-    }
+    Object.keys(this)
+        .filter(key => key.indexOf('_') === 0 && this[key] !== undefined && !this.skipProperties().includes(key))
+        .forEach(key => {
+            data[key] = this[key];
+        });
+    
     return JSON.stringify(data);
   }
 
@@ -52,11 +49,9 @@ export default class BaseCoachmarksStore {
         return;
       }
       const data = JSON.parse(json);
-      for (const key of Object.keys(data)) {
-        if (data[key] !== undefined && !this.skipProperties().includes(key)) {
-          this.set(key, data[key], false);
-        }
-      }
+      Object.keys(data)
+        .filter(key => data[key] !== undefined && !this.skipProperties().includes(key))
+        .forEach(key => this.set(key, data[key], false));
     } catch (e) {
       console.error(e);
       console.log(json);

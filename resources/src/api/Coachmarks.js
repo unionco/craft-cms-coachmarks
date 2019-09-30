@@ -1,20 +1,28 @@
 import client from './Client';
 
+/**
+ * Load all coachmarks for current user from backend
+ * @return {array}
+ */
 export async function getCoachmarks() {
+    // Get the URL from Craft
+  const url = window.Craft.getActionUrl('coachmarks/coachmarks');
+
   return client
-    .get(window.Craft.getActionUrl('coachmarks/coachmarks'))
+    .get(url)
     .then(resp => resp.data);
 }
 
-export async function getCoachmarkById(id) {
-    return client
-    .get(window.Craft.getActionUrl('coachmarks/coachmarks/one/' + id))
-    .then(resp => resp.data);
-}
-
+/**
+ * Save the coachmark in the backend
+ * @param {Object} data 
+ * @return {Object}
+ */
 export async function saveCoachmark(data) {
+  const url = window.Craft.getActionUrl('coachmarks/coachmarks/edit');
+  
   return client
-    .post(window.Craft.getActionUrl('coachmarks/coachmarks/edit'), {
+    .post(url, {
       coachmark: data,
     })
     .then(resp => resp.data)

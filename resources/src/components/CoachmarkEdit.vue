@@ -58,9 +58,6 @@
         @click="$store.ui.editSteps"
       >Edit Steps</md-button>
     </template>
-    <!-- <template v-slot:activity>
-      <Activity :loading="loading" />
-    </template>-->
     <template v-slot:snackbar>
       <md-snackbar :md-active.sync="success">Coachmark saved</md-snackbar>
     </template>
@@ -68,21 +65,17 @@
 </template>
 
 <script>
-// v-bind:value="form.title"
-// @change="e => $store.currentCoachmark.setTitle(e.target.value)" -->
 import { Vue, Component, Inject, Watch } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import BaseDetail from './BaseDetail.vue';
 import Field from './forms/Field';
-import ContentStore from '../store/ContentStore';
-import Activity from './Activity.vue';
+import ContentStore from '../store/ContentStore'
 import { validationMixin } from 'vuelidate';
 import { required, minLength } from 'vuelidate/lib/validators';
 @Observer
 @Component({
   components: {
     BaseDetail,
-    Activity,
     Field,
   },
   mixins: [validationMixin],
