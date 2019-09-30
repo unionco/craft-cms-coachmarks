@@ -33,7 +33,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import { Observer } from 'mobx-vue';
 import Toggle from './Toggle.vue';
 import MainMenu from './MainMenu.vue';
-import CoachmarkDetail from './CoachmarkDetail.vue';
+// import CoachmarkDetail from './CoachmarkDetail.vue';
 import ContentStore from '../store/ContentStore';
 import CoachmarkEdit from './CoachmarkEdit.vue';
 import StepsEdit from './StepsEdit.vue';
@@ -50,7 +50,7 @@ import CoachmarkPlay from './CoachmarkPlay.vue';
   components: {
     Toggle,
     MainMenu,
-    CoachmarkDetail,
+    // CoachmarkDetail,
     CoachmarkEdit,
     StepsEdit,
     StepEdit,

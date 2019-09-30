@@ -1,23 +1,48 @@
-import { observable, action, computed, autorun, toJS } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import UiStore from './UiStore';
 import ContentStore from './ContentStore';
 import CurrentCoachmarkStore from './CurrentCoachmarkStore';
 import CurrentStepStore from './CurrentStepStore';
 
+/**
+ * Root mobx store, containing several child stores, grouped by functionality type
+ * @class RootStore
+ */
 export default class RootStore {
+  /**
+   * @var UiStore ui
+   */
   @observable ui = new UiStore(this);
+
+  /**
+   * @var ContentStore content
+   */
   @observable content = new ContentStore(this);
+
+  /**
+   * @var CurrentCoachmarkStore currentCoachmark
+   */
   @observable currentCoachmark = new CurrentCoachmarkStore(this);
+
+  /**
+   * @var CurrentStepStore currentStep
+   */
   @observable currentStep = new CurrentStepStore(this);
 
+  /**
+   * Get the current coachmark, based on UI coachmarkId
+   * @return {null|Object}
+   */
   @computed get coachmark() {
-    // console.log('getting coachmark for id: ', this.ui.coachmarkId);
     return this.content.coachmarks.find(c => c.id === this.ui.coachmarkId);
   }
 
+  /**
+   * Get the current step, based on UI stepId
+   * @return {null|Object}
+   */
   @computed get step() {
     let stepId;
-    // console.log('getting step for id: ', this.ui.stepId);
     if (!this.ui.stepId) {
       const coachmark = this.coachmark;
       const firstStep = coachmark.steps[0];
@@ -31,19 +56,16 @@ export default class RootStore {
   }
 
   /**
-   * @return bool is the user currently creating a new coachmark
+   * @return {boolean} is the user currently creating a new coachmark
    */
   @computed get isNewCoachmark() {
     return this.ui.coachmarkId === ContentStore.NewCoachmarkId;
   }
 
+  
   /**
-   * @return bool can the current user edit this coachmark
+   * Persist each child store
    */
-  @computed get coachmarkEditable() {
-    return true; /** @todo  actually check this... */
-  }
-  /* Persistance */
   restore() {
     this.ui.restore();
     this.content.restore();
@@ -51,6 +73,9 @@ export default class RootStore {
     this.currentStep.restore();
   }
 
+  /**
+   * @todo Move this to UI store
+   */
   @action.bound toggleStepActive() {
     const selector = this.step.selectorNode;
     const element = document.querySelector(selector);

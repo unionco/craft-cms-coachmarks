@@ -1,7 +1,6 @@
-import { observable, action, computed, autorun, toJS } from 'mobx';
+import { observable, action, computed } from 'mobx';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 import ContentStore from './ContentStore';
-import RootStore from '.';
 
 export default class UiStore extends BaseCoachmarksStore {
   constructor(rootStore) {
@@ -14,7 +13,7 @@ export default class UiStore extends BaseCoachmarksStore {
     return 'cm-ui';
   }
 
-  /** @var {RootStore} rootStore reference to root store */
+  /** @var {Object} rootStore reference to root store */
   rootStore = undefined;
 
   /** Page Types */
@@ -64,7 +63,7 @@ export default class UiStore extends BaseCoachmarksStore {
    * @var {string} _tooltipPosition the CSS style string generated for the tooltip position during coachmark/step playback
    */
   @observable _tooltipPosition = '';
-  
+
   /**
    * @var {array} _steps array of step IDs for the current coachmark. Referenced during coachmark/step playback
    */
@@ -92,14 +91,14 @@ export default class UiStore extends BaseCoachmarksStore {
 
   /**
    * Set the current playback mode
-   * @param {boolean} active 
+   * @param {boolean} active
    */
   @action.bound setStepActive(active) {
     this._stepActive = active;
     this.writeState();
   }
 
-    /**
+  /**
    * Toggle whether the coachmarks UI is open or closed
    * @return {null}
    */
@@ -131,7 +130,7 @@ export default class UiStore extends BaseCoachmarksStore {
 
   /**
    * Set the UI page type
-   * @param {string} pt 
+   * @param {string} pt
    * @return {null}
    */
   @action.bound setPageType(pt) {
@@ -149,7 +148,7 @@ export default class UiStore extends BaseCoachmarksStore {
 
   /**
    * Set the current coachmark ID
-   * @param {null|Number} id 
+   * @param {null|Number} id
    * @return {null}
    */
   @action.bound setCoachmarkId(id) {
@@ -227,6 +226,7 @@ export default class UiStore extends BaseCoachmarksStore {
         this._tooltipPosition = `top: ${this._rect.top}px; left: ${this._rect.left}px;`;
         break;
       case 'right':
+      default:
         this._tooltipPosition =
           'top: 0px; left: 100%; margin-top: 0px; margin-left: 10px;';
         break;
@@ -235,7 +235,7 @@ export default class UiStore extends BaseCoachmarksStore {
 
   /**
    * Set step IDs available for the current coachmark
-   * @param {array} stepIds 
+   * @param {array} stepIds
    * @return {null}
    */
   @action.bound setSteps(stepIds) {
@@ -375,7 +375,7 @@ export default class UiStore extends BaseCoachmarksStore {
   /**
    * Start coachmark playback. Sets the coachmark ID (or uses current coachmark ID) and
    * sets the page type, steps, etc.
-   * @param {null|Number|Event} id 
+   * @param {null|Number|Event} id
    * @return {null}
    */
   @action.bound startCoachmark(id = false) {
@@ -429,7 +429,7 @@ export default class UiStore extends BaseCoachmarksStore {
   /**
    * Navigate to the Coachmark Detail page for the given coachmark ID.
    * If the given ID is null or a click event, use the current coachmark id
-   * @param {null|Number|Event} id 
+   * @param {null|Number|Event} id
    * @return {null}
    */
   @action.bound goToCoachmark(id = false) {
@@ -492,7 +492,7 @@ export default class UiStore extends BaseCoachmarksStore {
 
   /**
    * Navigate to the Step Edit page
-   * @param {Number|null|Event} id 
+   * @param {Number|null|Event} id
    * @return {null}
    */
   @action.bound editStep(id) {
