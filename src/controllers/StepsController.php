@@ -29,7 +29,10 @@ class StepsController extends Controller
         return $output;
     }
 
-    public function actionNew()
+    /**
+     * Endpoint for saving new steps (id < 1), or editing existing steps (id >= 1)
+     */
+    public function actionEdit()
     {
         $this->requirePostRequest();
 

@@ -145,9 +145,9 @@ export default class UiStore extends BaseCoachmarksStore {
   @computed get stepProgress() {
     if (this.numberOfSteps) {
       return (100 * (this.currentStepIndex + 1)) / this.numberOfSteps;
-    } else {
+    } 
       return 0;
-    }
+    
   }
 
   @computed get previousStepIndex() {
@@ -289,6 +289,7 @@ export default class UiStore extends BaseCoachmarksStore {
   @action.bound createNewCoachmark() {
     this.setCoachmarkId(ContentStore.NewCoachmarkId);
     this.setStepId(null);
+    this.rootStore.currentStep.setId(null);
     this.setPageType(UiStore.PTCoachmarkEdit);
     this.rootStore.currentCoachmark.setCurrentCoachmark({
       id: ContentStore.NewCoachmarkId,

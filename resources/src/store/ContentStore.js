@@ -1,5 +1,4 @@
 import { observable, action, runInAction, toJS, computed } from 'mobx';
-// import Cookies from 'js-cookie';
 import { getCoachmarks as getCoachmarksApi } from '../api/Coachmarks';
 import { getUsers as getUsersApi, getCurrentUser } from '../api/Users';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
@@ -9,16 +8,19 @@ export default class ContentStore extends BaseCoachmarksStore {
     super();
     this.rootStore = rootStore;
   }
+
+  /** @inheritdoc */
   cookieName() {
     return 'cm-content';
   }
 
+  /** @inheritdoc */
   skipProperties() {
     return ['_coachmarks', '_coachmarksState', '_coachmarkSaveState'];
   }
 
-  static CookieName = 'cm-content';
 
+  /** ID to use for coachmarks/steps indicating it it is new */
   static NewCoachmarkId = -1;
 
   /** Statuses */
@@ -27,19 +29,37 @@ export default class ContentStore extends BaseCoachmarksStore {
   static StateError = 'error';
   static StateComplete = 'complete';
 
+  /**
+   * Reference back to root mobx store
+   */
   rootStore = undefined;
 
-  /** Coachmarks */
+  /**
+   * @var {array} _coachmarks array of coachmarks (w/ steps)
+   */
   @observable _coachmarks = [];
+
+  /**
+   * @var {array} _users array of user objects
+   */
   @observable _users = [];
 
+  /**
+   * @var {string} _coachmarksState status for coachmarks API call
+   */
   @observable _coachmarksState = ContentStore.StateUninit;
+
+  /**
+   * @var {string} _usersState status for users API call
+   */
   @observable _usersState = ContentStore.StateUninit;
 
+  /**
+   * @var {number} _currentUser current user ID
+   */
   @observable _currentUser = -1;
-  //   @observable _currentCoachmark = {};
-  //   @observable _currentStep = {};
 
+  /** @inheritdoc */
   @action.bound reset() {
     this._coachmarks = [];
     this._users = [];
@@ -48,26 +68,46 @@ export default class ContentStore extends BaseCoachmarksStore {
     this._usersState = ContentStore.StateUninit;
   }
 
+  /**
+   * Set the coachmarks array
+   * @param {array} cm 
+   * @return {null}
+   */
   @action.bound setCoachmarks(cm) {
     this._coachmarks = cm;
-    this.writeState();
   }
 
+
+  /**
+   * Get the coachmarks array
+   * @return {array}
+   */
   @computed get coachmarks() {
     return this._coachmarks;
   }
 
-  /** Coachmarks State */
-
+  /**
+   * Set the coachmarks loading status. Should use constants/statics as valid statuses
+   * @param {string} state 
+   */
   @action.bound setCoachmarksState(state) {
     this._coachmarksState = state;
-    this.writeState();
   }
 
+  /**
+   * Get the coachmarks loading status
+   * @return {string}
+   */
   @computed get coachmarksState() {
     return this._coachmarksState;
   }
 
+  /**
+   * Load coachmarks (w/steps) for the current user from the backend.
+   * Optionally run in the background (don't update loading state)
+   * @param {boolean|null} background
+   * @return {null}
+   */
   @action async fetchCoachmarks(background = false) {
     console.log('ContentStore.fetchCoachmarks()');
     this._coachmarks = [];
@@ -93,6 +133,10 @@ export default class ContentStore extends BaseCoachmarksStore {
     }
   }
 
+  /**
+   * Get the array of step objects for the current coachmark (based on `get coachmark()`)
+   * @return {array}
+   */
   @computed get steps() {
     const steps = [];
     this.coachmarks.forEach(coachmark => {
@@ -105,6 +149,10 @@ export default class ContentStore extends BaseCoachmarksStore {
     return steps;
   }
 
+  /**
+   * Convenience method to see if all backend requests are complete
+   * @return {boolean}
+   */
   @computed get loaded() {
     return (
       this.coachmarksState === ContentStore.StateComplete &&
@@ -112,20 +160,43 @@ export default class ContentStore extends BaseCoachmarksStore {
     );
   }
 
+  /**
+   * Get the current state for users (loading, error, complete, uninit, etc)
+   * @return {string}
+   */
   @computed get usersState() {
     return this._usersState;
   }
+
+  /**
+   * Set the users array
+   * @param {array} users
+   * @return {null}
+   */
   @action.bound setUsers(users) {
     this._users = users;
-    this.writeState();
   }
+
+  /**
+   * Get an array of all user objects
+   * @return {array}
+   */
   @computed get users() {
     return this._users;
   }
+
+  /**
+   * Get the current user ID
+   * @return {null|Number}
+   */
   @computed get currentUser() {
       return this._currentUser;
   }
 
+  /**
+   * Load the users from the backend, setting state once the request is complete
+   * @return {null}
+   */
   @action.bound async fetchUsers() {
     console.log('ContentStore.fetchUsers');
     this._users = [];
@@ -139,7 +210,7 @@ export default class ContentStore extends BaseCoachmarksStore {
         this.set('_users', users.users, false);
       });
       runInAction(() => {
-        this.set('_currentUser', parseInt(currentUser.user), false);
+        this.set('_currentUser', parseInt(currentUser.user, 10), false);
       });
     } catch (err) {
       runInAction(() => {
@@ -148,6 +219,11 @@ export default class ContentStore extends BaseCoachmarksStore {
     }
   }
 
+  /**
+   * Get the user for the given ID
+   * @param {*} id 
+   * @return {null|object}
+   */
   getUser(id) {
     if (this.usersState !== ContentStore.StateComplete) {
       return null;
@@ -155,6 +231,11 @@ export default class ContentStore extends BaseCoachmarksStore {
     return this.users.find(u => u.id === id);
   }
 
+  /**
+   * Get the coachmark for the given id
+   * @param {*} coachmarkId 
+   * @return {null|object}
+   */
   getCoachmark(coachmarkId) {
     const coachmark = this._coachmarks.filter(c => c.id === coachmarkId);
     if (coachmark.length) {
@@ -163,6 +244,12 @@ export default class ContentStore extends BaseCoachmarksStore {
     return coachmark;
   }
 
+  /**
+   * Get an array of steps for the given coachmark. If coachmark not specified, use the current
+   * coachmark (see `get coachmark()`, below)
+   * @param {*} coachmarkId
+   * @return {array}
+   */
   getCoachmarkSteps(coachmarkId = null) {
     if (!coachmarkId || coachmarkId instanceof Event) {
       coachmarkId = this.rootStore.ui.coachmarkId;
@@ -175,6 +262,10 @@ export default class ContentStore extends BaseCoachmarksStore {
     return [];
   }
 
+  /**
+   * Return the current coachmark, based on the UI Store coachmarkId attribute
+   * @return {false|object}
+   */
   @computed get coachmark() {
     const { coachmarkId } = this.rootStore.ui;
     const coachmarks = this.coachmarks.filter(
@@ -186,6 +277,10 @@ export default class ContentStore extends BaseCoachmarksStore {
     return false;
   }
 
+  /**
+   * Return the current step, based on the UI Store stepId attribute
+   * @return {false|object}
+   */
   @computed get step() {
     const { stepId } = this.rootStore.ui;
     const coachmark = this.coachmark;
@@ -198,6 +293,11 @@ export default class ContentStore extends BaseCoachmarksStore {
     return false;
   }
 
+  /**
+   * Get step by ID
+   * @param {*} id
+   * @return {null|object}
+   */
   getStep(id) {
       const steps = this.steps.filter(step => step.id === id);
       if (steps.length) {
@@ -206,6 +306,11 @@ export default class ContentStore extends BaseCoachmarksStore {
       return null;
   }
 
+  /**
+   * Return whether the current user can edit a coachmark with the given ID
+   * @param {*} id Coachmark ID
+   * @return {boolean}
+   */
   userCanEditCoachmark(id) {
     const coachmark = this.getCoachmark(id);
     if (!coachmark) {
@@ -214,11 +319,15 @@ export default class ContentStore extends BaseCoachmarksStore {
     return coachmark.readWriteUsers.includes(this._currentUser);
   }
 
+  /**
+   * Return whether the current user can create coachmarks
+   * @return {boolean}
+   */
   @computed get userCanCreateCoachmark() {
       const user = this.getUser(this.currentUser);
       if (!user) {
           console.warn('Current user is null');
-          return;
+          return false;
       }
       return user.createCoachmarks;
   }

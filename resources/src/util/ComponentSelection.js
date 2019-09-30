@@ -65,6 +65,16 @@ export const handleMouseClick = e => {
   document.body.dispatchEvent(componentSelectedEvent);
 };
 
+export const sanitizeSelector = selector => {
+    let sanitized = selector;
+    // Replace absolute URLs with relative ones
+    const absoluteUrlsRegex = /href="https?:\/\/[\w\.\-]+\/(.*)/;
+    if (selector.match(absoluteUrlsRegex)) {
+        sanitized = sanitized.replace(absoluteUrlsRegex, 'href*=/$1');
+        console.log('replaced absolute urls in selector [before, after]', selector, sanitized);
+    }
+    return sanitized;
+};
 // export const addCompomnentSelectedListener = callback => {
 //   document.body.addEventListener('component-selected', callback);
 // };

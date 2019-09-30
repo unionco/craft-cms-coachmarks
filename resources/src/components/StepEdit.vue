@@ -41,11 +41,13 @@
             >{{ componentSelectMode ? 'Cancel' : 'Select' }}</md-button>
             <span class="md-error" v-if="!$v.form.selectedNode.required">Node Selector is required</span>
           </Field>
-          <Field label="Step Order" :class="getValidationClass('order')">
+
+          <Field label="Step Order" :field-class="getValidationClass('order')">
             <md-input v-model="form.order" type="number" />
-            <span class="md-error" v-if="!$v.form.order.required">Order is required</span>
+            <span class="md-error" v-if="!$v.form.order.required">Order! is required</span>
             <span class="md-error" v-if="!$v.form.order.minValue">Order must be a positive integer</span>
           </Field>
+
           <Field>
             <md-button type="submit" class="md-primary md-raised" :disabled="loading">Save</md-button>
           </Field>
@@ -74,12 +76,9 @@ import {
   //   removeComponentSelectListener,
   handleMouseMove,
   handleMouseClick,
+  sanitizeSelector,
 } from '../util/ComponentSelection';
-import {
-  required,
-  minLength,
-  minValue,
-} from 'vuelidate/lib/validators';
+import { required, minLength, minValue } from 'vuelidate/lib/validators';
 import { validationMixin } from 'vuelidate';
 import Activity from './Activity.vue';
 import Field from './forms/Field.vue';
@@ -115,19 +114,13 @@ export default class StepEdit extends Vue {
     description: this.$store.currentStep.description,
     selectedNode: this.$store.currentStep.selectedNode,
     tooltipPosition: this.$store.currentStep.tooltipPosition,
+    order: this.$store.currentStep.order,
   };
 
   loading = false;
   success = false;
   error = false;
   componentSelectMode = false;
-
-  //   created() {
-  //     // this.componentSelectMode = this.$store.ui.componentSelectMode;
-  //     this.form.tooltipPosition = this.$store.currentStep.tooltipPosition;
-  //     this.form.nodeSelector = this.$store.currentStep.selectedNode;
-  //     this.form.label = this.$store.currentStep.label;
-  //   }
 
   @Watch('componentSelectMode')
   onComponentSelectModeChange(val, oldVal) {
@@ -136,24 +129,18 @@ export default class StepEdit extends Vue {
       if (val === true) {
         document.addEventListener('mousemove', handleMouseMove);
         document.addEventListener('click', this.setSelectedComponent);
-        //   this.$store.ui.setComponentSelectMode(val);
-
-        //   addCompomnentSelectedListener(this.componentSelectListenerCallback);
       } else {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('click', this.setSelectedComponent);
-
-        //   removeComponentSelectListener(this.componentSelectListenerCallback);
       }
     }, 100);
   }
 
   setSelectedComponent(e) {
     e.preventDefault();
-    console.log(e.target.getSelector());
-    this.form.nodeSelector = e.target.getSelector();
-    // this.form.selectedNode = e.target.getSelector();
-    // this.$store.currentStep.setSelectedNode(e.target.getSelector());
+    const selector = e.target.getSelector();
+    this.form.selectedNode = sanitizeSelector(selector);
+    console.log(this.form.nodeSelector);
     this.componentSelectMode = false;
   }
 
@@ -194,13 +181,14 @@ export default class StepEdit extends Vue {
     }
   }
 
+  /**
+   * Return class 'md-invalid' if the field validation fails
+   */
   getValidationClass(fieldName) {
     const field = this.$v.form[fieldName];
 
     if (field) {
-      return {
-        'md-invalid': field.$invalid && field.$dirty,
-      };
+      return field.$invalid && field.$dirty ? 'md-invalid' : '';
     }
   }
 }

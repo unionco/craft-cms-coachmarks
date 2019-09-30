@@ -1,45 +1,59 @@
-import { toJS, action } from 'mobx';
+import { action } from 'mobx';
 // import Cookies from 'js-cookie';
 
+/**
+ * Base class for mobx stores
+ * @class BaseCoachmarkStore
+ */
 export default class BaseCoachmarksStore {
+  /**
+   * Return the name for this store's localStorage object. Overriden in child classes.
+   * @return string
+   */
   cookieName() {
     return '';
   }
 
+  /**
+   * Properties to skip during state write/restore. Overriden in child classes
+   * @return string[]
+   */
   skipProperties() {
     return [];
   }
 
+  /**
+   * Serialize the store as a JSON object, skipping specified attributes.
+   * @return string
+   */
   serialize() {
-    let data = {};
+    const data = {};
     for (const key of Object.keys(this)) {
       if (
         key.indexOf('_') === 0 &&
         this[key] !== undefined &&
         !this.skipProperties().includes(key)
       ) {
-        // console.log(key, toJS(this[key]));
         data[key] = this[key];
       }
     }
-    // console.log(data);
     return JSON.stringify(data);
   }
 
+  /**
+   * Deserialize state from JSON object
+   * @param {string} json
+   * @return null
+   */
   @action.bound deserialize(json) {
-    // debugger;
     try {
-      // console.log(this.cookieName());
-      // console.log(json);
       if (!json) {
         this.reset();
         return;
       }
-      // console.log(json);
       const data = JSON.parse(json);
       for (const key of Object.keys(data)) {
         if (data[key] !== undefined && !this.skipProperties().includes(key)) {
-          // console.log(key, data[key]);
           this.set(key, data[key], false);
         }
       }
@@ -48,24 +62,43 @@ export default class BaseCoachmarksStore {
       console.log(json);
       console.error('reseting');
       this.reset();
-      // console.error(e);
     }
   }
 
+  /**
+   * Write current state as JSON to localStorage
+   * @return null
+   */
   writeState() {
     console.log('writeState', this.cookieName());
     localStorage.setItem(this.cookieName(), this.serialize());
+    
   }
 
+  /**
+   * Restore stage from localStorage
+   * @return null
+   */
   @action.bound restore() {
     const state = localStorage.getItem(this.cookieName());
     this.deserialize(state);
   }
 
+  /**
+   * Set some default values for the store, overridden in child classes
+   * @return null
+   */
   @action.bound reset() {
-    return;
+    
   }
 
+  /**
+   * Generic setter. Writes state after setting value
+   * @param {string} prop
+   * @param {*} val
+   * @param {boolean} write
+   * @return null
+   */
   @action.bound set(prop, val, write = true) {
     this[prop] = val;
     if (write) {

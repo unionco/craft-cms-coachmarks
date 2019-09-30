@@ -6,7 +6,10 @@
         <div v-if="!$store.content.loaded">
           <md-progress-spinner md-mode="indeterminate"></md-progress-spinner>
         </div>
-        <div v-else class="page">
+        <div
+          v-else
+          :class="{page: $store.ui.pageType !== 'CoachmarkPlay', play: $store.ui.pageType === 'CoachmarkPlay'}"
+        >
           <component
             v-if="$store.ui.open"
             v-bind:is="$store.ui.pageType"
@@ -15,12 +18,13 @@
         </div>
       </div>
     </div>
-    <StepBox v-if="$store.ui.stepActive" 
-    :position="$store.ui.stepBoxPosition"
-    :tooltip-position="$store.content.step.tooltipPosition"
-    :label="$store.content.step.label"
+    <StepBox
+      v-if="$store.ui.stepActive"
+      :position="$store.ui.stepBoxPosition"
+      :tooltip-position="$store.content.step.tooltipPosition"
+      :label="$store.content.step.label"
     />
-    <DebugCard/>
+    <DebugCard />
   </div>
 </template>
 
@@ -99,6 +103,12 @@ export default class Coachmarks extends Vue {
   .page {
     z-index: 0;
     background-color: white;
+  }
+  .play {
+    z-index: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
   }
 }
 </style>

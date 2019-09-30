@@ -1,9 +1,15 @@
 import client from './Client';
 
-export async function newStep(data) {
-  console.log(data);
+/**
+ * Send a request to the steps controller edit method
+ * @param {object} data 
+ */
+export async function saveStep(data) {
+  // Get the URL from Craft
+  const url = window.Craft.getActionUrl('coachmarks/steps/edit');
+  
   return client
-    .post(window.Craft.getActionUrl('coachmarks/steps/new'), {
+    .post(url, {
       step: data,
     })
     .then(resp => resp.data)

@@ -1,6 +1,6 @@
 import { observable, action, computed, toJS } from 'mobx';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
-import { newStep } from '../api/Steps';
+import { saveStep } from '../api/Steps';
 import ContentStore from './ContentStore';
 
 export default class CurrentStepStore extends BaseCoachmarksStore {
@@ -82,7 +82,7 @@ export default class CurrentStepStore extends BaseCoachmarksStore {
   }
 
   @action.bound async save(coachmarkId) {
-    const result = await newStep({
+    const result = await saveStep({
       coachmarkId,
       id: toJS(this.id),
       selectedNode: toJS(this.selectedNode),
