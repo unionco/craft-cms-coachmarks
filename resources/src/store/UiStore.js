@@ -1,19 +1,22 @@
 import { observable, action, computed, autorun, toJS } from 'mobx';
 import BaseCoachmarksStore from './BaseCoachmarksStore';
 import ContentStore from './ContentStore';
+import RootStore from '.';
 
 export default class UiStore extends BaseCoachmarksStore {
   constructor(rootStore) {
     super();
     this.rootStore = rootStore;
   }
+
+  /** @inheritdoc */
   cookieName() {
     return 'cm-ui';
   }
 
+  /** @var {RootStore} rootStore reference to root store */
   rootStore = undefined;
 
-  static CookieName = 'cm-ui';
   /** Page Types */
   static PTCoachmarkDetail = 'CoachmarkDetail';
   static PTMainMenu = 'MainMenu';
@@ -22,38 +25,93 @@ export default class UiStore extends BaseCoachmarksStore {
   static PTStepEdit = 'StepEdit';
   static PTCoachmarkPlay = 'CoachmarkPlay';
 
-  /** Open */
+  /**
+   * @var {boolean} _open Is the coachmarks UI open
+   */
   @observable _open = false;
+
+  /**
+   * @var {boolean} _stepActive Is the user in the middle of a coachmark/step playback?
+   */
   @observable _stepActive = false;
+
+  /**
+   * @var {string} _pageType The current page type to render. See page type statics, above, for valid options
+   */
   @observable _pageType = UiStore.PTMainMenu;
+
+  /**
+   * @var {null|Number} _coachmarkId the current coachmark ID
+   */
   @observable _coachmarkId = undefined;
+
+  /**
+   * @var {null|Number} _stepId the current step ID
+   */
   @observable _stepId = undefined;
+
+  /**
+   * @var {string} _rect the rectangle used for displaying the StepBox during coachmark/step playback
+   */
   @observable _rect = '';
+
+  /**
+   * @var {string} _stepBoxPosition the CSS style string generated for StepBox position during coachmark/step playback
+   */
   @observable _stepBoxPosition = '';
+
+  /**
+   * @var {string} _tooltipPosition the CSS style string generated for the tooltip position during coachmark/step playback
+   */
   @observable _tooltipPosition = '';
-  /** Steps for the current coachmark */
+  
+  /**
+   * @var {array} _steps array of step IDs for the current coachmark. Referenced during coachmark/step playback
+   */
   @observable _steps = [];
-  @observable _showDebugcard = true;
 
-  @action.bound toggleOpen() {
-    this.setOpen(!this.open);
-  }
+  /**
+   * @var {boolean} _showDebugCard Whether to show the debug card on the bottom left side of the screen (DEV)
+   */
+  @observable _showDebugCard = true;
 
+  /** @inheritdoc */
   @action.bound reset() {
     this._open = false;
     this._pageType = UiStore.PTMainMenu;
     this._coachmarkId = 0;
   }
 
+  /**
+   * Get whether the user is in playback mode
+   * @return {boolean}
+   */
   @computed get stepActive() {
     return this._stepActive;
   }
 
+  /**
+   * Set the current playback mode
+   * @param {boolean} active 
+   */
   @action.bound setStepActive(active) {
     this._stepActive = active;
     this.writeState();
   }
 
+    /**
+   * Toggle whether the coachmarks UI is open or closed
+   * @return {null}
+   */
+  @action.bound toggleOpen() {
+    this.setOpen(!this.open);
+  }
+
+  /**
+   * Set the UI open/close state
+   * @param {boolean} open
+   * @return {null}
+   */
   @action setOpen(open) {
     console.log('setOpen', open);
     this._open = open;
@@ -63,50 +121,100 @@ export default class UiStore extends BaseCoachmarksStore {
     this.writeState();
   }
 
+  /**
+   * Get the UI open/close state
+   * @return {boolean}
+   */
   @computed get open() {
     return this._open;
   }
 
+  /**
+   * Set the UI page type
+   * @param {string} pt 
+   * @return {null}
+   */
   @action.bound setPageType(pt) {
     this._pageType = pt;
     this.writeState();
   }
 
+  /**
+   * Get the UI page type
+   * @return {string}
+   */
   @computed get pageType() {
     return this._pageType;
   }
 
+  /**
+   * Set the current coachmark ID
+   * @param {null|Number} id 
+   * @return {null}
+   */
   @action.bound setCoachmarkId(id) {
     this._coachmarkId = id;
     this.writeState();
   }
 
+  /**
+   * Get the current coachmark ID
+   * @return {null|Number}
+   */
   @computed get coachmarkId() {
     return this._coachmarkId;
   }
 
+  /**
+   * Set the current step ID
+   * @param {null|Number} id
+   * @return {null}
+   */
   @action.bound setStepId(id) {
     this._stepId = id;
     this.writeState();
   }
 
+  /**
+   * Get the current step ID
+   * @return {null|Number}
+   */
   @computed get stepId() {
     return this._stepId;
   }
 
+  /**
+   * Get the calculated StepBox position string
+   * @return {string}
+   */
   @computed get stepBoxPosition() {
     return this._stepBoxPosition;
   }
+
+  /**
+   * Set the _rect attribute and calculate the StepBox position, based on the target rect
+   * @param {Object} rect
+   * @return {null}
+   */
   @action.bound setStepBoxPosition(rect) {
     this._rect = rect;
     this._stepBoxPosition = `top: ${rect.top}px; left: ${rect.left}px; width: ${rect.width}px; height: ${rect.height}px`;
   }
 
+  /**
+   * Get the tooltip position string
+   * @return {string}
+   */
   @computed get tooltipPosition() {
     return this._tooltipPosition;
   }
+
+  /**
+   * Set the tooltip position, based on orientation (left|right|top|bottom)
+   * @param {string} orientation
+   * @return {null}
+   */
   @action.bound setTooltipPosition(orientation) {
-    console.log('orientation', orientation);
     switch (orientation) {
       case 'bottom':
         this._tooltipPosition = 'top: 100%; left: 0px;';
@@ -125,37 +233,66 @@ export default class UiStore extends BaseCoachmarksStore {
     }
   }
 
+  /**
+   * Set step IDs available for the current coachmark
+   * @param {array} stepIds 
+   * @return {null}
+   */
   @action.bound setSteps(stepIds) {
     this._steps = stepIds;
     this.writeState();
   }
+
+  /**
+   * Get the step IDs available for the current coachmark
+   * @return {array}
+   */
   @computed get steps() {
     return this._steps;
   }
 
+  /**
+   * Get the index of the current step in the array of _steps
+   * @return {false|Number}
+   */
   @computed get currentStepIndex() {
     const currentIndex = this._steps.indexOf(this.stepId);
     return currentIndex > -1 ? currentIndex : false;
   }
 
+  /**
+   * Get a count of the available steps
+   * @return {Number}
+   */
   @computed get numberOfSteps() {
     return this._steps.length;
   }
 
+  /**
+   * Get the current step playback progress, as a percentage, 0 >= x >= 100
+   * @return {Number}
+   */
   @computed get stepProgress() {
     if (this.numberOfSteps) {
       return (100 * (this.currentStepIndex + 1)) / this.numberOfSteps;
-    } 
-      return 0;
-    
+    }
+    return 0;
   }
 
+  /**
+   * Get an index for the previous step, or false if the user is on the first step
+   * @return {false|Number}
+   */
   @computed get previousStepIndex() {
     const currentStepIndex = this._steps.indexOf(this.stepId);
     const previousIndex = currentStepIndex > 0 ? currentStepIndex - 1 : false;
     return previousIndex;
   }
 
+  /**
+   * Get an index for the next step, or false if the user in on the last step
+   * @return {false|Number}
+   */
   @computed get nextStepIndex() {
     const currentStepIndex = this._steps.indexOf(this.stepId);
     const nextIndex =
@@ -163,11 +300,19 @@ export default class UiStore extends BaseCoachmarksStore {
     return nextIndex;
   }
 
+  /**
+   * Set playback mode to false and send the user to the main menu
+   * @return {null}
+   */
   @action.bound exitPlayMode() {
     this.setPageType(UiStore.PTMainMenu);
     this.setStepActive(false);
   }
 
+  /**
+   * Advance to the next step, making sure the user is on the right page for the given step
+   * @return {null}
+   */
   @action.bound goToNextStep() {
     const nextStepIndex = this.nextStepIndex;
     const nextStep = this._steps[nextStepIndex] || false;
@@ -182,6 +327,10 @@ export default class UiStore extends BaseCoachmarksStore {
     return nextStep;
   }
 
+  /**
+   * Go back to the previous step, making sure the user is on the right page for the given step
+   * @return {null}
+   */
   @action.bound goToPreviousStep() {
     const previousStepIndex = this.previousStepIndex;
     const previousStep = this._steps[previousStepIndex] || false;
@@ -195,6 +344,11 @@ export default class UiStore extends BaseCoachmarksStore {
     return previousStep;
   }
 
+  /**
+   * Update the Stepox parameters
+   * @todo Refactor based on hash
+   * @return {null}
+   */
   @action.bound updateStepBoxParams() {
     this.checkPageUri();
     console.log('after checkPageUri');
@@ -218,6 +372,12 @@ export default class UiStore extends BaseCoachmarksStore {
     this.setTooltipPosition(this.rootStore.step.tooltipPosition);
   }
 
+  /**
+   * Start coachmark playback. Sets the coachmark ID (or uses current coachmark ID) and
+   * sets the page type, steps, etc.
+   * @param {null|Number|Event} id 
+   * @return {null}
+   */
   @action.bound startCoachmark(id = false) {
     if (!id || id instanceof Event) {
       id = this.coachmarkId;
@@ -239,21 +399,39 @@ export default class UiStore extends BaseCoachmarksStore {
     this.checkPageUri();
   }
 
+  /**
+   * Get whether the debug card should be shown (DEV)
+   * @return {boolean}
+   */
   @computed get showDebugCard() {
-    return this._showDebugcard;
+    return this._showDebugCard;
   }
 
+  /**
+   * Set whether the debug card should be shown (DEV)
+   * @param {boolean} val
+   * @return {null}
+   */
   @action.bound setShowDebugCard(val) {
-    this._showDebugcard = val;
+    this._showDebugCard = val;
   }
 
-  /** Navigation */
+  /**
+   * Navigate to the main menu, resetting coachmark/step ids
+   * @return {null}
+   */
   @action.bound goToMainMenu() {
     this.setPageType(UiStore.PTMainMenu);
     this.setCoachmarkId(null);
     this.setStepId(null);
   }
 
+  /**
+   * Navigate to the Coachmark Detail page for the given coachmark ID.
+   * If the given ID is null or a click event, use the current coachmark id
+   * @param {null|Number|Event} id 
+   * @return {null}
+   */
   @action.bound goToCoachmark(id = false) {
     if (!id || id instanceof Event) {
       id = this.coachmarkId;
@@ -263,11 +441,12 @@ export default class UiStore extends BaseCoachmarksStore {
   }
 
   /**
-   * Navigate to the Edit Coachmark view
+   * Navigate to the Coachmark Edit page for the given coachmark ID.
+   * If the given ID is null or ac lick event, use the current coachmark ID.
    * @param {Number|Event|null} id
+   * @return {null}
    */
   @action.bound editCoachmark(id = false) {
-    // console.log('editCoachmark', id);
     if (!id || id instanceof Event) {
       id = this.coachmarkId;
     }
@@ -286,6 +465,10 @@ export default class UiStore extends BaseCoachmarksStore {
     });
   }
 
+  /**
+   * Navigate to the Coachmark Edit page, setting the current coachmark to default values
+   * @return {null}
+   */
   @action.bound createNewCoachmark() {
     this.setCoachmarkId(ContentStore.NewCoachmarkId);
     this.setStepId(null);
@@ -294,17 +477,24 @@ export default class UiStore extends BaseCoachmarksStore {
     this.rootStore.currentCoachmark.setCurrentCoachmark({
       id: ContentStore.NewCoachmarkId,
       name: '',
-      //   steps: [],
-      //   createdBy: 'someUser',
       readonlyUsers: [],
       readWriteUsers: [],
     });
   }
 
+  /**
+   * Navigate to the Steps Edit page
+   * @return {null}
+   */
   @action.bound editSteps() {
     this.setPageType(UiStore.PTStepsEdit);
   }
 
+  /**
+   * Navigate to the Step Edit page
+   * @param {Number|null|Event} id 
+   * @return {null}
+   */
   @action.bound editStep(id) {
     this.setStepId(id);
     const step = this.rootStore.content.getStep(id);
@@ -313,6 +503,10 @@ export default class UiStore extends BaseCoachmarksStore {
     this.setPageType(UiStore.PTStepEdit);
   }
 
+  /**
+   * Navifate to the Step Edit page, setting the current step to defaults
+   * @return {null}
+   */
   @action.bound newStep() {
     this.setPageType(UiStore.PTStepEdit);
     this.rootStore.currentStep.configure({
@@ -325,6 +519,10 @@ export default class UiStore extends BaseCoachmarksStore {
     });
   }
 
+  /**
+   * Check the current page URI and redirect if it does not match the current step URL
+   * @return {null}
+   */
   checkPageUri() {
     const current = window.location.pathname;
     const stepUri = this.rootStore.content.step.url;
